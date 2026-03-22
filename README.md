@@ -2,6 +2,39 @@
 
 Minimal `uv`-managed local deployment for `HY-MT1.5-1.8B-4bit` on Apple Silicon.
 
+I mainly use this setup with Immersive Translate on my local Mac. The response speed feels very fast, and the overall experience is surprisingly good for a fully local translation workflow.
+
+## Model Download
+
+Recommended MLX model:
+
+- `mlx-community/HY-MT1.5-1.8B-4bit`
+- https://huggingface.co/mlx-community/HY-MT1.5-1.8B-4bit
+
+Original Tencent model:
+
+- `tencent/HY-MT1.5-1.8B`
+- https://huggingface.co/tencent/HY-MT1.5-1.8B
+
+Upstream project:
+
+- Tencent Hunyuan HY-MT
+- https://github.com/Tencent-Hunyuan/HY-MT
+
+Create the local model directory:
+
+```bash
+mkdir -p models/HY-MT1.5-1.8B-4bit
+```
+
+At minimum, place these files into `models/HY-MT1.5-1.8B-4bit/`:
+
+- `model.safetensors`
+- `config.json`
+- `tokenizer.json`
+- `tokenizer_config.json`
+- `special_tokens_map.json`
+
 ## Layout
 
 - CLI environment: `.venv`
@@ -29,6 +62,16 @@ Expected output:
 
 ```bash
 uv run python scripts/smoke_suite.py
+```
+
+## Quick Start
+
+```bash
+uv sync
+cp configs/omlx.env.example configs/omlx.env
+zsh scripts/start_omlx_tmux.sh
+zsh scripts/status_omlx.sh
+uv run python scripts/repl_translate.py
 ```
 
 ## oMLX Serve
@@ -94,3 +137,28 @@ curl http://127.0.0.1:8001/v1/chat/completions \
     "temperature": 0.2
   }'
 ```
+
+## Prompt Notes
+
+This project follows the official Tencent HY-MT prompt pattern for `ZH <=> XX` translation:
+
+```text
+将以下文本翻译为{target_language}，注意只需要输出翻译后的结果，不要额外解释：
+
+{source_text}
+```
+
+The original HY-MT README also recommends these inference settings:
+
+- `top_k: 20`
+- `top_p: 0.6`
+- `repetition_penalty: 1.05`
+- `temperature: 0.7`
+
+## Acknowledgements
+
+Thanks to:
+
+- Tencent Hunyuan team for releasing `HY-MT1.5-1.8B` and the official prompt guidance
+- `mlx-community` for the `HY-MT1.5-1.8B-4bit` MLX conversion
+- `oMLX` for the local OpenAI-compatible serving layer
