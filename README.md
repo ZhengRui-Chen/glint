@@ -4,6 +4,12 @@ Minimal `uv`-managed local deployment for `HY-MT1.5-1.8B-4bit` on Apple Silicon.
 
 I mainly use this setup with Immersive Translate on my local Mac. The response speed feels very fast, and the overall experience is surprisingly good for a fully local translation workflow.
 
+This project uses `oMLX` as the local serving layer. `oMLX` is a relatively new Apple Silicon focused inference framework that exposes MLX models through an OpenAI-compatible API, which makes it a good fit for serving HY-MT as a local translation service.
+
+oMLX repository:
+
+- https://github.com/jundot/omlx
+
 ## Model Download
 
 Recommended MLX model:
