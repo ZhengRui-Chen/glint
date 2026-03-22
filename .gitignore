@@ -1,0 +1,15 @@
+.pytest_cache/
+.runtime/
+.venv/
+.venv-omlx/
+__pycache__/
+*.pyc
+
+# Local model weights
+models/
+
+# Local service config
+configs/omlx.env
+
+# macOS
+.DS_Store
