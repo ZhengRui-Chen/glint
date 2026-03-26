@@ -218,14 +218,24 @@ translation paths backed by the local `oMLX` service.
 
 After launch, the app runs as a menu bar utility.
 
+- The top of the menu shows `Service Status` so you can tell whether the
+  translation backend is currently usable.
+- `Start Service`, `Stop Service`, `Restart Service`, and `Refresh Status`
+  let you manage the local backend without leaving the menu bar.
 - `Translate Clipboard` reads plain text from the clipboard and shows the
   floating translation overlay.
 - `Translate Selection` reads the current accessibility-exposed selection and
   shows the overlay near the cursor when possible.
+- Translation actions are disabled whenever the backend is unavailable or
+  still starting.
 - `Selection Shortcut` and `Clipboard Shortcut` let you record separate global
   hotkeys from the menu bar.
 - `Cancel Shortcut Recording` exits shortcut capture mode if you start
   recording by mistake.
+
+Backend availability refreshes when the menu opens and also in the background
+every 15 seconds so the menu stays current without surfacing internal runtime
+details.
 
 Default shortcuts:
 

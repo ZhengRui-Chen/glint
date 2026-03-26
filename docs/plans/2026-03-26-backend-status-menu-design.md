@@ -114,13 +114,17 @@ This keeps the UX stable even if shell output formatting changes.
 The menu should refresh in two situations:
 
 1. Immediately when the menu opens
-2. Periodically in the background at a low frequency, such as every 10 to 15 seconds
+2. Periodically in the background at a low frequency, currently every 15 seconds
 
 When an action is running:
 
 - show an in-progress state
 - disable conflicting actions
 - disable translation entries until the backend is usable again
+
+This keeps the latest backend snapshot warm even if the user has not opened the
+menu recently, while still treating menu-open refresh as the most immediate
+source of truth.
 
 ## Visual Direction
 
@@ -153,6 +157,7 @@ Add deterministic unit tests for:
 - status mapping from internal signals to user-facing state
 - menu item enabled and disabled behavior by backend state
 - action transitions such as start to starting to available
+- refresh-on-open and low-frequency background refresh wiring in `AppDelegate`
 - preservation of existing menu functionality
 
 Verification should include:

@@ -272,6 +272,12 @@ Implement:
 - small menu polish such as section ordering and concise detail copy
 - documentation updates if menu behavior descriptions need to mention backend status and management actions
 
+Implementation notes:
+
+- keep the refresh loop on the main run loop because the menu model is rebuilt on the main actor
+- use the existing `AppConfig.default.backendStatusRefreshInterval` value, which is 15 seconds
+- do not churn `scripts/build_mac_app.sh` unless the new menu wiring actually requires a packaging change
+
 **Step 4: Run test to verify it passes**
 
 Run:

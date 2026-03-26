@@ -137,6 +137,99 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         let callCount = await apiChecker.recordedCallCount()
         XCTAssertEqual(callCount, 2)
     }
+
+    @MainActor
+    func test_background_refresh_keeps_backend_snapshot_current() async throws {
+        let apiChecker = SequencedBackendAPIHealthChecker(results: [.unreachable, .reachable])
+        let processChecker = SequencedBackendProcessChecker(results: [false, false])
+        let monitor = BackendStatusMonitor(
+            apiChecker: apiChecker,
+            processChecker: processChecker,
+            now: { Date(timeIntervalSince1970: 100) }
+        )
+        let scheduler = TestBackendRefreshScheduler()
+        let appDelegate = AppDelegate(
+            shortcutSettings: .default,
+            launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
+            shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
+            hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
+            backendStatusMonitor: monitor,
+            backendControlService: BlockingBackendControlService(),
+            backendRefreshScheduler: scheduler
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        _ = await waitForMenuItem(titled: "Service Status: Unavailable", in: menu)
+
+        try scheduler.fire()
+
+        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+        let callCount = await apiChecker.recordedCallCount()
+        XCTAssertEqual(callCount, 2)
+    }
+
+    @MainActor
+    func test_backend_refresh_preserves_existing_shortcut_and_translation_items() async throws {
+        let apiChecker = SequencedBackendAPIHealthChecker(results: [.reachable, .reachable])
+        let processChecker = SequencedBackendProcessChecker(results: [true, true])
+        let monitor = BackendStatusMonitor(
+            apiChecker: apiChecker,
+            processChecker: processChecker,
+            now: { Date(timeIntervalSince1970: 100) }
+        )
+        let scheduler = TestBackendRefreshScheduler()
+        let appDelegate = AppDelegate(
+            shortcutSettings: .default,
+            launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
+            shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
+            hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
+            backendStatusMonitor: monitor,
+            backendControlService: BlockingBackendControlService(),
+            backendRefreshScheduler: scheduler
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+
+        try scheduler.fire()
+        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+
+        let selectionItem = await waitForMenuItem(titled: "Translate Selection", in: menu)
+        let clipboardItem = await waitForMenuItem(titled: "Translate Clipboard", in: menu)
+        let selectionShortcutItem = await waitForMenuItem(
+            titled: "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)",
+            in: menu
+        )
+        let clipboardShortcutItem = await waitForMenuItem(
+            titled: "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)",
+            in: menu
+        )
+
+        XCTAssertTrue(selectionItem.isEnabled)
+        XCTAssertTrue(clipboardItem.isEnabled)
+        XCTAssertTrue(selectionShortcutItem.isEnabled)
+        XCTAssertTrue(clipboardShortcutItem.isEnabled)
+    }
 }
 
 private actor BlockingBackendControlService: BackendControlServicing {
@@ -220,6 +313,28 @@ private final class NoopHotkeyMonitor: GlobalHotkeyMonitoring {
     func reload(shortcut: GlobalHotkeyShortcut) -> Bool {
         true
     }
+}
+
+@MainActor
+private final class TestBackendRefreshScheduler: BackendRefreshScheduling {
+    private var action: (() -> Void)?
+
+    func schedule(
+        interval: TimeInterval,
+        action: @escaping () -> Void
+    ) -> any BackendRefreshControlling {
+        self.action = action
+        return TestBackendRefreshTimer()
+    }
+
+    func fire() throws {
+        let action = try XCTUnwrap(action)
+        action()
+    }
+}
+
+private struct TestBackendRefreshTimer: BackendRefreshControlling {
+    func invalidate() {}
 }
 
 @MainActor
