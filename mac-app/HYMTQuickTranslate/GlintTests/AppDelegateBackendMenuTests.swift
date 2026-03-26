@@ -314,6 +314,37 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 50_000_000)
         XCTAssertEqual(menu.items.first?.title, "Service Status: Starting")
     }
+
+    @MainActor
+    func test_menu_refresh_does_not_override_starting_state_while_start_action_is_in_flight() async throws {
+        let controlService = BlockingBackendControlService()
+        let appDelegate = makeAppDelegate(
+            apiResults: [.unreachable, .reachable],
+            processResults: [false, false],
+            controlService: controlService
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        _ = await waitForMenuItem(titled: "Service Status: Unavailable", in: menu)
+
+        try triggerMenuItem(titled: "Start Service", in: menu)
+        _ = await waitForMenuItem(titled: "Service Status: Starting", in: menu)
+
+        controller.menuNeedsUpdate(menu)
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        XCTAssertEqual(menu.items.first?.title, "Service Status: Starting")
+    }
 }
 
 private actor BlockingBackendControlService: BackendControlServicing {

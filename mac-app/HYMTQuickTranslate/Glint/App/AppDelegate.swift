@@ -102,6 +102,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var shortcutStatusLabel: String?
     private var backendStatus = BackendStatusSnapshot.checking()
     private var backendActionContext: BackendActionContext?
+    private var isBackendControlActionInFlight = false
     private var backendRefreshGeneration = 0
     private var backendRefreshTimer: (any BackendRefreshControlling)?
     private var localShortcutRecordingMonitor: Any?
@@ -272,6 +273,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func startBackendService() {
         invalidateInFlightBackendRefreshes()
+        isBackendControlActionInFlight = true
         backendActionContext = BackendActionContext(action: .start, requestedAt: Date())
         updateBackendStatus(.starting(detail: "Backend is starting, please wait"))
         Task { @MainActor [weak self] in
@@ -281,8 +283,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
             do {
                 try await backendControlService.start()
+                isBackendControlActionInFlight = false
                 refreshBackendStatus()
             } catch {
+                isBackendControlActionInFlight = false
                 updateBackendStatus(
                     .error(detail: "Failed to start the service"),
                     clearActionContext: true
@@ -293,6 +297,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func stopBackendService() {
         invalidateInFlightBackendRefreshes()
+        isBackendControlActionInFlight = true
         backendActionContext = nil
         updateBackendStatus(.unavailable(detail: "Backend is currently unavailable"))
         Task { @MainActor [weak self] in
@@ -302,8 +307,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
             do {
                 try await backendControlService.stop()
+                isBackendControlActionInFlight = false
                 refreshBackendStatus()
             } catch {
+                isBackendControlActionInFlight = false
                 updateBackendStatus(.error(detail: "Failed to stop the service"))
             }
         }
@@ -311,6 +318,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func restartBackendService() {
         invalidateInFlightBackendRefreshes()
+        isBackendControlActionInFlight = true
         backendActionContext = BackendActionContext(action: .restart, requestedAt: Date())
         updateBackendStatus(.starting(detail: "Backend is starting, please wait"))
         Task { @MainActor [weak self] in
@@ -320,8 +328,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
             do {
                 try await backendControlService.restart()
+                isBackendControlActionInFlight = false
                 refreshBackendStatus()
             } catch {
+                isBackendControlActionInFlight = false
                 updateBackendStatus(
                     .error(detail: "Failed to restart the service"),
                     clearActionContext: true
@@ -331,6 +341,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func refreshBackendStatus() {
+        guard !isBackendControlActionInFlight else {
+            return
+        }
         let refreshGeneration = nextBackendRefreshGeneration()
         updateBackendStatus(.checking())
         Task { @MainActor [weak self] in
