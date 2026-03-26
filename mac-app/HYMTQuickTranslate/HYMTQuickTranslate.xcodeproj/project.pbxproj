@@ -1,0 +1,471 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */; };
+		2C6AC15A3DC20E3690AA0ADF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */; };
+		4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A767EF72CE237474EB211A9D /* AppConfig.swift */; };
+		5F456AF294A234263FEC97B2 /* HYMTQuickTranslateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDADDFCAE51D0B4E3FF13DD4 /* HYMTQuickTranslateApp.swift */; };
+		8C830E79BD7C7102DC4DD459 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */; };
+		BAA4E0E8A9912D1A5015A3BE /* HYMTQuickTranslateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7DAA0F2B6511FE5F8298C0FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 34A469F569C6F5BC2362732E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 20CB6FFFDCA21F6FED9E3E19;
+			remoteInfo = HYMTQuickTranslate;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = App/AppDelegate.swift; sourceTree = "<group>"; };
+		79F18BB4BDA1E2CD5616822E /* HYMTQuickTranslate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HYMTQuickTranslate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HYMTQuickTranslateTests.swift; sourceTree = "<group>"; };
+		A767EF72CE237474EB211A9D /* AppConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = Config/AppConfig.swift; sourceTree = "<group>"; };
+		B7B6E8C289C92039E8BE9AA7 /* HYMTQuickTranslateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HYMTQuickTranslateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDADDFCAE51D0B4E3FF13DD4 /* HYMTQuickTranslateApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HYMTQuickTranslateApp.swift; path = App/HYMTQuickTranslateApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		14D2B059E16D706CAA5C5ADB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C830E79BD7C7102DC4DD459 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAA1F1A0F2641796F57FED39 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C6AC15A3DC20E3690AA0ADF /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0ED68302D390AA723419E1D1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3B303CE8440A0B9D7D87A8BD /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3B303CE8440A0B9D7D87A8BD /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+		9A1AB20D4773E0BFE04ECF51 = {
+			isa = PBXGroup;
+			children = (
+				C4E9392681167F0AD067D1B4 /* Products */,
+				0ED68302D390AA723419E1D1 /* Frameworks */,
+				CFFF07A5516A00606E135D4C /* HYMTQuickTranslate */,
+				E65E7203B6D010AD12334685 /* HYMTQuickTranslateTests */,
+			);
+			sourceTree = "<group>";
+		};
+		C4E9392681167F0AD067D1B4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				79F18BB4BDA1E2CD5616822E /* HYMTQuickTranslate.app */,
+				B7B6E8C289C92039E8BE9AA7 /* HYMTQuickTranslateTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFFF07A5516A00606E135D4C /* HYMTQuickTranslate */ = {
+			isa = PBXGroup;
+			children = (
+				DDADDFCAE51D0B4E3FF13DD4 /* HYMTQuickTranslateApp.swift */,
+				053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */,
+				A767EF72CE237474EB211A9D /* AppConfig.swift */,
+			);
+			name = HYMTQuickTranslate;
+			path = HYMTQuickTranslate;
+			sourceTree = "<group>";
+		};
+		E65E7203B6D010AD12334685 /* HYMTQuickTranslateTests */ = {
+			isa = PBXGroup;
+			children = (
+				9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */,
+			);
+			name = HYMTQuickTranslateTests;
+			path = HYMTQuickTranslateTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		20CB6FFFDCA21F6FED9E3E19 /* HYMTQuickTranslate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5B68B73DF0F5EE635C7174D /* Build configuration list for PBXNativeTarget "HYMTQuickTranslate" */;
+			buildPhases = (
+				4103C87106D8D379F16E839F /* Sources */,
+				FAA1F1A0F2641796F57FED39 /* Frameworks */,
+				E7C2F78A89554E5063917C17 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HYMTQuickTranslate;
+			productName = HYMTQuickTranslate;
+			productReference = 79F18BB4BDA1E2CD5616822E /* HYMTQuickTranslate.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A6638BA04B74C21D84A99110 /* HYMTQuickTranslateTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E138CBB1DB4012FC5E6BA932 /* Build configuration list for PBXNativeTarget "HYMTQuickTranslateTests" */;
+			buildPhases = (
+				8F479FC562850BF4C4E8E633 /* Sources */,
+				14D2B059E16D706CAA5C5ADB /* Frameworks */,
+				2249CC00AFC7DDD906CA0F33 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B966CDA84E6A73F21DCD309D /* PBXTargetDependency */,
+			);
+			name = HYMTQuickTranslateTests;
+			productName = HYMTQuickTranslateTests;
+			productReference = B7B6E8C289C92039E8BE9AA7 /* HYMTQuickTranslateTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		34A469F569C6F5BC2362732E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+			};
+			buildConfigurationList = F2606D708A84C633B7838F7B /* Build configuration list for PBXProject "HYMTQuickTranslate" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9A1AB20D4773E0BFE04ECF51;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C4E9392681167F0AD067D1B4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				20CB6FFFDCA21F6FED9E3E19 /* HYMTQuickTranslate */,
+				A6638BA04B74C21D84A99110 /* HYMTQuickTranslateTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2249CC00AFC7DDD906CA0F33 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E7C2F78A89554E5063917C17 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4103C87106D8D379F16E839F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F456AF294A234263FEC97B2 /* HYMTQuickTranslateApp.swift in Sources */,
+				1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */,
+				4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F479FC562850BF4C4E8E633 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BAA4E0E8A9912D1A5015A3BE /* HYMTQuickTranslateTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B966CDA84E6A73F21DCD309D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = HYMTQuickTranslate;
+			target = 20CB6FFFDCA21F6FED9E3E19 /* HYMTQuickTranslate */;
+			targetProxy = 7DAA0F2B6511FE5F8298C0FE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0B12498DD0FA62785766ABE7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = local.hymt.quicktranslate;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		19504C0E07F743A9E3B99FA8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		3D3B44636A18DCC7336C6A08 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4F4D416FAAF8E0A04F2C022F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = local.hymt.quicktranslateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HYMTQuickTranslate.app/Contents/MacOS/HYMTQuickTranslate";
+				TEST_TARGET_NAME = HYMTQuickTranslate;
+			};
+			name = Release;
+		};
+		CDDF1AC0204B495F2C43269B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = local.hymt.quicktranslate;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		F4AA9461F7748FEC028E9106 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = local.hymt.quicktranslateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HYMTQuickTranslate.app/Contents/MacOS/HYMTQuickTranslate";
+				TEST_TARGET_NAME = HYMTQuickTranslate;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A5B68B73DF0F5EE635C7174D /* Build configuration list for PBXNativeTarget "HYMTQuickTranslate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B12498DD0FA62785766ABE7 /* Release */,
+				CDDF1AC0204B495F2C43269B /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E138CBB1DB4012FC5E6BA932 /* Build configuration list for PBXNativeTarget "HYMTQuickTranslateTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F4D416FAAF8E0A04F2C022F /* Release */,
+				F4AA9461F7748FEC028E9106 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2606D708A84C633B7838F7B /* Build configuration list for PBXProject "HYMTQuickTranslate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D3B44636A18DCC7336C6A08 /* Debug */,
+				19504C0E07F743A9E3B99FA8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 34A469F569C6F5BC2362732E /* Project object */;
+}

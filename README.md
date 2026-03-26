@@ -161,6 +161,12 @@ The original HY-MT README also recommends these inference settings:
 - `repetition_penalty: 1.05`
 - `temperature: 0.7`
 
+## macOS Quick Translate App
+
+An Xcode macOS companion app now lives under `mac-app/HYMTQuickTranslate/`.
+The initial target wires the local service defaults and will be expanded in
+later tasks for clipboard translation and floating overlay presentation.
+
 ## Acknowledgements
 
 Thanks to:
