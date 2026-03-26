@@ -167,6 +167,29 @@ An Xcode macOS companion app now lives under `mac-app/HYMTQuickTranslate/`.
 The initial target wires the local service defaults and will be expanded in
 later tasks for clipboard translation and floating overlay presentation.
 
+### Run the macOS app
+
+1. Open `mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj` in Xcode.
+2. Make sure the local `oMLX` service is running and reachable at
+   `http://127.0.0.1:8001`.
+3. Run the `HYMTQuickTranslate` scheme on your Mac.
+4. Copy text to the clipboard and press the default shortcut:
+   `Control + Option + Command + T`
+
+You can start the local service with:
+
+```bash
+cp configs/omlx.env.example configs/omlx.env
+zsh scripts/start_omlx_tmux.sh
+zsh scripts/status_omlx.sh
+```
+
+Threshold behavior:
+
+- `<= 2000` characters: translate immediately
+- `2001...8000` characters: ask for confirmation in the floating panel
+- `> 8000` characters: reject the request with an error message
+
 ## Acknowledgements
 
 Thanks to:

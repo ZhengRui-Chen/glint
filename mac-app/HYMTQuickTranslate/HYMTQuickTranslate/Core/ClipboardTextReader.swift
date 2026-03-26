@@ -1,6 +1,6 @@
 import AppKit
 
-protocol ClipboardTextReading {
+protocol ClipboardTextReading: Sendable {
     func readString() -> String?
 }
 

@@ -1,6 +1,6 @@
 import Foundation
 
-protocol TranslationClienting {
+protocol TranslationClienting: Sendable {
     func translate(text: String, direction: TranslationDirection) async throws -> String
 }
 
@@ -10,7 +10,7 @@ enum LocalTranslationClientError: Error, Equatable {
     case emptyChoices
 }
 
-struct LocalTranslationClient: TranslationClienting {
+struct LocalTranslationClient: TranslationClienting, Sendable {
     let config: AppConfig
     let session: URLSession
 

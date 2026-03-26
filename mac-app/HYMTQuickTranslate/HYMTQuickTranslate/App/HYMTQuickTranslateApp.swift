@@ -6,7 +6,14 @@ struct HYMTQuickTranslateApp: App {
 
     var body: some Scene {
         Settings {
-            EmptyView()
+            VStack(alignment: .leading, spacing: 8) {
+                Text("HYMT Quick Translate")
+                    .font(.headline)
+                Text("Use the global shortcut to translate the clipboard.")
+                    .foregroundStyle(.secondary)
+            }
+            .padding(16)
+            .frame(width: 320)
         }
     }
 }

@@ -1,16 +1,16 @@
 import Foundation
 
-struct TranslateClipboardWorkflow {
+struct TranslateClipboardWorkflow: Sendable {
     let clipboard: any ClipboardTextReading
     let client: any TranslationClienting
     let policy: TextLengthPolicy
-    let detectDirection: (String) -> TranslationDirection
+    let detectDirection: @Sendable (String) -> TranslationDirection
 
     init(
         clipboard: any ClipboardTextReading = ClipboardTextReader(),
         client: any TranslationClienting = LocalTranslationClient(),
         policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
-        detectDirection: @escaping (String) -> TranslationDirection = DirectionDetector.detect
+        detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect
     ) {
         self.clipboard = clipboard
         self.client = client
