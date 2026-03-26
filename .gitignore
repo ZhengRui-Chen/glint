@@ -13,3 +13,4 @@ configs/omlx.env
 
 # macOS
 .DS_Store
+.worktrees/
