@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OverlayContentView: View {
     @ObservedObject var viewModel: OverlayViewModel
+    @ObservedObject var backdropState: OverlayBackdropState
     private let visualStyle = OverlayVisualStyle.current
 
     var body: some View {
@@ -10,10 +11,16 @@ struct OverlayContentView: View {
                 .id(stateTransitionKey)
                 .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
         }
-        .padding(20)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
         .frame(width: 460)
-        .background(OverlayBackgroundView(visualStyle: visualStyle))
-        .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+        .background(
+            OverlayBackgroundView(
+                visualStyle: visualStyle,
+                averageLuminance: backdropState.averageLuminance
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: OverlayVisualStyle.cornerRadius, style: .continuous))
         .animation(.easeOut(duration: 0.18), value: stateTransitionKey)
     }
 
