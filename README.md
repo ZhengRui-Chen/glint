@@ -164,8 +164,8 @@ The original HY-MT README also recommends these inference settings:
 ## macOS Quick Translate App
 
 An Xcode macOS companion app now lives under `mac-app/HYMTQuickTranslate/`.
-The initial target wires the local service defaults and will be expanded in
-later tasks for clipboard translation and floating overlay presentation.
+It now provides a menu bar utility with separate clipboard and selection
+translation paths backed by the local `oMLX` service.
 
 ### Run the macOS app
 
@@ -173,8 +173,82 @@ later tasks for clipboard translation and floating overlay presentation.
 2. Make sure the local `oMLX` service is running and reachable at
    `http://127.0.0.1:8001`.
 3. Run the `HYMTQuickTranslate` scheme on your Mac.
-4. Copy text to the clipboard and press the default shortcut:
-   `Control + Option + Command + T`
+4. Use the menu bar item to trigger translation or configure shortcuts.
+
+### Menu bar usage
+
+After launch, the app runs as a menu bar utility.
+
+- `Translate Clipboard` reads plain text from the clipboard and shows the
+  floating translation overlay.
+- `Translate Selection` reads the current accessibility-exposed selection and
+  shows the overlay near the cursor when possible.
+- `Selection Shortcut` and `Clipboard Shortcut` let you record separate global
+  hotkeys from the menu bar.
+- `Cancel Shortcut Recording` exits shortcut capture mode if you start
+  recording by mistake.
+
+Default shortcuts:
+
+- Clipboard: `Control + Option + Command + T`
+- Selection: `Control + Option + Command + S`
+
+### Clipboard vs selection triggers
+
+- Clipboard translation always reads from the pasteboard and opens the overlay
+  in the centered placement.
+- Selection translation reads the current text selection through macOS
+  accessibility APIs.
+- Selection-triggered overlays try to appear near the cursor and safely fall
+  back to centered placement if no usable anchor is available.
+- The selection path does not fall back to clipboard contents. If no supported
+  selection is available, the app reports an error instead.
+
+### Shortcut configuration
+
+- Clipboard and selection shortcuts are configured independently.
+- Duplicate assignments are rejected during recording.
+- Updated shortcuts are persisted and restored on the next launch.
+- If a new shortcut cannot be registered with macOS, the previous active
+  shortcut remains in place.
+
+### Accessibility requirement
+
+Selection translation requires Accessibility permission for the app.
+
+- Without permission, the selection path reports an explicit permission error.
+- The clipboard path does not require Accessibility permission.
+
+To grant permission, open:
+
+- `System Settings > Privacy & Security > Accessibility`
+
+### Supported selection scenarios
+
+Supported:
+
+- Text selected in apps that expose `AXSelectedText` through macOS
+  Accessibility APIs
+- Cursor-near overlay placement when the current mouse location can be used as
+  the anchor
+
+Unsupported or limited:
+
+- Apps that do not expose selected text through Accessibility APIs
+- Empty selections or controls that only expose focus without selected text
+- Exact selection-bounds anchoring; the current implementation anchors near the
+  cursor rather than the selected text rect
+
+### Quick verification checklist
+
+Use this checklist when validating the app manually:
+
+- menu bar is visible after launch
+- clipboard and selection actions are both accessible
+- two shortcuts can be configured and persisted
+- selection path reports permission errors clearly
+- selection path does not silently fall back to clipboard
+- cursor-near placement falls back safely
 
 You can start the local service with:
 
