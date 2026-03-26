@@ -199,6 +199,138 @@ final class ShortcutRecorderTests: XCTestCase {
             ]
         )
     }
+
+    @MainActor
+    func test_launch_resets_clipboard_shortcut_to_default_when_saved_shortcut_cannot_be_registered() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        defer {
+            userDefaults.removePersistentDomain(forName: #function)
+        }
+
+        let savedShortcut = GlobalHotkeyShortcut(
+            keyCode: UInt32(kVK_ANSI_T),
+            modifiers: UInt32(controlKey | optionKey)
+        )
+        let savedSettings = ShortcutSettings(
+            clipboardShortcut: savedShortcut,
+            selectionShortcut: .selectionDefault
+        )
+        savedSettings.save(to: userDefaults)
+
+        let clipboardMonitor = TestHotkeyMonitor(startResults: [false], reloadResults: [true])
+        let selectionMonitor = TestHotkeyMonitor()
+        let appDelegate = AppDelegate(
+            shortcutSettings: savedSettings,
+            launchCoordinator: ImmediateLaunchCoordinator(),
+            shortcutRecorderUserDefaults: userDefaults,
+            hotkeyMonitorFactory: { identifier, shortcut, _ in
+                let monitor = if identifier == 1 {
+                    clipboardMonitor
+                } else {
+                    selectionMonitor
+                }
+                monitor.initialShortcut = shortcut
+                return monitor
+            }
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        XCTAssertEqual(
+            clipboardMonitor.events,
+            [
+                .start(savedShortcut),
+                .reload(.default),
+            ]
+        )
+        XCTAssertEqual(
+            ShortcutSettings.load(from: userDefaults),
+            ShortcutSettings(
+                clipboardShortcut: .default,
+                selectionShortcut: .selectionDefault
+            )
+        )
+        XCTAssertEqual(
+            reflectedValue(named: "shortcutStatusLabel", from: appDelegate) as? String,
+            "Clipboard shortcut was reset to the default because the saved combination could not be registered."
+        )
+    }
+
+    @MainActor
+    func test_launch_shows_error_when_clipboard_shortcut_and_default_both_fail() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        defer {
+            userDefaults.removePersistentDomain(forName: #function)
+        }
+
+        let savedShortcut = GlobalHotkeyShortcut(
+            keyCode: UInt32(kVK_ANSI_T),
+            modifiers: UInt32(controlKey | optionKey)
+        )
+        let savedSettings = ShortcutSettings(
+            clipboardShortcut: savedShortcut,
+            selectionShortcut: .selectionDefault
+        )
+
+        let clipboardMonitor = TestHotkeyMonitor(startResults: [false], reloadResults: [false])
+        let selectionMonitor = TestHotkeyMonitor()
+        let appDelegate = AppDelegate(
+            shortcutSettings: savedSettings,
+            launchCoordinator: ImmediateLaunchCoordinator(),
+            shortcutRecorderUserDefaults: userDefaults,
+            hotkeyMonitorFactory: { identifier, shortcut, _ in
+                let monitor = if identifier == 1 {
+                    clipboardMonitor
+                } else {
+                    selectionMonitor
+                }
+                monitor.initialShortcut = shortcut
+                return monitor
+            }
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        XCTAssertEqual(
+            clipboardMonitor.events,
+            [
+                .start(savedShortcut),
+                .reload(.default),
+            ]
+        )
+        XCTAssertEqual(ShortcutSettings.load(from: userDefaults), .default)
+        XCTAssertEqual(
+            reflectedValue(named: "shortcutStatusLabel", from: appDelegate) as? String,
+            "Clipboard shortcut could not be registered. Choose another combination from the menu bar."
+        )
+    }
+
+    @MainActor
+    func test_overlay_panel_uses_nonactivating_panel_style() throws {
+        let controller = OverlayPanelController()
+
+        let panel = try XCTUnwrap(
+            Mirror(reflecting: controller).children
+                .first { $0.label == "panel" }?
+                .value as? NSPanel
+        )
+
+        XCTAssertTrue(panel.styleMask.contains(.nonactivatingPanel))
+    }
 }
 
 private func reflectedValue(named label: String, from appDelegate: AppDelegate) -> Any? {
@@ -222,15 +354,20 @@ private final class TestHotkeyMonitor: GlobalHotkeyMonitoring {
 
     var initialShortcut = GlobalHotkeyShortcut.default
     private(set) var events: [Event] = []
+    private var startResults: [Bool]
     private var reloadResults: [Bool]
 
-    init(reloadResults: [Bool] = []) {
+    init(startResults: [Bool] = [], reloadResults: [Bool] = []) {
+        self.startResults = startResults
         self.reloadResults = reloadResults
     }
 
     func start() -> Bool {
         events.append(.start(initialShortcut))
-        return true
+        if startResults.isEmpty {
+            return true
+        }
+        return startResults.removeFirst()
     }
 
     func stop() {

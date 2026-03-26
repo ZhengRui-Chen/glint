@@ -62,8 +62,8 @@ struct OverlayContentView: View {
         case let .error(message):
             Text("Translation failed")
                 .font(.headline)
-            Text(message)
-                .foregroundStyle(visualStyle.secondaryTextColor)
+            SelectableTextView(text: message, visualStyle: visualStyle)
+                .frame(minHeight: 72, maxHeight: 220)
             HStack {
                 Spacer()
                 primaryButton("Close") {

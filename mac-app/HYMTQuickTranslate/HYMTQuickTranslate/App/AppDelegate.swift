@@ -25,6 +25,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let selectionWorkflow = TranslateTextWorkflow(
         inputSource: SelectionInputSource(),
         noTextMessage: "No selected text was found.",
+        permissionRequiredMessage: "Accessibility permission is not granted.",
+        automationPermissionRequiredMessage: "Browser automation permission is not granted. Allow HYMTQuickTranslate to control the browser and try again.",
+        unsupportedHostAppMessage: "Frontmost app does not expose selected text through Accessibility APIs.",
         rejectedTextMessage: "Selected text exceeds the maximum length."
     )
     private let overlayPlacementResolver = OverlayPlacementResolver()
@@ -100,9 +103,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         Task {
-            overlayController.show(state: .loading, placement: placement)
-            let state = await selectionWorkflow.run()
-            present(state, placement: placement)
+            switch await selectionWorkflow.prepare() {
+            case let .translate(text):
+                overlayController.show(state: .loading, placement: placement)
+                let state = await selectionWorkflow.confirmTranslation(for: text)
+                present(state, placement: placement)
+            case let .final(state):
+                present(state, placement: placement)
+            }
         }
     }
 
@@ -178,7 +186,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.translateClipboard()
             }
         }
-        _ = clipboardHotkeyMonitor?.start()
+        startHotkeyMonitor(
+            clipboardHotkeyMonitor,
+            target: .clipboard,
+            configuredShortcut: shortcutSettings.clipboardShortcut,
+            defaultShortcut: .default
+        )
 
         if selectionHotkeyMonitor == nil {
             selectionHotkeyMonitor = hotkeyMonitorFactory(
@@ -188,7 +201,55 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.handleSelectionTranslation()
             }
         }
-        _ = selectionHotkeyMonitor?.start()
+        startHotkeyMonitor(
+            selectionHotkeyMonitor,
+            target: .selection,
+            configuredShortcut: shortcutSettings.selectionShortcut,
+            defaultShortcut: .selectionDefault
+        )
+    }
+
+    private func startHotkeyMonitor(
+        _ monitor: GlobalHotkeyMonitoring?,
+        target: ShortcutTarget,
+        configuredShortcut: GlobalHotkeyShortcut,
+        defaultShortcut: GlobalHotkeyShortcut
+    ) {
+        guard let monitor else {
+            return
+        }
+
+        if monitor.start() {
+            return
+        }
+
+        let targetLabel = switch target {
+        case .clipboard:
+            "Clipboard"
+        case .selection:
+            "Selection"
+        }
+
+        if configuredShortcut != defaultShortcut,
+           monitor.reload(shortcut: defaultShortcut) {
+            persist(defaultShortcut, for: target)
+            shortcutStatusLabel = "\(targetLabel) shortcut was reset to the default because the saved combination could not be registered."
+            return
+        }
+
+        shortcutStatusLabel = "\(targetLabel) shortcut could not be registered. Choose another combination from the menu bar."
+    }
+
+    private func persist(
+        _ shortcut: GlobalHotkeyShortcut,
+        for target: ShortcutTarget
+    ) {
+        guard case let .success(updatedSettings) = shortcutSettings.replacing(shortcut, for: target) else {
+            return
+        }
+
+        shortcutSettings = updatedSettings
+        updatedSettings.save(to: shortcutRecorderUserDefaults)
     }
 
     func beginShortcutRecording(for target: ShortcutTarget) {

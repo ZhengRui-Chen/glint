@@ -23,4 +23,14 @@ final class OverlayPresentationBehaviorTests: XCTestCase {
         XCTAssertGreaterThan(animatedFrame.minY, frame.minY)
         XCTAssertLessThan(animatedFrame.width, frame.width)
     }
+
+    func test_noninteractive_overlay_states_do_not_require_app_activation() {
+        XCTAssertFalse(OverlayPanelController.shouldActivateApp(for: .loading))
+        XCTAssertFalse(OverlayPanelController.shouldActivateApp(for: .result("done")))
+        XCTAssertFalse(OverlayPanelController.shouldActivateApp(for: .error("failed")))
+    }
+
+    func test_confirmation_overlay_state_requires_app_activation() {
+        XCTAssertTrue(OverlayPanelController.shouldActivateApp(for: .confirmLongText("long text")))
+    }
 }

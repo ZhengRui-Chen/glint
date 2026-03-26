@@ -1,11 +1,19 @@
 import Foundation
 
+enum PreparedTranslation: Equatable {
+    case translate(String)
+    case final(OverlayViewState)
+}
+
 struct TranslateTextWorkflow: Sendable {
     let inputSource: any TextInputSource
     let client: any TranslationClienting
     let policy: TextLengthPolicy
     let detectDirection: @Sendable (String) -> TranslationDirection
     let noTextMessage: String
+    let permissionRequiredMessage: String
+    let automationPermissionRequiredMessage: String
+    let unsupportedHostAppMessage: String
     let rejectedTextMessage: String
 
     init(
@@ -14,6 +22,9 @@ struct TranslateTextWorkflow: Sendable {
         policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
         detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect,
         noTextMessage: String = "No text was provided.",
+        permissionRequiredMessage: String? = nil,
+        automationPermissionRequiredMessage: String? = nil,
+        unsupportedHostAppMessage: String? = nil,
         rejectedTextMessage: String = "Text exceeds the maximum length."
     ) {
         self.inputSource = inputSource
@@ -21,22 +32,34 @@ struct TranslateTextWorkflow: Sendable {
         self.policy = policy
         self.detectDirection = detectDirection
         self.noTextMessage = noTextMessage
+        self.permissionRequiredMessage = permissionRequiredMessage ?? noTextMessage
+        self.automationPermissionRequiredMessage = automationPermissionRequiredMessage ?? noTextMessage
+        self.unsupportedHostAppMessage = unsupportedHostAppMessage ?? noTextMessage
         self.rejectedTextMessage = rejectedTextMessage
     }
 
     func run() async -> OverlayViewState {
+        switch await prepare() {
+        case let .translate(text):
+            return await translate(text)
+        case let .final(state):
+            return state
+        }
+    }
+
+    func prepare() async -> PreparedTranslation {
         switch await inputSource.resolveText() {
         case let .success(text):
             switch policy.evaluate(text) {
             case .allowed:
-                return await translate(text)
+                return .translate(text)
             case .needsConfirmation:
-                return .confirmLongText(text)
+                return .final(.confirmLongText(text))
             case .rejected:
-                return .error(rejectedTextMessage)
+                return .final(.error(rejectedTextMessage))
             }
-        case .failure:
-            return .error(noTextMessage)
+        case let .failure(failure):
+            return .final(.error(message(for: failure)))
         }
     }
 
@@ -66,6 +89,30 @@ struct TranslateTextWorkflow: Sendable {
         } catch {
             return .error("Local translation service is unavailable.")
         }
+    }
+
+    private func message(for failure: TextInputFailure) -> String {
+        let baseMessage: String
+        switch failure.error {
+        case .noText:
+            baseMessage = noTextMessage
+        case .permissionRequired:
+            baseMessage = permissionRequiredMessage
+        case .automationPermissionRequired:
+            baseMessage = automationPermissionRequiredMessage
+        case .unsupportedHostApp:
+            baseMessage = unsupportedHostAppMessage
+        }
+
+        guard let diagnostics = failure.diagnostics,
+              !diagnostics.isEmpty else {
+            return baseMessage
+        }
+
+        return """
+        \(baseMessage)
+        Diagnostics: \(diagnostics)
+        """
     }
 }
 

@@ -81,7 +81,7 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
                 width: panelWidth,
                 height: sizingPolicy.minHeight
             ),
-            styleMask: [.titled, .closable, .fullSizeContentView],
+            styleMask: [.titled, .closable, .fullSizeContentView, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
@@ -127,11 +127,12 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
         onConfirm: ((String) -> Void)? = nil
     ) {
         lastShownAt = ProcessInfo.processInfo.systemUptime
+        panel.allowsKeyWindow = Self.shouldActivateApp(for: state)
         viewModel.show(state, onConfirm: onConfirm)
         resizePanel(for: state)
         apply(placement)
         refreshBackdropSample()
-        presentPanel()
+        presentPanel(activatingApp: Self.shouldActivateApp(for: state))
     }
 
     func closePanel() {
@@ -230,11 +231,9 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
         }
     }
 
-    private func presentPanel() {
-        NSApp.activate(ignoringOtherApps: true)
-
+    private func presentPanel(activatingApp: Bool) {
         if panel.isVisible {
-            panel.makeKeyAndOrderFront(nil)
+            orderPanelFront(activatingApp: activatingApp)
             return
         }
 
@@ -245,7 +244,7 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
 
         panel.alphaValue = transition.initialAlpha
         panel.setFrame(startingFrame, display: false)
-        panel.makeKeyAndOrderFront(nil)
+        orderPanelFront(activatingApp: activatingApp)
 
         NSAnimationContext.runAnimationGroup { context in
             context.duration = transition.duration
@@ -253,6 +252,24 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
             panel.animator().alphaValue = transition.finalAlpha
             panel.animator().setFrame(targetFrame, display: true)
         }
+    }
+
+    private func orderPanelFront(activatingApp: Bool) {
+        if activatingApp {
+            NSApp.activate(ignoringOtherApps: true)
+            panel.makeKeyAndOrderFront(nil)
+            return
+        }
+
+        panel.orderFrontRegardless()
+    }
+
+    nonisolated static func shouldActivateApp(for state: OverlayViewState) -> Bool {
+        if case .confirmLongText = state {
+            return true
+        }
+
+        return false
     }
 
     private func installClickMonitorsIfNeeded() {
@@ -307,9 +324,14 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
 
 private final class OverlayPanel: NSPanel {
     var onCancel: (() -> Void)?
+    var allowsKeyWindow = false
 
     override var canBecomeKey: Bool {
-        true
+        allowsKeyWindow
+    }
+
+    override var canBecomeMain: Bool {
+        allowsKeyWindow
     }
 
     override func cancelOperation(_ sender: Any?) {

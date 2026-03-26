@@ -7,10 +7,10 @@ struct ClipboardInputSource: TextInputSource {
         self.clipboard = clipboard
     }
 
-    func resolveText() async -> Result<String, TextInputSourceError> {
+    func resolveText() async -> Result<String, TextInputFailure> {
         guard let text = clipboard.readString()?.trimmingCharacters(in: .whitespacesAndNewlines),
               !text.isEmpty else {
-            return .failure(.noText)
+            return .failure(TextInputFailure(.noText))
         }
         return .success(text)
     }
