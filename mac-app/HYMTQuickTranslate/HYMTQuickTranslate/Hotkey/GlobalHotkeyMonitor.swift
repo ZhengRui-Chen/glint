@@ -24,6 +24,7 @@ final class GlobalHotkeyMonitor {
 
     private var eventHandler: EventHandlerRef?
     private var hotKeyRef: EventHotKeyRef?
+    private(set) var isRunning = false
 
     init(
         shortcut: GlobalHotkeyShortcut = .default,
@@ -35,7 +36,7 @@ final class GlobalHotkeyMonitor {
     }
 
     func start() {
-        guard hotKeyRef == nil else {
+        guard isRunning == false else {
             return
         }
 
@@ -43,7 +44,7 @@ final class GlobalHotkeyMonitor {
             eventClass: OSType(kEventClassKeyboard),
             eventKind: UInt32(kEventHotKeyPressed)
         )
-        InstallEventHandler(
+        let installStatus = InstallEventHandler(
             GetApplicationEventTarget(),
             { _, eventRef, userData in
                 guard let userData else {
@@ -59,12 +60,16 @@ final class GlobalHotkeyMonitor {
             Unmanaged.passUnretained(self).toOpaque(),
             &eventHandler
         )
+        guard installStatus == noErr else {
+            eventHandler = nil
+            return
+        }
 
-        var hotKeyID = EventHotKeyID(
+        let hotKeyID = EventHotKeyID(
             signature: Self.signature,
             id: identifier
         )
-        RegisterEventHotKey(
+        let registerStatus = RegisterEventHotKey(
             shortcut.keyCode,
             shortcut.modifiers,
             hotKeyID,
@@ -72,6 +77,15 @@ final class GlobalHotkeyMonitor {
             0,
             &hotKeyRef
         )
+        guard registerStatus == noErr, hotKeyRef != nil else {
+            if let eventHandler {
+                RemoveEventHandler(eventHandler)
+                self.eventHandler = nil
+            }
+            return
+        }
+
+        isRunning = true
     }
 
     func stop() {
@@ -83,6 +97,7 @@ final class GlobalHotkeyMonitor {
             RemoveEventHandler(eventHandler)
             self.eventHandler = nil
         }
+        isRunning = false
     }
 
     func invokeForTesting() {

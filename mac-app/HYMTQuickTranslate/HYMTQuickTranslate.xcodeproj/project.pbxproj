@@ -26,7 +26,9 @@
 		8EFA5E1EE4239D20DD129EC7 /* OverlayPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */; };
 		8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E536E02711038F959B64A810 /* ClipboardTextReader.swift */; };
 		9ACA3D2DC5AA4C653C9DB0B2 /* TextLengthPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */; };
+		A36D1B90B9C54B12A1F79011 /* AppLaunchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */; };
 		A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */; };
+		B5149D4A8C5A423DA0D4D322 /* AppLaunchCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */; };
 		BAA4E0E8A9912D1A5015A3BE /* HYMTQuickTranslateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */; };
 		E5C0A30729DA18B13DBC905C /* GlobalHotkeyMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */; };
 		ECF93753A573674D125D96AC /* TranslateClipboardWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687ED94B1D0A6E8467917C5 /* TranslateClipboardWorkflow.swift */; };
@@ -63,8 +65,10 @@
 		9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HYMTQuickTranslateTests.swift; sourceTree = "<group>"; };
 		9F06EDB02CB1EEFD2CACEFD2 /* TranslationPromptBuilder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TranslationPromptBuilder.swift; path = Networking/TranslationPromptBuilder.swift; sourceTree = "<group>"; };
+		A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppLaunchCoordinator.swift; path = App/AppLaunchCoordinator.swift; sourceTree = "<group>"; };
 		A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayPanelController.swift; path = UI/OverlayPanelController.swift; sourceTree = "<group>"; };
 		A767EF72CE237474EB211A9D /* AppConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = Config/AppConfig.swift; sourceTree = "<group>"; };
+		B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLaunchCoordinatorTests.swift; sourceTree = "<group>"; };
 		B7B6E8C289C92039E8BE9AA7 /* HYMTQuickTranslateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HYMTQuickTranslateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextLengthPolicy.swift; path = Core/TextLengthPolicy.swift; sourceTree = "<group>"; };
 		D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TranslationPromptBuilderTests.swift; sourceTree = "<group>"; };
@@ -135,6 +139,7 @@
 			children = (
 				DDADDFCAE51D0B4E3FF13DD4 /* HYMTQuickTranslateApp.swift */,
 				053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */,
+				A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */,
 				A767EF72CE237474EB211A9D /* AppConfig.swift */,
 				E536E02711038F959B64A810 /* ClipboardTextReader.swift */,
 				5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */,
@@ -158,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */,
+				B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */,
 				E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */,
 				6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */,
 				D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */,
@@ -262,6 +268,7 @@
 			files = (
 				5F456AF294A234263FEC97B2 /* HYMTQuickTranslateApp.swift in Sources */,
 				1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */,
+				A36D1B90B9C54B12A1F79011 /* AppLaunchCoordinator.swift in Sources */,
 				4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */,
 				8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */,
 				42F3CD2B101BB299A6DB09BF /* TranslationDirection.swift in Sources */,
@@ -284,6 +291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BAA4E0E8A9912D1A5015A3BE /* HYMTQuickTranslateTests.swift in Sources */,
+				B5149D4A8C5A423DA0D4D322 /* AppLaunchCoordinatorTests.swift in Sources */,
 				A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */,
 				76C0BD70306C0A9E62C6CC6B /* TextLengthPolicyTests.swift in Sources */,
 				4C741E38AAE445DB0417666D /* TranslationPromptBuilderTests.swift in Sources */,
