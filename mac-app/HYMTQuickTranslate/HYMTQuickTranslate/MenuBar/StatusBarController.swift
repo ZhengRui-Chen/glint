@@ -38,7 +38,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
             keyEquivalent: ""
         )
         selectionItem.target = self
-        selectionItem.isEnabled = viewModel.permissionStatus == .granted
+        selectionItem.isEnabled = true
         menu.addItem(selectionItem)
 
         let clipboardItem = NSMenuItem(

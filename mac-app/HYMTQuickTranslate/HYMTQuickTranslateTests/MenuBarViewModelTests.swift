@@ -31,6 +31,20 @@ final class MenuBarViewModelTests: XCTestCase {
 
         XCTAssertEqual(recorder.events, [.selection, .clipboard, .quit])
     }
+
+    @MainActor
+    func test_status_bar_keeps_selection_item_enabled_when_permission_is_required() throws {
+        let controller = StatusBarController(statusBar: NSStatusBar()) {
+            MenuBarViewModel(permissionStatus: .required)
+        }
+
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        let selectionItem = try XCTUnwrap(
+            menu.items.first { $0.title == "Translate Selection" }
+        )
+
+        XCTAssertTrue(selectionItem.isEnabled)
+    }
 }
 
 private final class MenuActionRecorder {
@@ -53,4 +67,10 @@ private final class MenuActionRecorder {
     func recordQuit() {
         events.append(.quit)
     }
+}
+
+private func reflectedMenu(from controller: StatusBarController) -> NSMenu? {
+    Mirror(reflecting: controller).children
+        .first { $0.label == "menu" }?
+        .value as? NSMenu
 }
