@@ -190,6 +190,12 @@ Threshold behavior:
 - `2001...8000` characters: ask for confirmation in the floating panel
 - `> 8000` characters: reject the request with an error message
 
+Overlay polish notes:
+
+- The floating panel now uses content-aware sizing for result, error, and confirmation states.
+- On macOS 26 and newer, the panel adopts Liquid Glass styling for the background and primary actions.
+- On older macOS versions, it falls back to the existing material-based appearance so readability stays stable.
+
 ### Build a local app bundle
 
 If you want a fixed app bundle outside Xcode `DerivedData`, run:

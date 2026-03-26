@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OverlayContentView: View {
     @ObservedObject var viewModel: OverlayViewModel
+    private let visualStyle = OverlayVisualStyle.current
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -11,6 +12,8 @@ struct OverlayContentView: View {
         }
         .padding(20)
         .frame(width: 460)
+        .background(OverlayBackgroundView(visualStyle: visualStyle))
+        .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
         .animation(.easeOut(duration: 0.18), value: stateTransitionKey)
     }
 
@@ -25,18 +28,14 @@ struct OverlayContentView: View {
                 .font(.headline)
             Text("Preview:")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
-            ScrollView {
-                Text(text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textSelection(.enabled)
-            }
-            .frame(maxHeight: 160)
+                .foregroundStyle(visualStyle.secondaryTextColor)
+            SelectableTextView(text: text, visualStyle: visualStyle)
+                .frame(maxHeight: 160)
             HStack {
-                Button("Cancel") {
+                secondaryButton("Cancel") {
                     viewModel.close()
                 }
-                Button("Translate") {
+                primaryButton("Translate") {
                     viewModel.confirmLongText()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -44,15 +43,11 @@ struct OverlayContentView: View {
         case let .result(text):
             Text("Translation")
                 .font(.headline)
-            ScrollView {
-                Text(text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textSelection(.enabled)
-            }
-            .frame(maxHeight: 200)
+            SelectableTextView(text: text, visualStyle: visualStyle)
+                .frame(maxHeight: 200)
             HStack {
                 Spacer()
-                Button("Close") {
+                primaryButton("Close") {
                     viewModel.close()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -61,10 +56,10 @@ struct OverlayContentView: View {
             Text("Translation failed")
                 .font(.headline)
             Text(message)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(visualStyle.secondaryTextColor)
             HStack {
                 Spacer()
-                Button("Close") {
+                primaryButton("Close") {
                     viewModel.close()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -82,6 +77,28 @@ struct OverlayContentView: View {
             return "result-\(text)"
         case let .error(message):
             return "error-\(message)"
+        }
+    }
+
+    @ViewBuilder
+    private func primaryButton(_ title: String, action: @escaping () -> Void) -> some View {
+        if #available(macOS 26, *), visualStyle == .liquidGlass {
+            Button(title, action: action)
+                .buttonStyle(.glassProminent)
+        } else {
+            Button(title, action: action)
+                .buttonStyle(.borderedProminent)
+        }
+    }
+
+    @ViewBuilder
+    private func secondaryButton(_ title: String, action: @escaping () -> Void) -> some View {
+        if #available(macOS 26, *), visualStyle == .liquidGlass {
+            Button(title, action: action)
+                .buttonStyle(.glass)
+        } else {
+            Button(title, action: action)
+                .buttonStyle(.bordered)
         }
     }
 }
