@@ -3,19 +3,28 @@ import SwiftUI
 
 @MainActor
 final class OverlayPanelController: NSObject, NSWindowDelegate {
+    private let panelWidth: CGFloat = 460
     private let viewModel: OverlayViewModel
     private let panel: OverlayPanel
     private let dismissalPolicy: OverlayDismissalPolicy
+    private let sizingPolicy: OverlaySizingPolicy
     private var lastShownAt: TimeInterval?
 
     init(
         viewModel: OverlayViewModel = OverlayViewModel(),
-        dismissalPolicy: OverlayDismissalPolicy = .default
+        dismissalPolicy: OverlayDismissalPolicy = .default,
+        sizingPolicy: OverlaySizingPolicy = .default
     ) {
         self.viewModel = viewModel
         self.dismissalPolicy = dismissalPolicy
+        self.sizingPolicy = sizingPolicy
         self.panel = OverlayPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 460, height: 280),
+            contentRect: NSRect(
+                x: 0,
+                y: 0,
+                width: panelWidth,
+                height: sizingPolicy.minHeight
+            ),
             styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -49,6 +58,7 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
     ) {
         lastShownAt = ProcessInfo.processInfo.systemUptime
         viewModel.show(state, onConfirm: onConfirm)
+        resizePanel(for: state)
         panel.center()
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
@@ -65,6 +75,22 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
             return
         }
         closePanel()
+    }
+
+    private func resizePanel(for state: OverlayViewState) {
+        let targetHeight: CGFloat
+
+        switch state {
+        case .loading:
+            targetHeight = sizingPolicy.minHeight
+        case let .result(text), let .error(text), let .confirmLongText(text):
+            targetHeight = sizingPolicy.height(for: text)
+        }
+
+        var frame = panel.frame
+        frame.origin.y += frame.height - targetHeight
+        frame.size = NSSize(width: panelWidth, height: targetHeight)
+        panel.setFrame(frame, display: true)
     }
 }
 

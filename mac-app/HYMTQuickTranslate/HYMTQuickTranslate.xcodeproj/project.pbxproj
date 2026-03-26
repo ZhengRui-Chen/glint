@@ -30,6 +30,8 @@
 		A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */; };
 		B5149D4A8C5A423DA0D4D322 /* AppLaunchCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */; };
 		BAA4E0E8A9912D1A5015A3BE /* HYMTQuickTranslateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */; };
+		C6FA3164C1A241F7AF4E4401 /* OverlaySizingPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FA3164C1A241F7AF4E4400 /* OverlaySizingPolicyTests.swift */; };
+		D34F5CF0B8A349D6A4B15A11 /* OverlaySizingPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34F5CF0B8A349D6A4B15A10 /* OverlaySizingPolicy.swift */; };
 		E5C0A30729DA18B13DBC905C /* GlobalHotkeyMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */; };
 		ECF93753A573674D125D96AC /* TranslateClipboardWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687ED94B1D0A6E8467917C5 /* TranslateClipboardWorkflow.swift */; };
 		EF43FD1949B75F070072B0D4 /* OverlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779AD1A28C553316316D509A /* OverlayViewModel.swift */; };
@@ -71,6 +73,8 @@
 		B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLaunchCoordinatorTests.swift; sourceTree = "<group>"; };
 		B7B6E8C289C92039E8BE9AA7 /* HYMTQuickTranslateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HYMTQuickTranslateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextLengthPolicy.swift; path = Core/TextLengthPolicy.swift; sourceTree = "<group>"; };
+		C6FA3164C1A241F7AF4E4400 /* OverlaySizingPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlaySizingPolicyTests.swift; sourceTree = "<group>"; };
+		D34F5CF0B8A349D6A4B15A10 /* OverlaySizingPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlaySizingPolicy.swift; path = UI/OverlaySizingPolicy.swift; sourceTree = "<group>"; };
 		D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TranslationPromptBuilderTests.swift; sourceTree = "<group>"; };
 		DDADDFCAE51D0B4E3FF13DD4 /* HYMTQuickTranslateApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HYMTQuickTranslateApp.swift; path = App/HYMTQuickTranslateApp.swift; sourceTree = "<group>"; };
 		E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DirectionDetectorTests.swift; sourceTree = "<group>"; };
@@ -152,6 +156,7 @@
 				779AD1A28C553316316D509A /* OverlayViewModel.swift */,
 				256D57BF55CAA7F38948E365 /* OverlayContentView.swift */,
 				A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */,
+				D34F5CF0B8A349D6A4B15A10 /* OverlaySizingPolicy.swift */,
 				20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */,
 				6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */,
 			);
@@ -171,6 +176,7 @@
 				7DC8F7BBA7C829ED18EC9776 /* TranslateClipboardWorkflowTests.swift */,
 				0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */,
 				2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */,
+				C6FA3164C1A241F7AF4E4400 /* OverlaySizingPolicyTests.swift */,
 			);
 			name = HYMTQuickTranslateTests;
 			path = HYMTQuickTranslateTests;
@@ -281,6 +287,7 @@
 				EF43FD1949B75F070072B0D4 /* OverlayViewModel.swift in Sources */,
 				8562635D6940198B616B1F7F /* OverlayContentView.swift in Sources */,
 				8EFA5E1EE4239D20DD129EC7 /* OverlayPanelController.swift in Sources */,
+				D34F5CF0B8A349D6A4B15A11 /* OverlaySizingPolicy.swift in Sources */,
 				34C1DDB0BD903BB23B8FFB7E /* GlobalHotkeyMonitor.swift in Sources */,
 				244E3E51D4F288ED4B93B187 /* OverlayDismissalPolicy.swift in Sources */,
 			);
@@ -299,6 +306,7 @@
 				F5D5D61EB3A36A308C0A306A /* TranslateClipboardWorkflowTests.swift in Sources */,
 				E5C0A30729DA18B13DBC905C /* GlobalHotkeyMonitorTests.swift in Sources */,
 				430F9AB6B3CB4F7E0F0E6771 /* OverlayDismissalPolicyTests.swift in Sources */,
+				C6FA3164C1A241F7AF4E4401 /* OverlaySizingPolicyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
