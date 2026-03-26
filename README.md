@@ -199,13 +199,14 @@ The original HY-MT README also recommends these inference settings:
 - `repetition_penalty: 1.05`
 - `temperature: 0.7`
 
-## macOS Quick Translate App
+## Glint macOS App
 
-An Xcode macOS companion app now lives under `mac-app/HYMTQuickTranslate/`.
+Glint, the macOS companion app for this project, now lives under
+`mac-app/HYMTQuickTranslate/`.
 The initial target wires the local service defaults and will be expanded in
 later tasks for clipboard translation and floating overlay presentation.
 
-### Run the macOS app
+### Run Glint
 
 1. Open `mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj` in Xcode.
 2. Make sure the local `oMLX` service is running and reachable at
@@ -242,7 +243,7 @@ If you want a fixed app bundle outside Xcode `DerivedData`, run:
 zsh scripts/build_mac_app.sh
 ```
 
-This exports the app to:
+This exports the Glint app bundle to:
 
 ```text
 dist/HYMTQuickTranslate.app
