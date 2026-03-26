@@ -34,6 +34,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let launchCoordinator: any AppLaunchCoordinating
     private let shortcutRecorderUserDefaults: UserDefaults
     private let hotkeyMonitorFactory: HotkeyMonitorFactory
+    nonisolated(unsafe) private let backendStatusMonitor: BackendStatusMonitor
+    nonisolated(unsafe) private let backendControlService: any BackendControlServicing
     private var shortcutSettings: ShortcutSettings
     private lazy var shortcutRecorder = ShortcutRecorder(
         existingSettings: shortcutSettings,
@@ -44,6 +46,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusBarController: StatusBarController?
     private var recordingTarget: ShortcutTarget?
     private var shortcutStatusLabel: String?
+    private var backendStatus = BackendStatusSnapshot.checking()
+    private var backendActionContext: BackendActionContext?
     private var localShortcutRecordingMonitor: Any?
     private var globalShortcutRecordingMonitor: Any?
 
@@ -52,6 +56,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         launchCoordinator = AppLaunchCoordinator()
         shortcutRecorderUserDefaults = .standard
         hotkeyMonitorFactory = Self.defaultHotkeyMonitorFactory
+        backendStatusMonitor = BackendStatusMonitor()
+        backendControlService = BackendControlService()
         super.init()
     }
 
@@ -59,20 +65,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutSettings: ShortcutSettings = .load(),
         launchCoordinator: any AppLaunchCoordinating = AppLaunchCoordinator(),
         shortcutRecorderUserDefaults: UserDefaults = .standard,
-        hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory
+        hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory,
+        backendStatusMonitor: BackendStatusMonitor = BackendStatusMonitor(),
+        backendControlService: any BackendControlServicing = BackendControlService()
     ) {
         self.shortcutSettings = shortcutSettings
         self.launchCoordinator = launchCoordinator
         self.shortcutRecorderUserDefaults = shortcutRecorderUserDefaults
         self.hotkeyMonitorFactory = hotkeyMonitorFactory
+        self.backendStatusMonitor = backendStatusMonitor
+        self.backendControlService = backendControlService
         super.init()
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
-        statusBarController = StatusBarController { [weak self] in
-            self?.makeMenuBarViewModel() ?? MenuBarViewModel(permissionStatus: .required)
+        statusBarController = StatusBarController(
+            onMenuWillOpen: { [weak self] in
+                self?.refreshBackendStatus()
+            }
+        ) { [weak self] in
+            self?.makeMenuBarViewModel() ?? MenuBarViewModel(
+                permissionStatus: .required,
+                backendStatus: .checking()
+            )
         }
+        refreshBackendStatus()
         registerHotkeysIfNeeded(immediatelyAfterLaunch: true)
     }
 
@@ -156,6 +174,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func makeMenuBarViewModel() -> MenuBarViewModel {
         MenuBarViewModel(
             permissionStatus: accessibilityPermission.isGranted ? .granted : .required,
+            backendStatus: backendStatus,
             shortcutSettings: shortcutSettings,
             recordingTarget: recordingTarget,
             shortcutStatusLabel: shortcutStatusLabel,
@@ -164,6 +183,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             },
             onTranslateClipboard: { [weak self] in
                 self?.translateClipboard()
+            },
+            onStartService: { [weak self] in
+                self?.startBackendService()
+            },
+            onStopService: { [weak self] in
+                self?.stopBackendService()
+            },
+            onRestartService: { [weak self] in
+                self?.restartBackendService()
+            },
+            onRefreshStatus: { [weak self] in
+                self?.refreshBackendStatus()
             },
             onStartRecording: { [weak self] target in
                 self?.beginShortcutRecording(for: target)
@@ -175,6 +206,75 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 NSApp.terminate(nil)
             }
         )
+    }
+
+    private func startBackendService() {
+        backendActionContext = BackendActionContext(action: .start, requestedAt: Date())
+        backendStatus = .starting(detail: "Backend is starting, please wait")
+        Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            do {
+                try await backendControlService.start()
+                refreshBackendStatus()
+            } catch {
+                backendActionContext = nil
+                backendStatus = .error(detail: "Failed to start the service")
+            }
+        }
+    }
+
+    private func stopBackendService() {
+        backendActionContext = nil
+        backendStatus = .unavailable(detail: "Backend is currently unavailable")
+        Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            do {
+                try await backendControlService.stop()
+                refreshBackendStatus()
+            } catch {
+                backendStatus = .error(detail: "Failed to stop the service")
+            }
+        }
+    }
+
+    private func restartBackendService() {
+        backendActionContext = BackendActionContext(action: .restart, requestedAt: Date())
+        backendStatus = .starting(detail: "Backend is starting, please wait")
+        Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            do {
+                try await backendControlService.restart()
+                refreshBackendStatus()
+            } catch {
+                backendActionContext = nil
+                backendStatus = .error(detail: "Failed to restart the service")
+            }
+        }
+    }
+
+    private func refreshBackendStatus() {
+        backendStatus = .checking()
+        Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            let snapshot = await backendStatusMonitor.refresh(actionContext: backendActionContext)
+            backendStatus = snapshot
+            if case .starting = snapshot {
+                return
+            }
+            backendActionContext = nil
+        }
     }
 
     private func configureHotkeyMonitors() {

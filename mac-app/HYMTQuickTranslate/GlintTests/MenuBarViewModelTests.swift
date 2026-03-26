@@ -64,14 +64,25 @@ final class MenuBarViewModelTests: XCTestCase {
             permissionStatus: .granted,
             onTranslateSelection: recorder.recordSelection,
             onTranslateClipboard: recorder.recordClipboard,
+            onStartService: recorder.recordStartService,
+            onStopService: recorder.recordStopService,
+            onRestartService: recorder.recordRestartService,
+            onRefreshStatus: recorder.recordRefreshStatus,
             onQuit: recorder.recordQuit
         )
 
         viewModel.translateSelection()
         viewModel.translateClipboard()
+        viewModel.startService()
+        viewModel.stopService()
+        viewModel.restartService()
+        viewModel.refreshStatus()
         viewModel.quit()
 
-        XCTAssertEqual(recorder.events, [.selection, .clipboard, .quit])
+        XCTAssertEqual(
+            recorder.events,
+            [.selection, .clipboard, .startService, .stopService, .restartService, .refreshStatus, .quit]
+        )
     }
 
     @MainActor
@@ -150,6 +161,10 @@ private final class MenuActionRecorder {
     enum Event: Equatable {
         case selection
         case clipboard
+        case startService
+        case stopService
+        case restartService
+        case refreshStatus
         case quit
     }
 
@@ -161,6 +176,22 @@ private final class MenuActionRecorder {
 
     func recordClipboard() {
         events.append(.clipboard)
+    }
+
+    func recordStartService() {
+        events.append(.startService)
+    }
+
+    func recordStopService() {
+        events.append(.stopService)
+    }
+
+    func recordRestartService() {
+        events.append(.restartService)
+    }
+
+    func recordRefreshStatus() {
+        events.append(.refreshStatus)
     }
 
     func recordQuit() {

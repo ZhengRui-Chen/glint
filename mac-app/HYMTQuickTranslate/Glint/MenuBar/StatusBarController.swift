@@ -3,14 +3,17 @@ import AppKit
 @MainActor
 final class StatusBarController: NSObject, NSMenuDelegate {
     private let viewModelProvider: () -> MenuBarViewModel
+    private let onMenuWillOpen: () -> Void
     private let statusItem: NSStatusItem
     private let menu = NSMenu()
 
     init(
         statusBar: NSStatusBar = .system,
+        onMenuWillOpen: @escaping () -> Void = {},
         viewModelProvider: @escaping () -> MenuBarViewModel
     ) {
         self.viewModelProvider = viewModelProvider
+        self.onMenuWillOpen = onMenuWillOpen
         self.statusItem = statusBar.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 
@@ -23,6 +26,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
+        onMenuWillOpen()
         rebuildMenu()
     }
 
