@@ -5,9 +5,15 @@ import SwiftUI
 final class OverlayPanelController: NSObject, NSWindowDelegate {
     private let viewModel: OverlayViewModel
     private let panel: OverlayPanel
+    private let dismissalPolicy: OverlayDismissalPolicy
+    private var lastShownAt: TimeInterval?
 
-    init(viewModel: OverlayViewModel = OverlayViewModel()) {
+    init(
+        viewModel: OverlayViewModel = OverlayViewModel(),
+        dismissalPolicy: OverlayDismissalPolicy = .default
+    ) {
         self.viewModel = viewModel
+        self.dismissalPolicy = dismissalPolicy
         self.panel = OverlayPanel(
             contentRect: NSRect(x: 0, y: 0, width: 460, height: 280),
             styleMask: [.titled, .closable, .fullSizeContentView],
@@ -41,6 +47,7 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
         state: OverlayViewState,
         onConfirm: ((String) -> Void)? = nil
     ) {
+        lastShownAt = ProcessInfo.processInfo.systemUptime
         viewModel.show(state, onConfirm: onConfirm)
         panel.center()
         NSApp.activate(ignoringOtherApps: true)
@@ -52,6 +59,11 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
     }
 
     func windowDidResignKey(_ notification: Notification) {
+        let now = ProcessInfo.processInfo.systemUptime
+        if let lastShownAt,
+           dismissalPolicy.shouldCloseOnFocusLoss(shownAt: lastShownAt, now: now) == false {
+            return
+        }
         closePanel()
     }
 }
