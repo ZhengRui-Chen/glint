@@ -16,6 +16,7 @@
 		34C1DDB0BD903BB23B8FFB7E /* GlobalHotkeyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */; };
 		3BB859C5818A4EA38E3F0FEB /* DirectionDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 800983F77AF1EE6EF8E788EC /* DirectionDetector.swift */; };
 		3F1FCDAFBAB6D739F058A51C /* ShortcutSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5844D11C1A8328E64ED9442B /* ShortcutSettings.swift */; };
+		3F1FCDB0BAB6D739F058A51C /* ShortcutRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCD9FBAB6D739F058A51C /* ShortcutRecorder.swift */; };
 		42F3CD2B101BB299A6DB09BF /* TranslationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */; };
 		430F9AB6B3CB4F7E0F0E6771 /* OverlayDismissalPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */; };
 		4B5B55D28F0713F55D1FE1FA /* LocalTranslationClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */; };
@@ -25,6 +26,7 @@
 		67F92AF34BF95A00B1EAA003 /* MenuBarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */; };
 		67F92AF74BF95A00B1EAA003 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF64BF95A00B1EAA003 /* StatusBarController.swift */; };
 		67F92AF94BF95A00B1EAA003 /* MenuBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF84BF95A00B1EAA003 /* MenuBarViewModel.swift */; };
+		67F92B014BF95A00B1EAA003 /* ShortcutRecorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */; };
 		76C0BD70306C0A9E62C6CC6B /* TextLengthPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */; };
 		8562635D6940198B616B1F7F /* OverlayContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256D57BF55CAA7F38948E365 /* OverlayContentView.swift */; };
 		8C830E79BD7C7102DC4DD459 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */; };
@@ -68,10 +70,12 @@
 		2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlayDismissalPolicyTests.swift; sourceTree = "<group>"; };
 		5844D11C1A8328E64ED9442B /* ShortcutSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutSettings.swift; path = Config/ShortcutSettings.swift; sourceTree = "<group>"; };
 		5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TranslationDirection.swift; path = Core/TranslationDirection.swift; sourceTree = "<group>"; };
+		3F1FCD9FBAB6D739F058A51C /* ShortcutRecorder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutRecorder.swift; path = Hotkey/ShortcutRecorder.swift; sourceTree = "<group>"; };
 		6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextLengthPolicyTests.swift; sourceTree = "<group>"; };
 		67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBarViewModelTests.swift; sourceTree = "<group>"; };
 		67F92AF64BF95A00B1EAA003 /* StatusBarController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StatusBarController.swift; path = MenuBar/StatusBarController.swift; sourceTree = "<group>"; };
 		67F92AF84BF95A00B1EAA003 /* MenuBarViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MenuBarViewModel.swift; path = MenuBar/MenuBarViewModel.swift; sourceTree = "<group>"; };
+		67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderTests.swift; sourceTree = "<group>"; };
 		6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayDismissalPolicy.swift; path = UI/OverlayDismissalPolicy.swift; sourceTree = "<group>"; };
 		779AD1A28C553316316D509A /* OverlayViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayViewModel.swift; path = UI/OverlayViewModel.swift; sourceTree = "<group>"; };
 		79F18BB4BDA1E2CD5616822E /* HYMTQuickTranslate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HYMTQuickTranslate.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,6 +176,7 @@
 				A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */,
 				67F92AF64BF95A00B1EAA003 /* StatusBarController.swift */,
 				20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */,
+				3F1FCD9FBAB6D739F058A51C /* ShortcutRecorder.swift */,
 				6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */,
 				5844D11C1A8328E64ED9442B /* ShortcutSettings.swift */,
 				D8943E7893671927E12021B2 /* TextInputSource.swift */,
@@ -190,6 +195,7 @@
 				E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */,
 				6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */,
 				67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */,
+				67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */,
 				D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */,
 				052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */,
 				7DC8F7BBA7C829ED18EC9776 /* TranslateClipboardWorkflowTests.swift */,
@@ -310,6 +316,7 @@
 				8EFA5E1EE4239D20DD129EC7 /* OverlayPanelController.swift in Sources */,
 				67F92AF74BF95A00B1EAA003 /* StatusBarController.swift in Sources */,
 				34C1DDB0BD903BB23B8FFB7E /* GlobalHotkeyMonitor.swift in Sources */,
+				3F1FCDB0BAB6D739F058A51C /* ShortcutRecorder.swift in Sources */,
 				244E3E51D4F288ED4B93B187 /* OverlayDismissalPolicy.swift in Sources */,
 				3F1FCDAFBAB6D739F058A51C /* ShortcutSettings.swift in Sources */,
 				C1A8152809D1E82876D70A65 /* TextInputSource.swift in Sources */,
@@ -327,6 +334,7 @@
 				A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */,
 				76C0BD70306C0A9E62C6CC6B /* TextLengthPolicyTests.swift in Sources */,
 				67F92AF34BF95A00B1EAA003 /* MenuBarViewModelTests.swift in Sources */,
+				67F92B014BF95A00B1EAA003 /* ShortcutRecorderTests.swift in Sources */,
 				4C741E38AAE445DB0417666D /* TranslationPromptBuilderTests.swift in Sources */,
 				4B5B55D28F0713F55D1FE1FA /* LocalTranslationClientTests.swift in Sources */,
 				F5D5D61EB3A36A308C0A306A /* TranslateClipboardWorkflowTests.swift in Sources */,

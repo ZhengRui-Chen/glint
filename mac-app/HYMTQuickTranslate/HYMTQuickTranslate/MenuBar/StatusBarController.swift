@@ -49,6 +49,44 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         clipboardItem.target = self
         menu.addItem(clipboardItem)
 
+        menu.addItem(.separator())
+
+        let selectionShortcutItem = NSMenuItem(
+            title: viewModel.selectionShortcutLabel,
+            action: #selector(handleRecordSelectionShortcut),
+            keyEquivalent: ""
+        )
+        selectionShortcutItem.target = self
+        menu.addItem(selectionShortcutItem)
+
+        let clipboardShortcutItem = NSMenuItem(
+            title: viewModel.clipboardShortcutLabel,
+            action: #selector(handleRecordClipboardShortcut),
+            keyEquivalent: ""
+        )
+        clipboardShortcutItem.target = self
+        menu.addItem(clipboardShortcutItem)
+
+        if let shortcutStatusLabel = viewModel.shortcutStatusLabel {
+            let shortcutStatusItem = NSMenuItem(
+                title: shortcutStatusLabel,
+                action: nil,
+                keyEquivalent: ""
+            )
+            shortcutStatusItem.isEnabled = false
+            menu.addItem(shortcutStatusItem)
+        }
+
+        if viewModel.recordingTarget != nil {
+            let cancelShortcutRecordingItem = NSMenuItem(
+                title: viewModel.cancelShortcutRecordingLabel,
+                action: #selector(handleCancelShortcutRecording),
+                keyEquivalent: ""
+            )
+            cancelShortcutRecordingItem.target = self
+            menu.addItem(cancelShortcutRecordingItem)
+        }
+
         let permissionItem = NSMenuItem(
             title: viewModel.permissionLabel,
             action: nil,
@@ -77,6 +115,21 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     @objc
     private func handleTranslateClipboard() {
         viewModelProvider().translateClipboard()
+    }
+
+    @objc
+    private func handleRecordSelectionShortcut() {
+        viewModelProvider().startRecordingSelectionShortcut()
+    }
+
+    @objc
+    private func handleRecordClipboardShortcut() {
+        viewModelProvider().startRecordingClipboardShortcut()
+    }
+
+    @objc
+    private func handleCancelShortcutRecording() {
+        viewModelProvider().cancelShortcutRecording()
     }
 
     @objc

@@ -65,7 +65,7 @@ struct GlobalHotkeyShortcut {
 final class GlobalHotkeyMonitor {
     private static let signature = OSType(0x48594D54)
 
-    private let shortcut: GlobalHotkeyShortcut
+    private var shortcut: GlobalHotkeyShortcut
     private let onTrigger: () -> Void
     private let identifier: UInt32
 
@@ -73,12 +73,13 @@ final class GlobalHotkeyMonitor {
     private var hotKeyRef: EventHotKeyRef?
 
     init(
+        identifier: UInt32 = 1,
         shortcut: GlobalHotkeyShortcut = .default,
         onTrigger: @escaping () -> Void
     ) {
         self.shortcut = shortcut
         self.onTrigger = onTrigger
-        self.identifier = 1
+        self.identifier = identifier
     }
 
     func start() {
@@ -107,7 +108,7 @@ final class GlobalHotkeyMonitor {
             &eventHandler
         )
 
-        var hotKeyID = EventHotKeyID(
+        let hotKeyID = EventHotKeyID(
             signature: Self.signature,
             id: identifier
         )
@@ -134,6 +135,15 @@ final class GlobalHotkeyMonitor {
 
     func invokeForTesting() {
         onTrigger()
+    }
+
+    func reload(shortcut: GlobalHotkeyShortcut) {
+        let wasRunning = hotKeyRef != nil || eventHandler != nil
+        stop()
+        self.shortcut = shortcut
+        if wasRunning {
+            start()
+        }
     }
 
     deinit {
