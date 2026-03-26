@@ -23,6 +23,7 @@
 		4B5B55D28F0713F55D1FE1FA /* LocalTranslationClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */; };
 		4C741E38AAE445DB0417666D /* TranslationPromptBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */; };
 		4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A767EF72CE237474EB211A9D /* AppConfig.swift */; };
+		4F2B8D1C3A4E5F60718293A4 /* BackendStatusSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */; };
 		5F456AF294A234263FEC97B2 /* GlintApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDADDFCAE51D0B4E3FF13DD4 /* GlintApp.swift */; };
 		67F92AF34BF95A00B1EAA003 /* MenuBarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */; };
 		67F92AF74BF95A00B1EAA003 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF64BF95A00B1EAA003 /* StatusBarController.swift */; };
@@ -98,6 +99,7 @@
 		9F06EDB02CB1EEFD2CACEFD2 /* TranslationPromptBuilder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TranslationPromptBuilder.swift; path = Networking/TranslationPromptBuilder.swift; sourceTree = "<group>"; };
 		98A4C1E45F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlayPlacementResolverTests.swift; sourceTree = "<group>"; };
 		98A4C1E65F2B4A7700D6B122 /* OverlayPlacementResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayPlacementResolver.swift; path = UI/OverlayPlacementResolver.swift; sourceTree = "<group>"; };
+		4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendStatusSnapshot.swift; path = Backend/BackendStatusSnapshot.swift; sourceTree = "<group>"; };
 		A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayPanelController.swift; path = UI/OverlayPanelController.swift; sourceTree = "<group>"; };
 		A767EF72CE237474EB211A9D /* AppConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = Config/AppConfig.swift; sourceTree = "<group>"; };
 		AF0F17C1BC6D430457FDB326 /* ShortcutSettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutSettingsTests.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */,
 				A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */,
 				A767EF72CE237474EB211A9D /* AppConfig.swift */,
+				4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */,
 				E536E02711038F959B64A810 /* ClipboardTextReader.swift */,
 				5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */,
 				800983F77AF1EE6EF8E788EC /* DirectionDetector.swift */,
@@ -335,6 +338,7 @@
 			files = (
 				5F456AF294A234263FEC97B2 /* GlintApp.swift in Sources */,
 				1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */,
+				4F2B8D1C3A4E5F60718293A4 /* BackendStatusSnapshot.swift in Sources */,
 				A36D1B90B9C54B12A1F79011 /* AppLaunchCoordinator.swift in Sources */,
 				4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */,
 				8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */,
