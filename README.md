@@ -208,10 +208,10 @@ translation paths backed by the local `oMLX` service.
 
 ### Run Glint
 
-1. Open `mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj` in Xcode.
+1. Open `mac-app/HYMTQuickTranslate/Glint.xcodeproj` in Xcode.
 2. Make sure the local `oMLX` service is running and reachable at
    `http://127.0.0.1:8001`.
-3. Run the `HYMTQuickTranslate` scheme on your Mac.
+3. Run the `Glint` scheme on your Mac.
 4. Use the menu bar item to trigger translation or configure shortcuts.
 
 ### Menu bar usage
@@ -320,7 +320,7 @@ zsh scripts/build_mac_app.sh
 This exports the Glint app bundle to:
 
 ```text
-dist/HYMTQuickTranslate.app
+dist/Glint.app
 ```
 
 ## Acknowledgements

@@ -3,12 +3,12 @@
 set -euo pipefail
 
 ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
-PROJECT_PATH="$ROOT_DIR/mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj"
-SCHEME="HYMTQuickTranslate"
-DERIVED_DATA_PATH="$ROOT_DIR/.runtime/xcode-derived-data/HYMTQuickTranslate"
-SOURCE_APP_PATH="$DERIVED_DATA_PATH/Build/Products/Debug/HYMTQuickTranslate.app"
+PROJECT_PATH="$ROOT_DIR/mac-app/HYMTQuickTranslate/Glint.xcodeproj"
+SCHEME="Glint"
+DERIVED_DATA_PATH="$ROOT_DIR/.runtime/xcode-derived-data/Glint"
+SOURCE_APP_PATH="$DERIVED_DATA_PATH/Build/Products/Debug/Glint.app"
 DIST_DIR="$ROOT_DIR/dist"
-DIST_APP_PATH="$DIST_DIR/HYMTQuickTranslate.app"
+DIST_APP_PATH="$DIST_DIR/Glint.app"
 
 xcodebuild build \
   -project "$PROJECT_PATH" \
