@@ -24,6 +24,10 @@
 		4C741E38AAE445DB0417666D /* TranslationPromptBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */; };
 		4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A767EF72CE237474EB211A9D /* AppConfig.swift */; };
 		4F2B8D1C3A4E5F60718293A4 /* BackendStatusSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */; };
+		5B7A9D0C1E2F304152637485 /* BackendStatusMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7A9D0C1E2F304152637484 /* BackendStatusMonitorTests.swift */; };
+		6A1B2C3D4E5F60718293A401 /* BackendStatusMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1B2C3D4E5F60718293A400 /* BackendStatusMonitor.swift */; };
+		6A1B2C3D4E5F60718293A403 /* BackendHealthChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1B2C3D4E5F60718293A402 /* BackendHealthChecker.swift */; };
+		6A1B2C3D4E5F60718293A405 /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1B2C3D4E5F60718293A404 /* ShellCommandRunner.swift */; };
 		5F456AF294A234263FEC97B2 /* GlintApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDADDFCAE51D0B4E3FF13DD4 /* GlintApp.swift */; };
 		67F92AF34BF95A00B1EAA003 /* MenuBarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */; };
 		67F92AF74BF95A00B1EAA003 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF64BF95A00B1EAA003 /* StatusBarController.swift */; };
@@ -83,6 +87,10 @@
 		2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlayDismissalPolicyTests.swift; sourceTree = "<group>"; };
 		5844D11C1A8328E64ED9442B /* ShortcutSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutSettings.swift; path = Config/ShortcutSettings.swift; sourceTree = "<group>"; };
 		5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TranslationDirection.swift; path = Core/TranslationDirection.swift; sourceTree = "<group>"; };
+		5B7A9D0C1E2F304152637484 /* BackendStatusMonitorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackendStatusMonitorTests.swift; sourceTree = "<group>"; };
+		6A1B2C3D4E5F60718293A400 /* BackendStatusMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendStatusMonitor.swift; path = Backend/BackendStatusMonitor.swift; sourceTree = "<group>"; };
+		6A1B2C3D4E5F60718293A402 /* BackendHealthChecker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendHealthChecker.swift; path = Backend/BackendHealthChecker.swift; sourceTree = "<group>"; };
+		6A1B2C3D4E5F60718293A404 /* ShellCommandRunner.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShellCommandRunner.swift; path = Backend/ShellCommandRunner.swift; sourceTree = "<group>"; };
 		3F1FCD9FBAB6D739F058A51C /* ShortcutRecorder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutRecorder.swift; path = Hotkey/ShortcutRecorder.swift; sourceTree = "<group>"; };
 		6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextLengthPolicyTests.swift; sourceTree = "<group>"; };
 		67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBarViewModelTests.swift; sourceTree = "<group>"; };
@@ -189,6 +197,9 @@
 				A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */,
 				A767EF72CE237474EB211A9D /* AppConfig.swift */,
 				4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */,
+				6A1B2C3D4E5F60718293A400 /* BackendStatusMonitor.swift */,
+				6A1B2C3D4E5F60718293A402 /* BackendHealthChecker.swift */,
+				6A1B2C3D4E5F60718293A404 /* ShellCommandRunner.swift */,
 				E536E02711038F959B64A810 /* ClipboardTextReader.swift */,
 				5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */,
 				800983F77AF1EE6EF8E788EC /* DirectionDetector.swift */,
@@ -223,6 +234,7 @@
 			isa = PBXGroup;
 			children = (
 				9E4804D656F5D78FD399E45C /* GlintTests.swift */,
+				5B7A9D0C1E2F304152637484 /* BackendStatusMonitorTests.swift */,
 				B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */,
 				E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */,
 				6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */,
@@ -339,6 +351,9 @@
 				5F456AF294A234263FEC97B2 /* GlintApp.swift in Sources */,
 				1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */,
 				4F2B8D1C3A4E5F60718293A4 /* BackendStatusSnapshot.swift in Sources */,
+				6A1B2C3D4E5F60718293A401 /* BackendStatusMonitor.swift in Sources */,
+				6A1B2C3D4E5F60718293A403 /* BackendHealthChecker.swift in Sources */,
+				6A1B2C3D4E5F60718293A405 /* ShellCommandRunner.swift in Sources */,
 				A36D1B90B9C54B12A1F79011 /* AppLaunchCoordinator.swift in Sources */,
 				4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */,
 				8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */,
@@ -374,6 +389,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BAA4E0E8A9912D1A5015A3BE /* GlintTests.swift in Sources */,
+				5B7A9D0C1E2F304152637485 /* BackendStatusMonitorTests.swift in Sources */,
 				B5149D4A8C5A423DA0D4D322 /* AppLaunchCoordinatorTests.swift in Sources */,
 				A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */,
 				76C0BD70306C0A9E62C6CC6B /* TextLengthPolicyTests.swift in Sources */,
