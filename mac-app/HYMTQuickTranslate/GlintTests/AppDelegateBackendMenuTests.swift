@@ -273,6 +273,47 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 50_000_000)
         XCTAssertEqual(menu.items.first?.title, "Service Status: Unavailable")
     }
+
+    @MainActor
+    func test_older_refresh_result_does_not_override_starting_state_after_start_action() async throws {
+        let apiChecker = ControlledBackendAPIHealthChecker()
+        let processChecker = SequencedBackendProcessChecker(results: [false])
+        let controlService = BlockingBackendControlService()
+        let monitor = BackendStatusMonitor(
+            apiChecker: apiChecker,
+            processChecker: processChecker,
+            now: { Date(timeIntervalSince1970: 100) }
+        )
+        let appDelegate = AppDelegate(
+            shortcutSettings: .default,
+            launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
+            shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
+            hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
+            backendStatusMonitor: monitor,
+            backendControlService: controlService
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        let firstRequest = await apiChecker.waitForRequest(number: 1)
+
+        try triggerMenuItem(titled: "Start Service", in: menu)
+        _ = await waitForMenuItem(titled: "Service Status: Starting", in: menu)
+
+        await apiChecker.resolve(request: firstRequest, with: .reachable)
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        XCTAssertEqual(menu.items.first?.title, "Service Status: Starting")
+    }
 }
 
 private actor BlockingBackendControlService: BackendControlServicing {

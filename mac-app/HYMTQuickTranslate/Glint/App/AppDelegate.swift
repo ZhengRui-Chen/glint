@@ -271,6 +271,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func startBackendService() {
+        invalidateInFlightBackendRefreshes()
         backendActionContext = BackendActionContext(action: .start, requestedAt: Date())
         updateBackendStatus(.starting(detail: "Backend is starting, please wait"))
         Task { @MainActor [weak self] in
@@ -291,6 +292,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func stopBackendService() {
+        invalidateInFlightBackendRefreshes()
         backendActionContext = nil
         updateBackendStatus(.unavailable(detail: "Backend is currently unavailable"))
         Task { @MainActor [weak self] in
@@ -308,6 +310,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func restartBackendService() {
+        invalidateInFlightBackendRefreshes()
         backendActionContext = BackendActionContext(action: .restart, requestedAt: Date())
         updateBackendStatus(.starting(detail: "Backend is starting, please wait"))
         Task { @MainActor [weak self] in
@@ -354,6 +357,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func nextBackendRefreshGeneration() -> Int {
         backendRefreshGeneration += 1
         return backendRefreshGeneration
+    }
+
+    private func invalidateInFlightBackendRefreshes() {
+        backendRefreshGeneration += 1
     }
 
     private func shouldApplyBackendRefreshResult(for refreshGeneration: Int) -> Bool {
