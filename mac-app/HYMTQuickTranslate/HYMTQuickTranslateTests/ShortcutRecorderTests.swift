@@ -1,3 +1,4 @@
+import AppKit
 import Carbon.HIToolbox
 import XCTest
 @testable import HYMTQuickTranslate
@@ -48,6 +49,25 @@ final class ShortcutRecorderTests: XCTestCase {
         let result = recorder.validate(settings.clipboardShortcut, for: .selection)
 
         XCTAssertEqual(result, .failure(.duplicateShortcut))
+    }
+
+    func test_shortcut_from_rejects_bare_key_presses() throws {
+        let event = try XCTUnwrap(
+            NSEvent.keyEvent(
+                with: .keyDown,
+                location: .zero,
+                modifierFlags: [],
+                timestamp: 0,
+                windowNumber: 0,
+                context: nil,
+                characters: "t",
+                charactersIgnoringModifiers: "t",
+                isARepeat: false,
+                keyCode: UInt16(kVK_ANSI_T)
+            )
+        )
+
+        XCTAssertNil(ShortcutRecorder.shortcut(from: event))
     }
 }
 

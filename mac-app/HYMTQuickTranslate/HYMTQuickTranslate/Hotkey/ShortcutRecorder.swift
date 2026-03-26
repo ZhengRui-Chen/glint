@@ -44,9 +44,14 @@ final class ShortcutRecorder {
             return nil
         }
 
+        let modifiers = carbonModifiers(from: event.modifierFlags)
+        guard modifiers != 0 else {
+            return nil
+        }
+
         return GlobalHotkeyShortcut(
             keyCode: UInt32(event.keyCode),
-            modifiers: carbonModifiers(from: event.modifierFlags)
+            modifiers: modifiers
         )
     }
 
