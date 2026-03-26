@@ -1,36 +1,39 @@
 import Foundation
 
-struct TranslateClipboardWorkflow: Sendable {
-    let clipboard: any ClipboardTextReading
+struct TranslateTextWorkflow: Sendable {
+    let inputSource: any TextInputSource
     let client: any TranslationClienting
     let policy: TextLengthPolicy
     let detectDirection: @Sendable (String) -> TranslationDirection
+    let noTextMessage: String
 
     init(
-        clipboard: any ClipboardTextReading = ClipboardTextReader(),
+        inputSource: any TextInputSource,
         client: any TranslationClienting = LocalTranslationClient(),
         policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
-        detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect
+        detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect,
+        noTextMessage: String = "No text was provided."
     ) {
-        self.clipboard = clipboard
+        self.inputSource = inputSource
         self.client = client
         self.policy = policy
         self.detectDirection = detectDirection
+        self.noTextMessage = noTextMessage
     }
 
-    func handleShortcut() async -> OverlayViewState {
-        guard let text = clipboard.readString()?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !text.isEmpty else {
-            return .error("Clipboard does not contain text.")
-        }
-
-        switch policy.evaluate(text) {
-        case .allowed:
-            return await translate(text)
-        case .needsConfirmation:
-            return .confirmLongText(text)
-        case .rejected:
-            return .error("Clipboard text exceeds the maximum length.")
+    func run() async -> OverlayViewState {
+        switch await inputSource.resolveText() {
+        case let .success(text):
+            switch policy.evaluate(text) {
+            case .allowed:
+                return await translate(text)
+            case .needsConfirmation:
+                return .confirmLongText(text)
+            case .rejected:
+                return .error("Clipboard text exceeds the maximum length.")
+            }
+        case .failure:
+            return .error(noTextMessage)
         }
     }
 
@@ -60,5 +63,32 @@ struct TranslateClipboardWorkflow: Sendable {
         } catch {
             return .error("Local translation service is unavailable.")
         }
+    }
+}
+
+struct TranslateClipboardWorkflow: Sendable {
+    private let workflow: TranslateTextWorkflow
+
+    init(
+        clipboard: any ClipboardTextReading = ClipboardTextReader(),
+        client: any TranslationClienting = LocalTranslationClient(),
+        policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
+        detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect
+    ) {
+        self.workflow = TranslateTextWorkflow(
+            inputSource: ClipboardInputSource(clipboard: clipboard),
+            client: client,
+            policy: policy,
+            detectDirection: detectDirection,
+            noTextMessage: "Clipboard does not contain text."
+        )
+    }
+
+    func handleShortcut() async -> OverlayViewState {
+        await workflow.run()
+    }
+
+    func confirmTranslation(for text: String) async -> OverlayViewState {
+        await workflow.confirmTranslation(for: text)
     }
 }

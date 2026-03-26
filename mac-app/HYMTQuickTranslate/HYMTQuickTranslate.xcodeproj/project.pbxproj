@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		02DE59A8465021E8EBFAD86C /* LocalTranslationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7AEFEB50D84538DA24CABB /* LocalTranslationClient.swift */; };
+		0C8B402801446D49E97E7BF8 /* ClipboardInputSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CF48D1B6CED4DB23532C15 /* ClipboardInputSource.swift */; };
 		1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */; };
 		244E3E51D4F288ED4B93B187 /* OverlayDismissalPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */; };
 		2C6AC15A3DC20E3690AA0ADF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */; };
@@ -29,11 +30,13 @@
 		9ACA3D2DC5AA4C653C9DB0B2 /* TextLengthPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */; };
 		A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */; };
 		BAA4E0E8A9912D1A5015A3BE /* HYMTQuickTranslateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */; };
+		C1A8152809D1E82876D70A65 /* TextInputSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8943E7893671927E12021B2 /* TextInputSource.swift */; };
 		C218C03A74F0AFB108B58073 /* ShortcutSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0F17C1BC6D430457FDB326 /* ShortcutSettingsTests.swift */; };
 		E5C0A30729DA18B13DBC905C /* GlobalHotkeyMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */; };
 		ECF93753A573674D125D96AC /* TranslateClipboardWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687ED94B1D0A6E8467917C5 /* TranslateClipboardWorkflow.swift */; };
 		EF43FD1949B75F070072B0D4 /* OverlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779AD1A28C553316316D509A /* OverlayViewModel.swift */; };
 		F5D5D61EB3A36A308C0A306A /* TranslateClipboardWorkflowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC8F7BBA7C829ED18EC9776 /* TranslateClipboardWorkflowTests.swift */; };
+		FC0C0CC33F7E4A72D2A6A970 /* TextInputSourceWorkflowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B6C96CEA5F60B882E660DF /* TextInputSourceWorkflowTests.swift */; };
 		FF9A8B5A42406761E0D802F5 /* ChatCompletionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1156EC880026F445D4879E9 /* ChatCompletionModels.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +55,7 @@
 		053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = App/AppDelegate.swift; sourceTree = "<group>"; };
 		0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GlobalHotkeyMonitorTests.swift; sourceTree = "<group>"; };
 		1687ED94B1D0A6E8467917C5 /* TranslateClipboardWorkflow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TranslateClipboardWorkflow.swift; path = Workflow/TranslateClipboardWorkflow.swift; sourceTree = "<group>"; };
+		18B6C96CEA5F60B882E660DF /* TextInputSourceWorkflowTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextInputSourceWorkflowTests.swift; sourceTree = "<group>"; };
 		20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GlobalHotkeyMonitor.swift; path = Hotkey/GlobalHotkeyMonitor.swift; sourceTree = "<group>"; };
 		256D57BF55CAA7F38948E365 /* OverlayContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayContentView.swift; path = UI/OverlayContentView.swift; sourceTree = "<group>"; };
 		2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlayDismissalPolicyTests.swift; sourceTree = "<group>"; };
@@ -69,9 +73,11 @@
 		A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayPanelController.swift; path = UI/OverlayPanelController.swift; sourceTree = "<group>"; };
 		A767EF72CE237474EB211A9D /* AppConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = Config/AppConfig.swift; sourceTree = "<group>"; };
 		AF0F17C1BC6D430457FDB326 /* ShortcutSettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutSettingsTests.swift; sourceTree = "<group>"; };
+		B2CF48D1B6CED4DB23532C15 /* ClipboardInputSource.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ClipboardInputSource.swift; path = Input/ClipboardInputSource.swift; sourceTree = "<group>"; };
 		B7B6E8C289C92039E8BE9AA7 /* HYMTQuickTranslateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HYMTQuickTranslateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextLengthPolicy.swift; path = Core/TextLengthPolicy.swift; sourceTree = "<group>"; };
 		D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TranslationPromptBuilderTests.swift; sourceTree = "<group>"; };
+		D8943E7893671927E12021B2 /* TextInputSource.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextInputSource.swift; path = Input/TextInputSource.swift; sourceTree = "<group>"; };
 		DDADDFCAE51D0B4E3FF13DD4 /* HYMTQuickTranslateApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HYMTQuickTranslateApp.swift; path = App/HYMTQuickTranslateApp.swift; sourceTree = "<group>"; };
 		E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DirectionDetectorTests.swift; sourceTree = "<group>"; };
 		E536E02711038F959B64A810 /* ClipboardTextReader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ClipboardTextReader.swift; path = Core/ClipboardTextReader.swift; sourceTree = "<group>"; };
@@ -154,6 +160,8 @@
 				20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */,
 				6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */,
 				5844D11C1A8328E64ED9442B /* ShortcutSettings.swift */,
+				D8943E7893671927E12021B2 /* TextInputSource.swift */,
+				B2CF48D1B6CED4DB23532C15 /* ClipboardInputSource.swift */,
 			);
 			name = HYMTQuickTranslate;
 			path = HYMTQuickTranslate;
@@ -171,6 +179,7 @@
 				0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */,
 				2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */,
 				AF0F17C1BC6D430457FDB326 /* ShortcutSettingsTests.swift */,
+				18B6C96CEA5F60B882E660DF /* TextInputSourceWorkflowTests.swift */,
 			);
 			name = HYMTQuickTranslateTests;
 			path = HYMTQuickTranslateTests;
@@ -283,6 +292,8 @@
 				34C1DDB0BD903BB23B8FFB7E /* GlobalHotkeyMonitor.swift in Sources */,
 				244E3E51D4F288ED4B93B187 /* OverlayDismissalPolicy.swift in Sources */,
 				3F1FCDAFBAB6D739F058A51C /* ShortcutSettings.swift in Sources */,
+				C1A8152809D1E82876D70A65 /* TextInputSource.swift in Sources */,
+				0C8B402801446D49E97E7BF8 /* ClipboardInputSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,6 +310,7 @@
 				E5C0A30729DA18B13DBC905C /* GlobalHotkeyMonitorTests.swift in Sources */,
 				430F9AB6B3CB4F7E0F0E6771 /* OverlayDismissalPolicyTests.swift in Sources */,
 				C218C03A74F0AFB108B58073 /* ShortcutSettingsTests.swift in Sources */,
+				FC0C0CC33F7E4A72D2A6A970 /* TextInputSourceWorkflowTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
