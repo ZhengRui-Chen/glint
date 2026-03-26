@@ -105,6 +105,44 @@ Check status:
 ./scripts/status_omlx.sh
 ```
 
+## LaunchAgent
+
+Install the macOS LaunchAgent:
+
+```bash
+zsh scripts/install_omlx_launch_agent.sh
+```
+
+Start it on demand:
+
+```bash
+zsh scripts/start_omlx_launch_agent.sh
+```
+
+Stop it:
+
+```bash
+zsh scripts/stop_omlx_launch_agent.sh
+```
+
+Restart it:
+
+```bash
+zsh scripts/restart_omlx_launch_agent.sh
+```
+
+Check status:
+
+```bash
+zsh scripts/status_omlx_launch_agent.sh
+```
+
+Uninstall it:
+
+```bash
+zsh scripts/uninstall_omlx_launch_agent.sh
+```
+
 ## OpenAI-Compatible API Smoke Test
 
 ```bash
