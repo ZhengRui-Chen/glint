@@ -50,15 +50,25 @@ struct AccessibilitySelectionProvider: SelectionProviding {
         }
 
         let applicationElement = AXUIElementCreateApplication(frontmostApplication.processIdentifier)
-        guard let focusedElement = focusedElement(in: applicationElement)
-                ?? focusedElement(in: AXUIElementCreateSystemWide()) else {
+        let applicationFocus = focusedElementLookup(in: applicationElement)
+        if case let .found(element) = applicationFocus {
+            return selectedText(from: element)
+        }
+
+        let systemFocus = focusedElementLookup(in: AXUIElementCreateSystemWide())
+        if case let .found(element) = systemFocus {
+            return selectedText(from: element)
+        }
+
+        if case .unsupportedHostApp = applicationFocus,
+           case .unsupportedHostApp = systemFocus {
             return .failure(.unsupportedHostApp)
         }
 
-        return selectedText(from: focusedElement)
+        return .failure(.noText)
     }
 
-    private func focusedElement(in element: AXUIElement) -> AXUIElement? {
+    private func focusedElementLookup(in element: AXUIElement) -> FocusedElementLookup {
         var value: CFTypeRef?
         let error = AXUIElementCopyAttributeValue(
             element,
@@ -66,11 +76,7 @@ struct AccessibilitySelectionProvider: SelectionProviding {
             &value
         )
 
-        guard error == .success else {
-            return nil
-        }
-
-        return value as! AXUIElement?
+        return Self.focusedElementLookup(from: value, error: error)
     }
 
     private func selectedText(from element: AXUIElement) -> Result<String, SelectionProviderError> {
@@ -81,6 +87,29 @@ struct AccessibilitySelectionProvider: SelectionProviding {
             &value
         )
 
+        return Self.selectionResult(from: value, error: error)
+    }
+
+    static func focusedElementLookup(from value: CFTypeRef?, error: AXError) -> FocusedElementLookup {
+        switch error {
+        case .success:
+            guard let value else {
+                return .unavailable
+            }
+
+            guard CFGetTypeID(value) == AXUIElementGetTypeID() else {
+                return .unavailable
+            }
+
+            return .found(unsafeDowncast(value, to: AXUIElement.self))
+        case .attributeUnsupported:
+            return .unsupportedHostApp
+        default:
+            return .unavailable
+        }
+    }
+
+    static func selectionResult(from value: CFTypeRef?, error: AXError) -> Result<String, SelectionProviderError> {
         switch error {
         case .success:
             if let text = value as? String {
@@ -92,7 +121,13 @@ struct AccessibilitySelectionProvider: SelectionProviding {
         case .attributeUnsupported:
             return .failure(.unsupportedHostApp)
         default:
-            return .failure(.unsupportedHostApp)
+            return .failure(.noText)
         }
     }
+}
+
+enum FocusedElementLookup {
+    case found(AXUIElement)
+    case unavailable
+    case unsupportedHostApp
 }

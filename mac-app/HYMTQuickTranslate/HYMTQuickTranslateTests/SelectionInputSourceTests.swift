@@ -48,6 +48,26 @@ final class SelectionInputSourceTests: XCTestCase {
 
         XCTAssertEqual(result, .success("Hello world"))
     }
+
+    func test_accessibility_provider_handles_non_axui_element_focus_value_safely() {
+        let lookup = AccessibilitySelectionProvider.focusedElementLookup(
+            from: "not-an-element" as CFTypeRef,
+            error: .success
+        )
+
+        guard case .unavailable = lookup else {
+            return XCTFail("Expected non-AXUIElement focus value to be treated as unavailable.")
+        }
+    }
+
+    func test_accessibility_provider_does_not_report_generic_ax_failure_as_unsupported_host_app() {
+        let result: Result<String, SelectionProviderError> = AccessibilitySelectionProvider.selectionResult(
+            from: nil,
+            error: .cannotComplete
+        )
+
+        XCTAssertEqual(result, .failure(.noText))
+    }
 }
 
 private struct StubAccessibilityPermission: AccessibilityPermissionChecking {
