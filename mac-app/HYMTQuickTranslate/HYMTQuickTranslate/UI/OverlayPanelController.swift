@@ -1,14 +1,19 @@
 import AppKit
+import QuartzCore
 import SwiftUI
 
 @MainActor
 final class OverlayPanelController: NSObject, NSWindowDelegate {
     private let panelWidth: CGFloat = 460
+    private let presentationOffset: CGFloat = 12
+    private let mouseEventMask: NSEvent.EventTypeMask = [.leftMouseDown, .rightMouseDown, .otherMouseDown]
     private let viewModel: OverlayViewModel
     private let panel: OverlayPanel
     private let dismissalPolicy: OverlayDismissalPolicy
     private let sizingPolicy: OverlaySizingPolicy
     private var lastShownAt: TimeInterval?
+    private var localClickMonitor: Any?
+    private var globalClickMonitor: Any?
 
     init(
         viewModel: OverlayViewModel = OverlayViewModel(),
@@ -34,7 +39,7 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
         panel.delegate = self
         panel.isFloatingPanel = true
         panel.level = .floating
-        panel.hidesOnDeactivate = true
+        panel.hidesOnDeactivate = false
         panel.collectionBehavior = [.transient, .moveToActiveSpace, .fullScreenAuxiliary]
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
@@ -50,6 +55,7 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
         viewModel.bindCloseAction { [weak self] in
             self?.closePanel()
         }
+        installClickMonitorsIfNeeded()
     }
 
     func show(
@@ -60,11 +66,11 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
         viewModel.show(state, onConfirm: onConfirm)
         resizePanel(for: state)
         panel.center()
-        NSApp.activate(ignoringOtherApps: true)
-        panel.makeKeyAndOrderFront(nil)
+        presentPanel()
     }
 
     func closePanel() {
+        panel.alphaValue = 1
         panel.orderOut(nil)
     }
 
@@ -91,6 +97,68 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
         frame.origin.y += frame.height - targetHeight
         frame.size = NSSize(width: panelWidth, height: targetHeight)
         panel.setFrame(frame, display: true)
+    }
+
+    private func presentPanel() {
+        NSApp.activate(ignoringOtherApps: true)
+
+        if panel.isVisible {
+            panel.makeKeyAndOrderFront(nil)
+            return
+        }
+
+        let targetFrame = panel.frame
+        var startingFrame = targetFrame
+        startingFrame.origin.y -= presentationOffset
+        startingFrame.size.width *= 0.98
+        startingFrame.origin.x += (targetFrame.width - startingFrame.width) / 2
+
+        panel.alphaValue = 0
+        panel.setFrame(startingFrame, display: false)
+        panel.makeKeyAndOrderFront(nil)
+
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.18
+            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            panel.animator().alphaValue = 1
+            panel.animator().setFrame(targetFrame, display: true)
+        }
+    }
+
+    private func installClickMonitorsIfNeeded() {
+        guard localClickMonitor == nil, globalClickMonitor == nil else {
+            return
+        }
+
+        localClickMonitor = NSEvent.addLocalMonitorForEvents(matching: mouseEventMask) { [weak self] event in
+            Task { @MainActor [weak self] in
+                self?.handlePotentialClickAway()
+            }
+            return event
+        }
+
+        globalClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: mouseEventMask) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.handlePotentialClickAway()
+            }
+        }
+    }
+
+    private func handlePotentialClickAway() {
+        guard panel.isVisible, let lastShownAt else {
+            return
+        }
+
+        let now = ProcessInfo.processInfo.systemUptime
+        guard dismissalPolicy.shouldCloseOnClickAway(shownAt: lastShownAt, now: now) else {
+            return
+        }
+
+        guard panel.frame.contains(NSEvent.mouseLocation) == false else {
+            return
+        }
+
+        closePanel()
     }
 }
 

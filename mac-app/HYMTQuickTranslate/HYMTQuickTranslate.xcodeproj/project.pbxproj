@@ -31,6 +31,7 @@
 		B5149D4A8C5A423DA0D4D322 /* AppLaunchCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */; };
 		BAA4E0E8A9912D1A5015A3BE /* HYMTQuickTranslateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */; };
 		C6FA3164C1A241F7AF4E4401 /* OverlaySizingPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FA3164C1A241F7AF4E4400 /* OverlaySizingPolicyTests.swift */; };
+		D908A44A839644AD85014001 /* OverlayPresentationBehaviorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D908A44A839644AD85014000 /* OverlayPresentationBehaviorTests.swift */; };
 		D34F5CF0B8A349D6A4B15A11 /* OverlaySizingPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34F5CF0B8A349D6A4B15A10 /* OverlaySizingPolicy.swift */; };
 		E5C0A30729DA18B13DBC905C /* GlobalHotkeyMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */; };
 		ECF93753A573674D125D96AC /* TranslateClipboardWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687ED94B1D0A6E8467917C5 /* TranslateClipboardWorkflow.swift */; };
@@ -75,6 +76,7 @@
 		CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextLengthPolicy.swift; path = Core/TextLengthPolicy.swift; sourceTree = "<group>"; };
 		C6FA3164C1A241F7AF4E4400 /* OverlaySizingPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlaySizingPolicyTests.swift; sourceTree = "<group>"; };
 		D34F5CF0B8A349D6A4B15A10 /* OverlaySizingPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlaySizingPolicy.swift; path = UI/OverlaySizingPolicy.swift; sourceTree = "<group>"; };
+		D908A44A839644AD85014000 /* OverlayPresentationBehaviorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlayPresentationBehaviorTests.swift; sourceTree = "<group>"; };
 		D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TranslationPromptBuilderTests.swift; sourceTree = "<group>"; };
 		DDADDFCAE51D0B4E3FF13DD4 /* HYMTQuickTranslateApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HYMTQuickTranslateApp.swift; path = App/HYMTQuickTranslateApp.swift; sourceTree = "<group>"; };
 		E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DirectionDetectorTests.swift; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 				0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */,
 				2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */,
 				C6FA3164C1A241F7AF4E4400 /* OverlaySizingPolicyTests.swift */,
+				D908A44A839644AD85014000 /* OverlayPresentationBehaviorTests.swift */,
 			);
 			name = HYMTQuickTranslateTests;
 			path = HYMTQuickTranslateTests;
@@ -307,6 +310,7 @@
 				E5C0A30729DA18B13DBC905C /* GlobalHotkeyMonitorTests.swift in Sources */,
 				430F9AB6B3CB4F7E0F0E6771 /* OverlayDismissalPolicyTests.swift in Sources */,
 				C6FA3164C1A241F7AF4E4401 /* OverlaySizingPolicyTests.swift in Sources */,
+				D908A44A839644AD85014001 /* OverlayPresentationBehaviorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
