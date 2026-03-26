@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		017B4A0A4D854E2B8F7A0001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 017B4A0A4D854E2B8F7A0002 /* Assets.xcassets */; };
 		02DE59A8465021E8EBFAD86C /* LocalTranslationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7AEFEB50D84538DA24CABB /* LocalTranslationClient.swift */; };
 		1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */; };
 		244E3E51D4F288ED4B93B187 /* OverlayDismissalPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */; };
@@ -54,6 +55,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		017B4A0A4D854E2B8F7A0002 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalTranslationClientTests.swift; sourceTree = "<group>"; };
 		053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = App/AppDelegate.swift; sourceTree = "<group>"; };
 		0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GlobalHotkeyMonitorTests.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 		CFFF07A5516A00606E135D4C /* HYMTQuickTranslate */ = {
 			isa = PBXGroup;
 			children = (
+				017B4A0A4D854E2B8F7A0002 /* Assets.xcassets */,
 				DDADDFCAE51D0B4E3FF13DD4 /* HYMTQuickTranslateApp.swift */,
 				053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */,
 				A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */,
@@ -274,6 +277,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				017B4A0A4D854E2B8F7A0001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
