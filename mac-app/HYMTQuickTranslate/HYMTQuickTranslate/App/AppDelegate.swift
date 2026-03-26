@@ -2,17 +2,56 @@ import AppKit
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    typealias HotkeyMonitorFactory = (
+        UInt32,
+        GlobalHotkeyShortcut,
+        @escaping () -> Void
+    ) -> GlobalHotkeyMonitoring
+    private static let defaultHotkeyMonitorFactory: HotkeyMonitorFactory = {
+        identifier,
+        shortcut,
+        onTrigger in
+        GlobalHotkeyMonitor(
+            identifier: identifier,
+            shortcut: shortcut,
+            onTrigger: onTrigger
+        )
+    }
+
     private let accessibilityPermission = AccessibilityPermission()
     private let overlayController = OverlayPanelController()
     private let workflow = TranslateClipboardWorkflow()
-    private var shortcutSettings = ShortcutSettings.load()
-    private lazy var shortcutRecorder = ShortcutRecorder(existingSettings: shortcutSettings)
-    private var clipboardHotkeyMonitor: GlobalHotkeyMonitor?
+    private let shortcutRecorderUserDefaults: UserDefaults
+    private let hotkeyMonitorFactory: HotkeyMonitorFactory
+    private var shortcutSettings: ShortcutSettings
+    private lazy var shortcutRecorder = ShortcutRecorder(
+        existingSettings: shortcutSettings,
+        userDefaults: shortcutRecorderUserDefaults
+    )
+    private var clipboardHotkeyMonitor: GlobalHotkeyMonitoring?
     private var statusBarController: StatusBarController?
     private var recordingTarget: ShortcutTarget?
     private var shortcutStatusLabel: String?
     private var localShortcutRecordingMonitor: Any?
     private var globalShortcutRecordingMonitor: Any?
+
+    override init() {
+        shortcutSettings = .load()
+        shortcutRecorderUserDefaults = .standard
+        hotkeyMonitorFactory = Self.defaultHotkeyMonitorFactory
+        super.init()
+    }
+
+    init(
+        shortcutSettings: ShortcutSettings = .load(),
+        shortcutRecorderUserDefaults: UserDefaults = .standard,
+        hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory
+    ) {
+        self.shortcutSettings = shortcutSettings
+        self.shortcutRecorderUserDefaults = shortcutRecorderUserDefaults
+        self.hotkeyMonitorFactory = hotkeyMonitorFactory
+        super.init()
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -89,30 +128,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureHotkeyMonitors() {
-        clipboardHotkeyMonitor = GlobalHotkeyMonitor(
-            identifier: 1,
-            shortcut: shortcutSettings.clipboardShortcut
+        clipboardHotkeyMonitor = hotkeyMonitorFactory(
+            1,
+            shortcutSettings.clipboardShortcut
         ) { [weak self] in
             self?.translateClipboard()
         }
-        clipboardHotkeyMonitor?.start()
+        _ = clipboardHotkeyMonitor?.start()
     }
 
-    private func reloadHotkeyMonitors() {
-        clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
-    }
-
-    private func beginShortcutRecording(for target: ShortcutTarget) {
+    func beginShortcutRecording(for target: ShortcutTarget) {
         recordingTarget = target
         shortcutStatusLabel = recordingStatusLabel(for: target)
+        clipboardHotkeyMonitor?.stop()
         installShortcutRecordingMonitors()
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    private func cancelShortcutRecording() {
+    func cancelShortcutRecording() {
+        finishShortcutRecording(restartClipboardMonitor: true)
+    }
+
+    private func finishShortcutRecording(restartClipboardMonitor: Bool) {
+        let wasRecording = recordingTarget != nil
         recordingTarget = nil
         shortcutStatusLabel = nil
         removeShortcutRecordingMonitors()
+        if wasRecording, restartClipboardMonitor {
+            _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
+        }
     }
 
     private func installShortcutRecordingMonitors() {
@@ -144,7 +188,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func handleShortcutRecordingEvent(_ event: NSEvent) {
-        guard let recordingTarget else {
+        guard recordingTarget != nil else {
             return
         }
 
@@ -157,11 +201,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        switch shortcutRecorder.save(shortcut, for: recordingTarget) {
-        case let .success(updatedSettings):
-            shortcutSettings = updatedSettings
-            cancelShortcutRecording()
-            reloadHotkeyMonitors()
+        applyRecordedShortcut(shortcut)
+    }
+
+    func applyRecordedShortcut(_ shortcut: GlobalHotkeyShortcut) {
+        guard let recordingTarget else {
+            return
+        }
+
+        switch shortcutRecorder.validate(shortcut, for: recordingTarget) {
+        case .success:
+            switch recordingTarget {
+            case .clipboard:
+                guard clipboardHotkeyMonitor?.reload(shortcut: shortcut) ?? false else {
+                    shortcutStatusLabel = "Shortcut could not be registered. Try another combination."
+                    return
+                }
+                guard case let .success(savedSettings) = shortcutRecorder.save(shortcut, for: .clipboard) else {
+                    shortcutStatusLabel = "Shortcut already in use. Try another combination."
+                    _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
+                    return
+                }
+                shortcutSettings = savedSettings
+                finishShortcutRecording(restartClipboardMonitor: false)
+            case .selection:
+                guard case let .success(savedSettings) = shortcutRecorder.save(shortcut, for: .selection) else {
+                    shortcutStatusLabel = "Shortcut already in use. Try another combination."
+                    return
+                }
+                shortcutSettings = savedSettings
+                finishShortcutRecording(restartClipboardMonitor: true)
+            }
         case .failure(.duplicateShortcut):
             shortcutStatusLabel = "Shortcut already in use. Try another combination."
         }

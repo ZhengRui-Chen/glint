@@ -1,6 +1,14 @@
 import Carbon.HIToolbox
 import Foundation
 
+protocol GlobalHotkeyMonitoring: AnyObject {
+    @discardableResult
+    func start() -> Bool
+    func stop()
+    @discardableResult
+    func reload(shortcut: GlobalHotkeyShortcut) -> Bool
+}
+
 struct GlobalHotkeyShortcut {
     let keyCode: UInt32
     let modifiers: UInt32
@@ -62,36 +70,85 @@ struct GlobalHotkeyShortcut {
     }
 }
 
-final class GlobalHotkeyMonitor {
+final class GlobalHotkeyMonitor: GlobalHotkeyMonitoring {
     private static let signature = OSType(0x48594D54)
 
     private var shortcut: GlobalHotkeyShortcut
     private let onTrigger: () -> Void
     private let identifier: UInt32
+    private let simulatedRegistrationResult: ((GlobalHotkeyShortcut) -> Bool)?
 
     private var eventHandler: EventHandlerRef?
     private var hotKeyRef: EventHotKeyRef?
+    private var isActive = false
 
     init(
         identifier: UInt32 = 1,
         shortcut: GlobalHotkeyShortcut = .default,
-        onTrigger: @escaping () -> Void
+        onTrigger: @escaping () -> Void,
+        simulatedRegistrationResult: ((GlobalHotkeyShortcut) -> Bool)? = nil
     ) {
         self.shortcut = shortcut
         self.onTrigger = onTrigger
         self.identifier = identifier
+        self.simulatedRegistrationResult = simulatedRegistrationResult
     }
 
-    func start() {
-        guard hotKeyRef == nil else {
-            return
+    func start() -> Bool {
+        guard !isActive else {
+            return true
         }
 
+        guard installEventHandler(), registerHotKey(for: shortcut) else {
+            cleanupEventHandler()
+            hotKeyRef = nil
+            return false
+        }
+
+        isActive = true
+        return true
+    }
+
+    func stop() {
+        if let hotKeyRef {
+            UnregisterEventHotKey(hotKeyRef)
+            self.hotKeyRef = nil
+        }
+        cleanupEventHandler()
+        isActive = false
+    }
+
+    func invokeForTesting() {
+        onTrigger()
+    }
+
+    func reload(shortcut: GlobalHotkeyShortcut) -> Bool {
+        let previousShortcut = self.shortcut
+        let wasActive = isActive
+
+        stop()
+        self.shortcut = shortcut
+        if start() {
+            return true
+        }
+
+        if wasActive {
+            self.shortcut = previousShortcut
+            _ = start()
+        }
+        return false
+    }
+
+    deinit {
+        stop()
+    }
+
+    private func installEventHandler() -> Bool {
         var eventType = EventTypeSpec(
             eventClass: OSType(kEventClassKeyboard),
             eventKind: UInt32(kEventHotKeyPressed)
         )
-        InstallEventHandler(
+        let status = InstallEventHandler(
             GetApplicationEventTarget(),
             { _, eventRef, userData in
                 guard let userData else {
@@ -107,12 +164,20 @@ final class GlobalHotkeyMonitor {
             Unmanaged.passUnretained(self).toOpaque(),
             &eventHandler
         )
+        return status == noErr
+    }
+
+    private func registerHotKey(for shortcut: GlobalHotkeyShortcut) -> Bool {
+        if let simulatedRegistrationResult {
+            return simulatedRegistrationResult(shortcut)
+        }
 
         let hotKeyID = EventHotKeyID(
             signature: Self.signature,
             id: identifier
         )
-        RegisterEventHotKey(
+        var hotKeyRef: EventHotKeyRef?
+        let status = RegisterEventHotKey(
             shortcut.keyCode,
             shortcut.modifiers,
             hotKeyID,
@@ -120,34 +185,18 @@ final class GlobalHotkeyMonitor {
             0,
             &hotKeyRef
         )
+        guard status == noErr, let hotKeyRef else {
+            return false
+        }
+        self.hotKeyRef = hotKeyRef
+        return true
     }
 
-    func stop() {
-        if let hotKeyRef {
-            UnregisterEventHotKey(hotKeyRef)
-            self.hotKeyRef = nil
-        }
+    private func cleanupEventHandler() {
         if let eventHandler {
             RemoveEventHandler(eventHandler)
             self.eventHandler = nil
         }
-    }
-
-    func invokeForTesting() {
-        onTrigger()
-    }
-
-    func reload(shortcut: GlobalHotkeyShortcut) {
-        let wasRunning = hotKeyRef != nil || eventHandler != nil
-        stop()
-        self.shortcut = shortcut
-        if wasRunning {
-            start()
-        }
-    }
-
-    deinit {
-        stop()
     }
 
     private func handle(_ event: EventRef?) -> OSStatus {
