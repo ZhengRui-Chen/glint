@@ -33,6 +33,8 @@
 		8D8EF327B0B7F14C8B9BF561 /* TranslationPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06EDB02CB1EEFD2CACEFD2 /* TranslationPromptBuilder.swift */; };
 		8EFA5E1EE4239D20DD129EC7 /* OverlayPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */; };
 		8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E536E02711038F959B64A810 /* ClipboardTextReader.swift */; };
+		98A4C1E55F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A4C1E45F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift */; };
+		98A4C1E75F2B4A7700D6B122 /* OverlayPlacementResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A4C1E65F2B4A7700D6B122 /* OverlayPlacementResolver.swift */; };
 		9ACA3D2DC5AA4C653C9DB0B2 /* TextLengthPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */; };
 		A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */; };
 		BAA4E0E8A9912D1A5015A3BE /* HYMTQuickTranslateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */; };
@@ -84,6 +86,8 @@
 		9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		9E4804D656F5D78FD399E45C /* HYMTQuickTranslateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HYMTQuickTranslateTests.swift; sourceTree = "<group>"; };
 		9F06EDB02CB1EEFD2CACEFD2 /* TranslationPromptBuilder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TranslationPromptBuilder.swift; path = Networking/TranslationPromptBuilder.swift; sourceTree = "<group>"; };
+		98A4C1E45F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlayPlacementResolverTests.swift; sourceTree = "<group>"; };
+		98A4C1E65F2B4A7700D6B122 /* OverlayPlacementResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayPlacementResolver.swift; path = UI/OverlayPlacementResolver.swift; sourceTree = "<group>"; };
 		A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayPanelController.swift; path = UI/OverlayPanelController.swift; sourceTree = "<group>"; };
 		A767EF72CE237474EB211A9D /* AppConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = Config/AppConfig.swift; sourceTree = "<group>"; };
 		AF0F17C1BC6D430457FDB326 /* ShortcutSettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutSettingsTests.swift; sourceTree = "<group>"; };
@@ -174,6 +178,7 @@
 				779AD1A28C553316316D509A /* OverlayViewModel.swift */,
 				256D57BF55CAA7F38948E365 /* OverlayContentView.swift */,
 				A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */,
+				98A4C1E65F2B4A7700D6B122 /* OverlayPlacementResolver.swift */,
 				67F92AF64BF95A00B1EAA003 /* StatusBarController.swift */,
 				20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */,
 				3F1FCD9FBAB6D739F058A51C /* ShortcutRecorder.swift */,
@@ -201,6 +206,7 @@
 				7DC8F7BBA7C829ED18EC9776 /* TranslateClipboardWorkflowTests.swift */,
 				0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */,
 				2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */,
+				98A4C1E45F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift */,
 				AF0F17C1BC6D430457FDB326 /* ShortcutSettingsTests.swift */,
 				18B6C96CEA5F60B882E660DF /* TextInputSourceWorkflowTests.swift */,
 				D8B4E6F2A1937C50B1D2E3F4 /* SelectionInputSourceTests.swift */,
@@ -314,6 +320,7 @@
 				EF43FD1949B75F070072B0D4 /* OverlayViewModel.swift in Sources */,
 				8562635D6940198B616B1F7F /* OverlayContentView.swift in Sources */,
 				8EFA5E1EE4239D20DD129EC7 /* OverlayPanelController.swift in Sources */,
+				98A4C1E75F2B4A7700D6B122 /* OverlayPlacementResolver.swift in Sources */,
 				67F92AF74BF95A00B1EAA003 /* StatusBarController.swift in Sources */,
 				34C1DDB0BD903BB23B8FFB7E /* GlobalHotkeyMonitor.swift in Sources */,
 				3F1FCDB0BAB6D739F058A51C /* ShortcutRecorder.swift in Sources */,
@@ -340,6 +347,7 @@
 				F5D5D61EB3A36A308C0A306A /* TranslateClipboardWorkflowTests.swift in Sources */,
 				E5C0A30729DA18B13DBC905C /* GlobalHotkeyMonitorTests.swift in Sources */,
 				430F9AB6B3CB4F7E0F0E6771 /* OverlayDismissalPolicyTests.swift in Sources */,
+				98A4C1E55F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift in Sources */,
 				C218C03A74F0AFB108B58073 /* ShortcutSettingsTests.swift in Sources */,
 				FC0C0CC33F7E4A72D2A6A970 /* TextInputSourceWorkflowTests.swift in Sources */,
 				C7A3F5B1D4826E90A1B2C3D4 /* SelectionInputSourceTests.swift in Sources */,

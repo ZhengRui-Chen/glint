@@ -5,8 +5,22 @@ import XCTest
 
 final class ShortcutRecorderTests: XCTestCase {
     @MainActor
-    func test_app_delegate_does_not_register_selection_hotkey_before_task6() {
-        let appDelegate = AppDelegate()
+    func test_app_delegate_registers_selection_hotkeys_after_task6() {
+        let clipboardMonitor = TestHotkeyMonitor()
+        let selectionMonitor = TestHotkeyMonitor()
+        let appDelegate = AppDelegate(
+            shortcutSettings: .default,
+            shortcutRecorderUserDefaults: UserDefaults(suiteName: #function)!,
+            hotkeyMonitorFactory: { identifier, shortcut, _ in
+                let monitor = if identifier == 1 {
+                    clipboardMonitor
+                } else {
+                    selectionMonitor
+                }
+                monitor.initialShortcut = shortcut
+                return monitor
+            }
+        )
 
         appDelegate.applicationDidFinishLaunching(
             Notification(name: NSApplication.didFinishLaunchingNotification)
@@ -17,8 +31,16 @@ final class ShortcutRecorderTests: XCTestCase {
             )
         }
 
+        XCTAssertEqual(
+            clipboardMonitor.events,
+            [.start(ShortcutSettings.default.clipboardShortcut)]
+        )
+        XCTAssertEqual(
+            selectionMonitor.events,
+            [.start(ShortcutSettings.default.selectionShortcut)]
+        )
         XCTAssertNotNil(reflectedValue(named: "clipboardHotkeyMonitor", from: appDelegate))
-        XCTAssertNil(reflectedValue(named: "selectionHotkeyMonitor", from: appDelegate))
+        XCTAssertNotNil(reflectedValue(named: "selectionHotkeyMonitor", from: appDelegate))
     }
 
     func test_recorder_persists_updated_shortcut_settings() throws {
@@ -72,11 +94,17 @@ final class ShortcutRecorderTests: XCTestCase {
 
     @MainActor
     func test_recording_stops_active_clipboard_hotkey_and_restarts_it_on_cancel() {
-        let monitor = TestHotkeyMonitor()
+        let clipboardMonitor = TestHotkeyMonitor()
+        let selectionMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             shortcutRecorderUserDefaults: UserDefaults(suiteName: #function)!,
-            hotkeyMonitorFactory: { _, shortcut, _ in
+            hotkeyMonitorFactory: { identifier, shortcut, _ in
+                let monitor = if identifier == 1 {
+                    clipboardMonitor
+                } else {
+                    selectionMonitor
+                }
                 monitor.initialShortcut = shortcut
                 return monitor
             }
@@ -95,11 +123,19 @@ final class ShortcutRecorderTests: XCTestCase {
         appDelegate.cancelShortcutRecording()
 
         XCTAssertEqual(
-            monitor.events,
+            clipboardMonitor.events,
             [
                 .start(ShortcutSettings.default.clipboardShortcut),
                 .stop,
                 .reload(ShortcutSettings.default.clipboardShortcut),
+            ]
+        )
+        XCTAssertEqual(
+            selectionMonitor.events,
+            [
+                .start(ShortcutSettings.default.selectionShortcut),
+                .stop,
+                .reload(ShortcutSettings.default.selectionShortcut),
             ]
         )
     }
@@ -115,11 +151,17 @@ final class ShortcutRecorderTests: XCTestCase {
             keyCode: UInt32(kVK_ANSI_X),
             modifiers: UInt32(controlKey | optionKey | cmdKey)
         )
-        let monitor = TestHotkeyMonitor(reloadResults: [false])
+        let clipboardMonitor = TestHotkeyMonitor(reloadResults: [false])
+        let selectionMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             shortcutRecorderUserDefaults: userDefaults,
-            hotkeyMonitorFactory: { _, shortcut, _ in
+            hotkeyMonitorFactory: { identifier, shortcut, _ in
+                let monitor = if identifier == 1 {
+                    clipboardMonitor
+                } else {
+                    selectionMonitor
+                }
                 monitor.initialShortcut = shortcut
                 return monitor
             }
@@ -139,11 +181,18 @@ final class ShortcutRecorderTests: XCTestCase {
 
         XCTAssertEqual(ShortcutSettings.load(from: userDefaults), .default)
         XCTAssertEqual(
-            monitor.events,
+            clipboardMonitor.events,
             [
                 .start(ShortcutSettings.default.clipboardShortcut),
                 .stop,
                 .reload(candidateShortcut),
+            ]
+        )
+        XCTAssertEqual(
+            selectionMonitor.events,
+            [
+                .start(ShortcutSettings.default.selectionShortcut),
+                .stop,
             ]
         )
     }

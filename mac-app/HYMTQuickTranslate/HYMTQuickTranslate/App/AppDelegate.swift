@@ -21,6 +21,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let accessibilityPermission = AccessibilityPermission()
     private let overlayController = OverlayPanelController()
     private let workflow = TranslateClipboardWorkflow()
+    private let selectionWorkflow = TranslateTextWorkflow(
+        inputSource: SelectionInputSource(),
+        noTextMessage: "No selected text was found.",
+        rejectedTextMessage: "Selected text exceeds the maximum length."
+    )
+    private let overlayPlacementResolver = OverlayPlacementResolver()
     private let shortcutRecorderUserDefaults: UserDefaults
     private let hotkeyMonitorFactory: HotkeyMonitorFactory
     private var shortcutSettings: ShortcutSettings
@@ -29,6 +35,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         userDefaults: shortcutRecorderUserDefaults
     )
     private var clipboardHotkeyMonitor: GlobalHotkeyMonitoring?
+    private var selectionHotkeyMonitor: GlobalHotkeyMonitoring?
     private var statusBarController: StatusBarController?
     private var recordingTarget: ShortcutTarget?
     private var shortcutStatusLabel: String?
@@ -63,43 +70,58 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         clipboardHotkeyMonitor?.stop()
+        selectionHotkeyMonitor?.stop()
         removeShortcutRecordingMonitors()
     }
 
     private func translateClipboard() {
         Task {
-            overlayController.show(state: .loading)
+            overlayController.show(state: .loading, placement: .centered)
             let state = await workflow.handleShortcut()
-            present(state)
+            present(state, placement: .centered)
         }
     }
 
     private func handleSelectionTranslation() {
-        let message = if accessibilityPermission.isGranted {
-            "Selection translation will be added in a later task."
-        } else {
-            "Accessibility permission is required for selection translation."
+        let placement = overlayPlacementResolver.resolve(cursorAnchor: NSEvent.mouseLocation)
+        guard accessibilityPermission.isGranted else {
+            overlayController.show(
+                state: .error("Accessibility permission is required for selection translation."),
+                placement: placement
+            )
+            return
         }
-        overlayController.show(state: .error(message))
+
+        Task {
+            overlayController.show(state: .loading, placement: placement)
+            let state = await selectionWorkflow.run()
+            present(state, placement: placement)
+        }
     }
 
-    private func confirmTranslation(_ text: String) {
+    private func confirmTranslation(
+        _ text: String,
+        placement: OverlayPlacement = .centered
+    ) {
         Task {
-            overlayController.show(state: .loading)
+            overlayController.show(state: .loading, placement: placement)
             let state = await workflow.confirmTranslation(for: text)
-            present(state)
+            present(state, placement: placement)
         }
     }
 
     // 所有入口都收敛到同一个面板状态机，避免多窗口分叉。
-    private func present(_ state: OverlayViewState) {
+    private func present(
+        _ state: OverlayViewState,
+        placement: OverlayPlacement = .centered
+    ) {
         switch state {
         case let .confirmLongText(text):
-            overlayController.show(state: state) { [weak self] _ in
-                self?.confirmTranslation(text)
+            overlayController.show(state: state, placement: placement) { [weak self] _ in
+                self?.confirmTranslation(text, placement: placement)
             }
         default:
-            overlayController.show(state: state)
+            overlayController.show(state: state, placement: placement)
         }
     }
 
@@ -135,27 +157,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.translateClipboard()
         }
         _ = clipboardHotkeyMonitor?.start()
+
+        selectionHotkeyMonitor = hotkeyMonitorFactory(
+            2,
+            shortcutSettings.selectionShortcut
+        ) { [weak self] in
+            self?.handleSelectionTranslation()
+        }
+        _ = selectionHotkeyMonitor?.start()
     }
 
     func beginShortcutRecording(for target: ShortcutTarget) {
         recordingTarget = target
         shortcutStatusLabel = recordingStatusLabel(for: target)
         clipboardHotkeyMonitor?.stop()
+        selectionHotkeyMonitor?.stop()
         installShortcutRecordingMonitors()
         NSApp.activate(ignoringOtherApps: true)
     }
 
     func cancelShortcutRecording() {
-        finishShortcutRecording(restartClipboardMonitor: true)
+        finishShortcutRecording(restartHotkeyMonitors: true)
     }
 
-    private func finishShortcutRecording(restartClipboardMonitor: Bool) {
+    private func finishShortcutRecording(restartHotkeyMonitors: Bool) {
         let wasRecording = recordingTarget != nil
         recordingTarget = nil
         shortcutStatusLabel = nil
         removeShortcutRecordingMonitors()
-        if wasRecording, restartClipboardMonitor {
+        if wasRecording, restartHotkeyMonitors {
             _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
+            _ = selectionHotkeyMonitor?.reload(shortcut: shortcutSettings.selectionShortcut)
         }
     }
 
@@ -223,14 +255,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     return
                 }
                 shortcutSettings = savedSettings
-                finishShortcutRecording(restartClipboardMonitor: false)
+                _ = selectionHotkeyMonitor?.reload(shortcut: shortcutSettings.selectionShortcut)
+                finishShortcutRecording(restartHotkeyMonitors: false)
             case .selection:
+                guard selectionHotkeyMonitor?.reload(shortcut: shortcut) ?? false else {
+                    shortcutStatusLabel = "Shortcut could not be registered. Try another combination."
+                    return
+                }
                 guard case let .success(savedSettings) = shortcutRecorder.save(shortcut, for: .selection) else {
                     shortcutStatusLabel = "Shortcut already in use. Try another combination."
+                    _ = selectionHotkeyMonitor?.reload(shortcut: shortcutSettings.selectionShortcut)
                     return
                 }
                 shortcutSettings = savedSettings
-                finishShortcutRecording(restartClipboardMonitor: true)
+                _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
+                finishShortcutRecording(restartHotkeyMonitors: false)
             }
         case .failure(.duplicateShortcut):
             shortcutStatusLabel = "Shortcut already in use. Try another combination."
