@@ -30,15 +30,11 @@ struct BackendAPIHealthChecker: BackendAPIHealthChecking {
         request.timeoutInterval = config.backendAPITimeout
         request.setValue("Bearer \(config.apiKey)", forHTTPHeaderField: "Authorization")
 
-        do {
-            let (_, response) = try await urlSession.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                return .unreachable
-            }
-            return (200 ..< 300).contains(httpResponse.statusCode) ? .reachable : .unreachable
-        } catch {
-            return .unreachable
+        let (_, response) = try await urlSession.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
         }
+        return (200 ..< 300).contains(httpResponse.statusCode) ? .reachable : .unreachable
     }
 }
 
