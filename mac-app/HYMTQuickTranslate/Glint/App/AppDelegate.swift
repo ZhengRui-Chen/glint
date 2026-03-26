@@ -102,6 +102,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var shortcutStatusLabel: String?
     private var backendStatus = BackendStatusSnapshot.checking()
     private var backendActionContext: BackendActionContext?
+    private var backendRefreshGeneration = 0
     private var backendRefreshTimer: (any BackendRefreshControlling)?
     private var localShortcutRecordingMonitor: Any?
     private var globalShortcutRecordingMonitor: Any?
@@ -327,6 +328,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func refreshBackendStatus() {
+        let refreshGeneration = nextBackendRefreshGeneration()
         updateBackendStatus(.checking())
         Task { @MainActor [weak self] in
             guard let self else {
@@ -334,6 +336,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             let snapshot = await backendStatusMonitor.refresh(actionContext: backendActionContext)
+            guard shouldApplyBackendRefreshResult(for: refreshGeneration) else {
+                return
+            }
             updateBackendStatus(
                 snapshot,
                 clearActionContext: {
@@ -344,6 +349,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 }()
             )
         }
+    }
+
+    private func nextBackendRefreshGeneration() -> Int {
+        backendRefreshGeneration += 1
+        return backendRefreshGeneration
+    }
+
+    private func shouldApplyBackendRefreshResult(for refreshGeneration: Int) -> Bool {
+        refreshGeneration == backendRefreshGeneration
     }
 
     private func updateBackendStatus(

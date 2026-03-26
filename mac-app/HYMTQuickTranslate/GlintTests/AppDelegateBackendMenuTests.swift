@@ -230,6 +230,49 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         XCTAssertTrue(selectionShortcutItem.isEnabled)
         XCTAssertTrue(clipboardShortcutItem.isEnabled)
     }
+
+    @MainActor
+    func test_older_backend_refresh_result_does_not_override_newer_snapshot() async throws {
+        let apiChecker = ControlledBackendAPIHealthChecker()
+        let processChecker = SequencedBackendProcessChecker(results: [false])
+        let monitor = BackendStatusMonitor(
+            apiChecker: apiChecker,
+            processChecker: processChecker,
+            now: { Date(timeIntervalSince1970: 100) }
+        )
+        let appDelegate = AppDelegate(
+            shortcutSettings: .default,
+            launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
+            shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
+            hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
+            backendStatusMonitor: monitor,
+            backendControlService: BlockingBackendControlService()
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+
+        let firstRequest = await apiChecker.waitForRequest(number: 1)
+        controller.menuNeedsUpdate(menu)
+        let secondRequest = await apiChecker.waitForRequest(number: 2)
+
+        await apiChecker.resolve(request: secondRequest, with: .unreachable)
+        _ = await waitForMenuItem(titled: "Service Status: Unavailable", in: menu)
+
+        await apiChecker.resolve(request: firstRequest, with: .reachable)
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        XCTAssertEqual(menu.items.first?.title, "Service Status: Unavailable")
+    }
 }
 
 private actor BlockingBackendControlService: BackendControlServicing {
@@ -294,6 +337,46 @@ private actor SequencedBackendProcessChecker: BackendProcessChecking {
         let resolvedIndex = min(index, results.count - 1)
         defer { index += 1 }
         return results[resolvedIndex]
+    }
+}
+
+private actor ControlledBackendAPIHealthChecker: BackendAPIHealthChecking {
+    private struct PendingRequest {
+        let id: Int
+        let continuation: CheckedContinuation<BackendAPIReachability, Error>
+    }
+
+    private var nextID = 0
+    private var pendingRequests: [PendingRequest] = []
+
+    func checkAPIReachability() async throws -> BackendAPIReachability {
+        let id = nextID
+        nextID += 1
+
+        return try await withCheckedThrowingContinuation { continuation in
+            pendingRequests.append(
+                PendingRequest(id: id, continuation: continuation)
+            )
+        }
+    }
+
+    func waitForRequest(number requestNumber: Int) async -> Int {
+        let expectedCount = requestNumber
+        while pendingRequests.count < expectedCount {
+            await Task.yield()
+        }
+        return pendingRequests[requestNumber - 1].id
+    }
+
+    func resolve(
+        request requestID: Int,
+        with result: BackendAPIReachability
+    ) {
+        guard let index = pendingRequests.firstIndex(where: { $0.id == requestID }) else {
+            return
+        }
+        let pendingRequest = pendingRequests.remove(at: index)
+        pendingRequest.continuation.resume(returning: result)
     }
 }
 
