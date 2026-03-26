@@ -6,19 +6,22 @@ struct TranslateTextWorkflow: Sendable {
     let policy: TextLengthPolicy
     let detectDirection: @Sendable (String) -> TranslationDirection
     let noTextMessage: String
+    let rejectedTextMessage: String
 
     init(
         inputSource: any TextInputSource,
         client: any TranslationClienting = LocalTranslationClient(),
         policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
         detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect,
-        noTextMessage: String = "No text was provided."
+        noTextMessage: String = "No text was provided.",
+        rejectedTextMessage: String = "Text exceeds the maximum length."
     ) {
         self.inputSource = inputSource
         self.client = client
         self.policy = policy
         self.detectDirection = detectDirection
         self.noTextMessage = noTextMessage
+        self.rejectedTextMessage = rejectedTextMessage
     }
 
     func run() async -> OverlayViewState {
@@ -30,7 +33,7 @@ struct TranslateTextWorkflow: Sendable {
             case .needsConfirmation:
                 return .confirmLongText(text)
             case .rejected:
-                return .error("Clipboard text exceeds the maximum length.")
+                return .error(rejectedTextMessage)
             }
         case .failure:
             return .error(noTextMessage)
@@ -80,7 +83,8 @@ struct TranslateClipboardWorkflow: Sendable {
             client: client,
             policy: policy,
             detectDirection: detectDirection,
-            noTextMessage: "Clipboard does not contain text."
+            noTextMessage: "Clipboard does not contain text.",
+            rejectedTextMessage: "Clipboard text exceeds the maximum length."
         )
     }
 

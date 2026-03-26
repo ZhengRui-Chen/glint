@@ -26,6 +26,19 @@ final class TranslateClipboardWorkflowTests: XCTestCase {
 
         XCTAssertEqual(state, .confirmLongText(text))
     }
+
+    func test_workflow_returns_clipboard_specific_error_when_text_exceeds_hard_limit() async {
+        let text = String(repeating: "a", count: 8001)
+        let workflow = TranslateClipboardWorkflow(
+            clipboard: StubClipboard(text: text),
+            client: StubClient(),
+            policy: .init(softLimit: 2000, hardLimit: 8000)
+        )
+
+        let state = await workflow.handleShortcut()
+
+        XCTAssertEqual(state, .error("Clipboard text exceeds the maximum length."))
+    }
 }
 
 private struct StubClipboard: ClipboardTextReading {
