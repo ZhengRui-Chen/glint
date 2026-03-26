@@ -4,6 +4,7 @@
 .venv-omlx/
 __pycache__/
 *.pyc
+dist/
 
 # Local model weights
 models/

@@ -190,6 +190,20 @@ Threshold behavior:
 - `2001...8000` characters: ask for confirmation in the floating panel
 - `> 8000` characters: reject the request with an error message
 
+### Build a local app bundle
+
+If you want a fixed app bundle outside Xcode `DerivedData`, run:
+
+```bash
+zsh scripts/build_mac_app.sh
+```
+
+This exports the app to:
+
+```text
+dist/HYMTQuickTranslate.app
+```
+
 ## Acknowledgements
 
 Thanks to:
