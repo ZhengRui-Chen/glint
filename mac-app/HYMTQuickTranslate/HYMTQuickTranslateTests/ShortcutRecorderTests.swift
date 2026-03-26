@@ -3,6 +3,23 @@ import XCTest
 @testable import HYMTQuickTranslate
 
 final class ShortcutRecorderTests: XCTestCase {
+    @MainActor
+    func test_app_delegate_does_not_register_selection_hotkey_before_task6() {
+        let appDelegate = AppDelegate()
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        XCTAssertNotNil(reflectedValue(named: "clipboardHotkeyMonitor", from: appDelegate))
+        XCTAssertNil(reflectedValue(named: "selectionHotkeyMonitor", from: appDelegate))
+    }
+
     func test_recorder_persists_updated_shortcut_settings() throws {
         let userDefaults = UserDefaults(suiteName: #function)!
         defer {
@@ -32,4 +49,10 @@ final class ShortcutRecorderTests: XCTestCase {
 
         XCTAssertEqual(result, .failure(.duplicateShortcut))
     }
+}
+
+private func reflectedValue(named label: String, from appDelegate: AppDelegate) -> Any? {
+    Mirror(reflecting: appDelegate).children
+        .first { $0.label == label }?
+        .value
 }

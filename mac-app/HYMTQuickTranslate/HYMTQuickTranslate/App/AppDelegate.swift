@@ -8,7 +8,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var shortcutSettings = ShortcutSettings.load()
     private lazy var shortcutRecorder = ShortcutRecorder(existingSettings: shortcutSettings)
     private var clipboardHotkeyMonitor: GlobalHotkeyMonitor?
-    private var selectionHotkeyMonitor: GlobalHotkeyMonitor?
     private var statusBarController: StatusBarController?
     private var recordingTarget: ShortcutTarget?
     private var shortcutStatusLabel: String?
@@ -25,7 +24,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         clipboardHotkeyMonitor?.stop()
-        selectionHotkeyMonitor?.stop()
         removeShortcutRecordingMonitors()
     }
 
@@ -97,19 +95,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ) { [weak self] in
             self?.translateClipboard()
         }
-        selectionHotkeyMonitor = GlobalHotkeyMonitor(
-            identifier: 2,
-            shortcut: shortcutSettings.selectionShortcut
-        ) { [weak self] in
-            self?.handleSelectionTranslation()
-        }
         clipboardHotkeyMonitor?.start()
-        selectionHotkeyMonitor?.start()
     }
 
     private func reloadHotkeyMonitors() {
         clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
-        selectionHotkeyMonitor?.reload(shortcut: shortcutSettings.selectionShortcut)
     }
 
     private func beginShortcutRecording(for target: ShortcutTarget) {
