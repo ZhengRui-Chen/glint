@@ -30,6 +30,10 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         rebuildMenu()
     }
 
+    func refreshMenu() {
+        rebuildMenu()
+    }
+
     private func rebuildMenu() {
         let viewModel = viewModelProvider()
 

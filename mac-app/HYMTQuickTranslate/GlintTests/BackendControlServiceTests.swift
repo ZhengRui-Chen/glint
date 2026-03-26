@@ -9,7 +9,10 @@ final class BackendControlServiceTests: XCTestCase {
         try await service.start()
         let commands = await runner.commands
 
-        XCTAssertEqual(commands, [["/bin/zsh", "scripts/start_omlx_tmux.sh"]])
+        XCTAssertEqual(
+            commands,
+            [["/bin/zsh", backendScriptsDirectoryURL().appending(path: "start_omlx_tmux.sh").path]]
+        )
     }
 
     func test_control_service_runs_stop_script() async throws {
@@ -19,7 +22,10 @@ final class BackendControlServiceTests: XCTestCase {
         try await service.stop()
         let commands = await runner.commands
 
-        XCTAssertEqual(commands, [["/bin/zsh", "scripts/stop_omlx.sh"]])
+        XCTAssertEqual(
+            commands,
+            [["/bin/zsh", backendScriptsDirectoryURL().appending(path: "stop_omlx.sh").path]]
+        )
     }
 
     func test_control_service_runs_restart_script() async throws {
@@ -29,7 +35,10 @@ final class BackendControlServiceTests: XCTestCase {
         try await service.restart()
         let commands = await runner.commands
 
-        XCTAssertEqual(commands, [["/bin/zsh", "scripts/restart_omlx.sh"]])
+        XCTAssertEqual(
+            commands,
+            [["/bin/zsh", backendScriptsDirectoryURL().appending(path: "restart_omlx.sh").path]]
+        )
     }
 }
 
@@ -44,4 +53,13 @@ private actor RecordingCommandRunner: ShellCommandRunning {
             standardError: ""
         )
     }
+}
+
+private func backendScriptsDirectoryURL() -> URL {
+    URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .deletingLastPathComponent()
+        .deletingLastPathComponent()
+        .deletingLastPathComponent()
+        .appending(path: "scripts", directoryHint: .isDirectory)
 }

@@ -210,7 +210,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func startBackendService() {
         backendActionContext = BackendActionContext(action: .start, requestedAt: Date())
-        backendStatus = .starting(detail: "Backend is starting, please wait")
+        updateBackendStatus(.starting(detail: "Backend is starting, please wait"))
         Task { @MainActor [weak self] in
             guard let self else {
                 return
@@ -220,15 +220,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 try await backendControlService.start()
                 refreshBackendStatus()
             } catch {
-                backendActionContext = nil
-                backendStatus = .error(detail: "Failed to start the service")
+                updateBackendStatus(
+                    .error(detail: "Failed to start the service"),
+                    clearActionContext: true
+                )
             }
         }
     }
 
     private func stopBackendService() {
         backendActionContext = nil
-        backendStatus = .unavailable(detail: "Backend is currently unavailable")
+        updateBackendStatus(.unavailable(detail: "Backend is currently unavailable"))
         Task { @MainActor [weak self] in
             guard let self else {
                 return
@@ -238,14 +240,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 try await backendControlService.stop()
                 refreshBackendStatus()
             } catch {
-                backendStatus = .error(detail: "Failed to stop the service")
+                updateBackendStatus(.error(detail: "Failed to stop the service"))
             }
         }
     }
 
     private func restartBackendService() {
         backendActionContext = BackendActionContext(action: .restart, requestedAt: Date())
-        backendStatus = .starting(detail: "Backend is starting, please wait")
+        updateBackendStatus(.starting(detail: "Backend is starting, please wait"))
         Task { @MainActor [weak self] in
             guard let self else {
                 return
@@ -255,26 +257,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 try await backendControlService.restart()
                 refreshBackendStatus()
             } catch {
-                backendActionContext = nil
-                backendStatus = .error(detail: "Failed to restart the service")
+                updateBackendStatus(
+                    .error(detail: "Failed to restart the service"),
+                    clearActionContext: true
+                )
             }
         }
     }
 
     private func refreshBackendStatus() {
-        backendStatus = .checking()
+        updateBackendStatus(.checking())
         Task { @MainActor [weak self] in
             guard let self else {
                 return
             }
 
             let snapshot = await backendStatusMonitor.refresh(actionContext: backendActionContext)
-            backendStatus = snapshot
-            if case .starting = snapshot {
-                return
-            }
+            updateBackendStatus(
+                snapshot,
+                clearActionContext: {
+                    if case .starting = snapshot {
+                        return false
+                    }
+                    return true
+                }()
+            )
+        }
+    }
+
+    private func updateBackendStatus(
+        _ snapshot: BackendStatusSnapshot,
+        clearActionContext: Bool = false
+    ) {
+        backendStatus = snapshot
+        if clearActionContext {
             backendActionContext = nil
         }
+        statusBarController?.refreshMenu()
     }
 
     private func configureHotkeyMonitors() {
