@@ -7,6 +7,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         GlobalHotkeyShortcut,
         @escaping () -> Void
     ) -> GlobalHotkeyMonitoring
+
     private static let defaultHotkeyMonitorFactory: HotkeyMonitorFactory = {
         identifier,
         shortcut,
@@ -27,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         rejectedTextMessage: "Selected text exceeds the maximum length."
     )
     private let overlayPlacementResolver = OverlayPlacementResolver()
+    private let launchCoordinator: any AppLaunchCoordinating
     private let shortcutRecorderUserDefaults: UserDefaults
     private let hotkeyMonitorFactory: HotkeyMonitorFactory
     private var shortcutSettings: ShortcutSettings
@@ -44,6 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     override init() {
         shortcutSettings = .load()
+        launchCoordinator = AppLaunchCoordinator()
         shortcutRecorderUserDefaults = .standard
         hotkeyMonitorFactory = Self.defaultHotkeyMonitorFactory
         super.init()
@@ -51,10 +54,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     init(
         shortcutSettings: ShortcutSettings = .load(),
+        launchCoordinator: any AppLaunchCoordinating = AppLaunchCoordinator(),
         shortcutRecorderUserDefaults: UserDefaults = .standard,
         hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory
     ) {
         self.shortcutSettings = shortcutSettings
+        self.launchCoordinator = launchCoordinator
         self.shortcutRecorderUserDefaults = shortcutRecorderUserDefaults
         self.hotkeyMonitorFactory = hotkeyMonitorFactory
         super.init()
@@ -65,12 +70,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusBarController = StatusBarController { [weak self] in
             self?.makeMenuBarViewModel() ?? MenuBarViewModel(permissionStatus: .required)
         }
-        configureHotkeyMonitors()
+        registerHotkeysIfNeeded(immediatelyAfterLaunch: true)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         clipboardHotkeyMonitor?.stop()
+        clipboardHotkeyMonitor = nil
         selectionHotkeyMonitor?.stop()
+        selectionHotkeyMonitor = nil
         removeShortcutRecordingMonitors()
     }
 
@@ -108,6 +115,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let state = await workflow.confirmTranslation(for: text)
             present(state, placement: placement)
         }
+    }
+
+    private func registerHotkeysIfNeeded(immediatelyAfterLaunch: Bool) {
+        guard launchCoordinator.shouldRegisterHotkey(
+            immediatelyAfterLaunch: immediatelyAfterLaunch
+        ) else {
+            DispatchQueue.main.async { [weak self] in
+                self?.registerHotkeysIfNeeded(immediatelyAfterLaunch: false)
+            }
+            return
+        }
+
+        configureHotkeyMonitors()
     }
 
     // 所有入口都收敛到同一个面板状态机，避免多窗口分叉。
@@ -150,19 +170,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureHotkeyMonitors() {
-        clipboardHotkeyMonitor = hotkeyMonitorFactory(
-            1,
-            shortcutSettings.clipboardShortcut
-        ) { [weak self] in
-            self?.translateClipboard()
+        if clipboardHotkeyMonitor == nil {
+            clipboardHotkeyMonitor = hotkeyMonitorFactory(
+                1,
+                shortcutSettings.clipboardShortcut
+            ) { [weak self] in
+                self?.translateClipboard()
+            }
         }
         _ = clipboardHotkeyMonitor?.start()
 
-        selectionHotkeyMonitor = hotkeyMonitorFactory(
-            2,
-            shortcutSettings.selectionShortcut
-        ) { [weak self] in
-            self?.handleSelectionTranslation()
+        if selectionHotkeyMonitor == nil {
+            selectionHotkeyMonitor = hotkeyMonitorFactory(
+                2,
+                shortcutSettings.selectionShortcut
+            ) { [weak self] in
+                self?.handleSelectionTranslation()
+            }
         }
         _ = selectionHotkeyMonitor?.start()
     }

@@ -10,6 +10,7 @@ final class ShortcutRecorderTests: XCTestCase {
         let selectionMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
+            launchCoordinator: ImmediateLaunchCoordinator(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: #function)!,
             hotkeyMonitorFactory: { identifier, shortcut, _ in
                 let monitor = if identifier == 1 {
@@ -98,6 +99,7 @@ final class ShortcutRecorderTests: XCTestCase {
         let selectionMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
+            launchCoordinator: ImmediateLaunchCoordinator(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: #function)!,
             hotkeyMonitorFactory: { identifier, shortcut, _ in
                 let monitor = if identifier == 1 {
@@ -155,6 +157,7 @@ final class ShortcutRecorderTests: XCTestCase {
         let selectionMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
+            launchCoordinator: ImmediateLaunchCoordinator(),
             shortcutRecorderUserDefaults: userDefaults,
             hotkeyMonitorFactory: { identifier, shortcut, _ in
                 let monitor = if identifier == 1 {
@@ -202,6 +205,12 @@ private func reflectedValue(named label: String, from appDelegate: AppDelegate) 
     Mirror(reflecting: appDelegate).children
         .first { $0.label == label }?
         .value
+}
+
+private struct ImmediateLaunchCoordinator: AppLaunchCoordinating {
+    func shouldRegisterHotkey(immediatelyAfterLaunch: Bool) -> Bool {
+        true
+    }
 }
 
 private final class TestHotkeyMonitor: GlobalHotkeyMonitoring {

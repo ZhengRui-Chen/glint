@@ -11,4 +11,11 @@ struct OverlayDismissalPolicy: Equatable {
     ) -> Bool {
         now - shownAt >= minimumFocusLossDelay
     }
+
+    func shouldCloseOnClickAway(
+        shownAt: TimeInterval,
+        now: TimeInterval
+    ) -> Bool {
+        shouldCloseOnFocusLoss(shownAt: shownAt, now: now)
+    }
 }

@@ -1,5 +1,9 @@
 import Foundation
 
+enum AppBranding {
+    static let displayName = "Glint"
+}
+
 struct AppConfig {
     let baseURL: URL
     let model: String
