@@ -6,4 +6,6 @@ protocol TextInputSource: Sendable {
 
 enum TextInputSourceError: Error, Equatable {
     case noText
+    case permissionRequired
+    case unsupportedHostApp
 }
