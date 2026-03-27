@@ -18,6 +18,10 @@ Glint is a macOS local translation app powered by `oMLX` and the current
   <img src="docs/assets/glint-screenshot.png" alt="Glint screenshot" />
 </p>
 
+<p align="center">
+  <img src="docs/assets/glint-demo.gif" alt="Glint demo" />
+</p>
+
 ## Product Overview
 
 Glint is a menu bar translation utility for macOS. It supports clipboard

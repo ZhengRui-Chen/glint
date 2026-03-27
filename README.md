@@ -16,6 +16,10 @@ Glint 是一个面向 macOS 的本地翻译应用，当前默认由 `oMLX` + `HY
   <img src="docs/assets/glint-screenshot.png" alt="Glint screenshot" />
 </p>
 
+<p align="center">
+  <img src="docs/assets/glint-demo.gif" alt="Glint demo" />
+</p>
+
 ## 项目简介
 
 Glint 是一个菜单栏常驻的 macOS 翻译工具，提供剪贴板翻译、选区翻译、
