@@ -1,37 +1,140 @@
-# HY-MT MLX PoC
+# Glint
 
-Minimal `uv`-managed local deployment for `HY-MT1.5-1.8B-4bit` on Apple Silicon.
+<p align="center">
+  <img src="docs/assets/glint-logo.png" alt="Glint logo" width="160" />
+</p>
 
-I mainly use this setup with Immersive Translate on my local Mac. The response speed feels very fast, and the overall experience is surprisingly good for a fully local translation workflow.
+Glint 是一个面向 macOS 的本地翻译应用，当前默认由 `oMLX` + `HY-MT`
+后端驱动。
 
-This project uses `oMLX` as the local serving layer. `oMLX` is a relatively new Apple Silicon focused inference framework that exposes MLX models through an OpenAI-compatible API, which makes it a good fit for serving HY-MT as a local translation service.
+[中文](README.md) | [English](README.en.md)
 
-oMLX repository:
+> 当前项目主要按个人使用场景维护，暂时没有提供可直接下载安装的 release 版本。
+> 如果你希望使用 Glint，请根据本文自行完成本地编译、模型准备与服务部署。
 
-- https://github.com/jundot/omlx
+<p align="center">
+  <img src="docs/assets/glint-screenshot.png" alt="Glint screenshot" />
+</p>
 
-## Model Download
+## 项目简介
 
-Recommended MLX model:
+Glint 是一个菜单栏常驻的 macOS 翻译工具，提供剪贴板翻译、选区翻译、
+快捷键配置以及本地后端状态管理。它面向的是需要自己控制模型、服务和
+运行环境的本地工作流，而不是开箱即用的发布版。
 
-- `mlx-community/HY-MT1.5-1.8B-4bit`
-- https://huggingface.co/mlx-community/HY-MT1.5-1.8B-4bit
+当前实现里：
 
-Original Tencent model:
+- `Glint` 负责 macOS 菜单栏交互和翻译入口
+- `oMLX` 负责本地服务层
+- `HY-MT1.5-1.8B-4bit` 是当前默认模型
 
-- `tencent/HY-MT1.5-1.8B`
-- https://huggingface.co/tencent/HY-MT1.5-1.8B
-
-Upstream project:
-
-- Tencent Hunyuan HY-MT
-- https://github.com/Tencent-Hunyuan/HY-MT
-
-Create the local model directory:
+## Quick Start
 
 ```bash
+uv sync
+cp configs/omlx.env.example configs/omlx.env
 mkdir -p models/HY-MT1.5-1.8B-4bit
+zsh scripts/start_omlx_tmux.sh
+zsh scripts/status_omlx.sh
+open mac-app/HYMTQuickTranslate/Glint.xcodeproj
 ```
+
+如果你想先验证命令行链路，可以运行：
+
+```bash
+uv run python scripts/repl_translate.py
+```
+
+如果你想直接构建 macOS app，可以运行：
+
+```bash
+zsh scripts/build_mac_app.sh
+```
+
+## macOS App
+
+### 运行 Glint
+
+1. 打开 `mac-app/HYMTQuickTranslate/Glint.xcodeproj`。
+2. 确认本地 `oMLX` 服务已启动，并监听 `http://127.0.0.1:8001`。
+3. 运行 `Glint` scheme。
+4. 使用菜单栏图标触发翻译或配置快捷键。
+
+### 菜单栏能力
+
+- 菜单顶部会显示后端状态，便于判断翻译服务是否可用。
+- `Start Service`、`Stop Service`、`Restart Service`、`Refresh Status`
+  用于管理本地后端。
+- `Translate Clipboard` 从剪贴板读取文本并打开翻译浮层。
+- `Translate Selection` 读取当前选区并尽量在光标附近展示结果。
+- 当后端不可用或正在启动时，翻译入口会自动禁用。
+- `Selection Shortcut` 和 `Clipboard Shortcut` 可分别录制两个全局快捷键。
+
+### 默认快捷键
+
+- Clipboard: `Control + Option + Command + T`
+- Selection: `Control + Option + Command + S`
+
+### 选区与剪贴板
+
+- 剪贴板翻译始终读取剪贴板内容，并以居中方式展示浮层。
+- 选区翻译通过 macOS Accessibility API 读取当前文本选区。
+- 选区路径会优先尝试在光标附近展示，失败后安全回退到居中展示。
+- 选区路径不会回退到剪贴板内容；没有可用选区时会直接报错。
+
+### 快捷键配置
+
+- 剪贴板和选区快捷键分别配置。
+- 录制期间若发生重复分配，会被拒绝。
+- 更新后的快捷键会被持久化，并在下次启动时恢复。
+
+## Local Backend
+
+Glint 依赖本地 `oMLX` 服务提供翻译能力。服务配置位于 `configs/omlx.env`，
+可直接从示例文件复制：
+
+```bash
+cp configs/omlx.env.example configs/omlx.env
+```
+
+启动服务：
+
+```bash
+zsh scripts/start_omlx.sh
+```
+
+停止服务：
+
+```bash
+zsh scripts/stop_omlx.sh
+```
+
+检查状态：
+
+```bash
+zsh scripts/status_omlx.sh
+```
+
+如果你使用 macOS LaunchAgent：
+
+```bash
+zsh scripts/install_omlx_launch_agent.sh
+zsh scripts/start_omlx_launch_agent.sh
+zsh scripts/status_omlx_launch_agent.sh
+```
+
+对应的停止、重启和卸载脚本也都在 `scripts/` 下。
+
+## Model And Prompt
+
+推荐使用的本地模型目录：
+
+- `models/HY-MT1.5-1.8B-4bit`
+
+下载来源：
+
+- `mlx-community/HY-MT1.5-1.8B-4bit`
+- `tencent/HY-MT1.5-1.8B`
 
 At minimum, place these files into `models/HY-MT1.5-1.8B-4bit/`:
 
@@ -41,14 +144,32 @@ At minimum, place these files into `models/HY-MT1.5-1.8B-4bit/`:
 - `tokenizer_config.json`
 - `special_tokens_map.json`
 
-## Layout
+当前项目遵循官方 HY-MT 的翻译提示词格式：
+
+```text
+将以下文本翻译为{target_language}，注意只需要输出翻译后的结果，不要额外解释：
+
+{source_text}
+```
+
+推荐的推理参数：
+
+- `top_k: 20`
+- `top_p: 0.6`
+- `repetition_penalty: 1.05`
+- `temperature: 0.7`
+
+## Project Layout
 
 - CLI environment: `.venv`
 - oMLX environment: `.venv-omlx`
-- Project model path: `models/HY-MT1.5-1.8B-4bit`
-- Local service overrides: `configs/omlx.env` (copy from `configs/omlx.env.example`)
+- Model path: `models/HY-MT1.5-1.8B-4bit`
+- Local service overrides: `configs/omlx.env`
+- Glint app: `mac-app/HYMTQuickTranslate/Glint.xcodeproj`
 
-## CLI Smoke Test
+## Smoke Tests
+
+CLI smoke test:
 
 ```bash
 uv run python scripts/smoke_cli.py \
@@ -64,279 +185,21 @@ Expected output:
 很高兴能见到您。
 ```
 
-## Smoke Suite
+Full smoke suite:
 
 ```bash
 uv run python scripts/smoke_suite.py
 ```
 
-## Quick Start
-
-```bash
-uv sync
-cp configs/omlx.env.example configs/omlx.env
-zsh scripts/start_omlx_tmux.sh
-zsh scripts/status_omlx.sh
-uv run python scripts/repl_translate.py
-```
-
-## oMLX Serve
-
-```bash
-./scripts/start_omlx.sh
-```
-
-Service settings live in `configs/omlx.env`.
-Initialize local config from the example:
-
-```bash
-cp configs/omlx.env.example configs/omlx.env
-```
-
-Stop the service:
-
-```bash
-./scripts/stop_omlx.sh
-```
-
-Check status:
-
-```bash
-./scripts/status_omlx.sh
-```
-
-## LaunchAgent
-
-Install the macOS LaunchAgent:
-
-```bash
-zsh scripts/install_omlx_launch_agent.sh
-```
-
-Start it on demand:
-
-```bash
-zsh scripts/start_omlx_launch_agent.sh
-```
-
-Stop it:
-
-```bash
-zsh scripts/stop_omlx_launch_agent.sh
-```
-
-Restart it:
-
-```bash
-zsh scripts/restart_omlx_launch_agent.sh
-```
-
-Check status:
-
-```bash
-zsh scripts/status_omlx_launch_agent.sh
-```
-
-Uninstall it:
-
-```bash
-zsh scripts/uninstall_omlx_launch_agent.sh
-```
-
-## OpenAI-Compatible API Smoke Test
+OpenAI-compatible API smoke test:
 
 ```bash
 python3 scripts/api_smoke.py
 ```
 
-## Interactive Translation REPL
+## Upstream
 
-```bash
-uv run python scripts/repl_translate.py
-```
+- oMLX repository: https://github.com/jundot/omlx
+- Tencent Hunyuan HY-MT: https://github.com/Tencent-Hunyuan/HY-MT
+- MLX community model: https://huggingface.co/mlx-community/HY-MT1.5-1.8B-4bit
 
-Example:
-
-```text
-direction[en2zh/zh2en] (default: en2zh)>
-src> It is a pleasure to meet you.
-out> 很高兴能见到您。
-```
-
-## curl Example
-
-```bash
-curl http://127.0.0.1:8001/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer local-hy-key" \
-  -d '{
-    "model": "HY-MT1.5-1.8B-4bit",
-    "messages": [
-      {
-        "role": "user",
-        "content": "将以下文本翻译为中文，注意只需要输出翻译后的结果，不要额外解释：\n\nIt is a pleasure to meet you."
-      }
-    ],
-    "max_tokens": 64,
-    "temperature": 0.2
-  }'
-```
-
-## Prompt Notes
-
-This project follows the official Tencent HY-MT prompt pattern for `ZH <=> XX` translation:
-
-```text
-将以下文本翻译为{target_language}，注意只需要输出翻译后的结果，不要额外解释：
-
-{source_text}
-```
-
-The original HY-MT README also recommends these inference settings:
-
-- `top_k: 20`
-- `top_p: 0.6`
-- `repetition_penalty: 1.05`
-- `temperature: 0.7`
-
-## Glint macOS App
-
-Glint, the macOS companion app for this project, now lives under
-`mac-app/HYMTQuickTranslate/`.
-It provides a menu bar utility with separate clipboard and selection
-translation paths backed by the local `oMLX` service.
-
-### Run Glint
-
-1. Open `mac-app/HYMTQuickTranslate/Glint.xcodeproj` in Xcode.
-2. Make sure the local `oMLX` service is running and reachable at
-   `http://127.0.0.1:8001`.
-3. Run the `Glint` scheme on your Mac.
-4. Use the menu bar item to trigger translation or configure shortcuts.
-
-### Menu bar usage
-
-After launch, the app runs as a menu bar utility.
-
-- The top of the menu shows `Service Status` so you can tell whether the
-  translation backend is currently usable.
-- `Start Service`, `Stop Service`, `Restart Service`, and `Refresh Status`
-  let you manage the local backend without leaving the menu bar.
-- `Translate Clipboard` reads plain text from the clipboard and shows the
-  floating translation overlay.
-- `Translate Selection` reads the current accessibility-exposed selection and
-  shows the overlay near the cursor when possible.
-- Translation actions are disabled whenever the backend is unavailable or
-  still starting.
-- `Selection Shortcut` and `Clipboard Shortcut` let you record separate global
-  hotkeys from the menu bar.
-- `Cancel Shortcut Recording` exits shortcut capture mode if you start
-  recording by mistake.
-
-Backend availability refreshes when the menu opens and also in the background
-every 15 seconds so the menu stays current without surfacing internal runtime
-details.
-
-Default shortcuts:
-
-- Clipboard: `Control + Option + Command + T`
-- Selection: `Control + Option + Command + S`
-
-### Clipboard vs selection triggers
-
-- Clipboard translation always reads from the pasteboard and opens the overlay
-  in the centered placement.
-- Selection translation reads the current text selection through macOS
-  accessibility APIs.
-- Selection-triggered overlays try to appear near the cursor and safely fall
-  back to centered placement if no usable anchor is available.
-- The selection path does not fall back to clipboard contents. If no supported
-  selection is available, the app reports an error instead.
-
-### Shortcut configuration
-
-- Clipboard and selection shortcuts are configured independently.
-- Duplicate assignments are rejected during recording.
-- Updated shortcuts are persisted and restored on the next launch.
-- If a new shortcut cannot be registered with macOS, the previous active
-  shortcut remains in place.
-
-### Accessibility requirement
-
-Selection translation requires Accessibility permission for the app.
-
-- Without permission, the selection path reports an explicit permission error.
-- The clipboard path does not require Accessibility permission.
-
-To grant permission, open:
-
-- `System Settings > Privacy & Security > Accessibility`
-
-### Supported selection scenarios
-
-Supported:
-
-- Text selected in apps that expose `AXSelectedText` through macOS
-  Accessibility APIs
-- Cursor-near overlay placement when the current mouse location can be used as
-  the anchor
-
-Unsupported or limited:
-
-- Apps that do not expose selected text through Accessibility APIs
-- Empty selections or controls that only expose focus without selected text
-- Exact selection-bounds anchoring; the current implementation anchors near the
-  cursor rather than the selected text rect
-
-### Quick verification checklist
-
-Use this checklist when validating the app manually:
-
-- menu bar is visible after launch
-- clipboard and selection actions are both accessible
-- two shortcuts can be configured and persisted
-- selection path reports permission errors clearly
-- selection path does not silently fall back to clipboard
-- cursor-near placement falls back safely
-
-You can start the local service with:
-
-```bash
-cp configs/omlx.env.example configs/omlx.env
-zsh scripts/start_omlx_tmux.sh
-zsh scripts/status_omlx.sh
-```
-
-Threshold behavior:
-
-- `<= 2000` characters: translate immediately
-- `2001...8000` characters: ask for confirmation in the floating panel
-- `> 8000` characters: reject the request with an error message
-
-Overlay polish notes:
-
-- The floating panel now uses content-aware sizing for result, error, and confirmation states.
-- On macOS 26 and newer, the panel adopts Liquid Glass styling for the background and primary actions.
-- On older macOS versions, it falls back to the existing material-based appearance so readability stays stable.
-
-### Build a local app bundle
-
-If you want a fixed app bundle outside Xcode `DerivedData`, run:
-
-```bash
-zsh scripts/build_mac_app.sh
-```
-
-This exports the Glint app bundle to:
-
-```text
-dist/Glint.app
-```
-
-## Acknowledgements
-
-Thanks to:
-
-- Tencent Hunyuan team for releasing `HY-MT1.5-1.8B` and the official prompt guidance
-- `mlx-community` for the `HY-MT1.5-1.8B-4bit` MLX conversion
-- `oMLX` for the local OpenAI-compatible serving layer
