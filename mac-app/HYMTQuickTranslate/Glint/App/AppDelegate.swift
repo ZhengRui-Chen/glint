@@ -95,6 +95,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         existingSettings: shortcutSettings,
         userDefaults: shortcutRecorderUserDefaults
     )
+    private lazy var shortcutPanelController = ShortcutPanelController(
+        shortcutSettings: shortcutSettings
+    ) { [weak self] action in
+        self?.handleShortcutPanelAction(action)
+    }
     private var clipboardHotkeyMonitor: GlobalHotkeyMonitoring?
     private var selectionHotkeyMonitor: GlobalHotkeyMonitoring?
     private var statusBarController: StatusBarController?
@@ -238,9 +243,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         MenuBarViewModel(
             permissionStatus: accessibilityPermission.isGranted ? .granted : .required,
             backendStatus: backendStatus,
-            shortcutSettings: shortcutSettings,
-            recordingTarget: recordingTarget,
-            shortcutStatusLabel: shortcutStatusLabel,
             onTranslateSelection: { [weak self] in
                 self?.handleSelectionTranslation()
             },
@@ -259,11 +261,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onRefreshStatus: { [weak self] in
                 self?.refreshBackendStatus()
             },
-            onStartRecording: { [weak self] target in
-                self?.beginShortcutRecording(for: target)
-            },
-            onCancelShortcutRecording: { [weak self] in
-                self?.cancelShortcutRecording()
+            onOpenShortcutPanel: { [weak self] in
+                self?.openShortcutPanel()
             },
             onQuit: {
                 NSApp.terminate(nil)
@@ -463,6 +462,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutStatusLabel = "\(targetLabel) shortcut could not be registered. Choose another combination from the menu bar."
     }
 
+    private func openShortcutPanel() {
+        shortcutPanelController.update(shortcutSettings: shortcutSettings)
+        shortcutPanelController.show()
+    }
+
+    private func handleShortcutPanelAction(_ action: ShortcutPanelAction) {
+        switch action {
+        case .startRecording:
+            break
+        case let .saveRecordedShortcut(target, shortcut):
+            applyRecordedShortcut(shortcut, for: target)
+            shortcutPanelController.update(shortcutSettings: shortcutSettings)
+        case .resetToDefaults:
+            resetShortcutSettingsToDefaults()
+            shortcutPanelController.update(shortcutSettings: shortcutSettings)
+        case .done:
+            break
+        }
+    }
+
+    private func resetShortcutSettingsToDefaults() {
+        shortcutSettings = .default
+        shortcutRecorder = ShortcutRecorder(
+            existingSettings: shortcutSettings,
+            userDefaults: shortcutRecorderUserDefaults
+        )
+        shortcutSettings.save(to: shortcutRecorderUserDefaults)
+        _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
+        _ = selectionHotkeyMonitor?.reload(shortcut: shortcutSettings.selectionShortcut)
+    }
+
     private func persist(
         _ shortcut: GlobalHotkeyShortcut,
         for target: ShortcutTarget
@@ -549,9 +579,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        switch shortcutRecorder.validate(shortcut, for: recordingTarget) {
+        applyRecordedShortcut(shortcut, for: recordingTarget)
+    }
+
+    private func applyRecordedShortcut(
+        _ shortcut: GlobalHotkeyShortcut,
+        for target: ShortcutTarget
+    ) {
+        switch shortcutRecorder.validate(shortcut, for: target) {
         case .success:
-            switch recordingTarget {
+            switch target {
             case .clipboard:
                 guard clipboardHotkeyMonitor?.reload(shortcut: shortcut) ?? false else {
                     shortcutStatusLabel = "Shortcut could not be registered. Try another combination."

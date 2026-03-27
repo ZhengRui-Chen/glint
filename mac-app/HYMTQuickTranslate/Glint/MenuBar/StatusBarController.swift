@@ -115,41 +115,13 @@ final class StatusBarController: NSObject, NSMenuDelegate {
 
         menu.addItem(.separator())
 
-        let selectionShortcutItem = NSMenuItem(
-            title: viewModel.selectionShortcutLabel,
-            action: #selector(handleRecordSelectionShortcut),
+        let keyboardShortcutsItem = NSMenuItem(
+            title: viewModel.keyboardShortcutsLabel,
+            action: #selector(handleOpenKeyboardShortcuts),
             keyEquivalent: ""
         )
-        selectionShortcutItem.target = self
-        menu.addItem(selectionShortcutItem)
-
-        let clipboardShortcutItem = NSMenuItem(
-            title: viewModel.clipboardShortcutLabel,
-            action: #selector(handleRecordClipboardShortcut),
-            keyEquivalent: ""
-        )
-        clipboardShortcutItem.target = self
-        menu.addItem(clipboardShortcutItem)
-
-        if let shortcutStatusLabel = viewModel.shortcutStatusLabel {
-            let shortcutStatusItem = NSMenuItem(
-                title: shortcutStatusLabel,
-                action: nil,
-                keyEquivalent: ""
-            )
-            shortcutStatusItem.isEnabled = false
-            menu.addItem(shortcutStatusItem)
-        }
-
-        if viewModel.recordingTarget != nil {
-            let cancelShortcutRecordingItem = NSMenuItem(
-                title: viewModel.cancelShortcutRecordingLabel,
-                action: #selector(handleCancelShortcutRecording),
-                keyEquivalent: ""
-            )
-            cancelShortcutRecordingItem.target = self
-            menu.addItem(cancelShortcutRecordingItem)
-        }
+        keyboardShortcutsItem.target = self
+        menu.addItem(keyboardShortcutsItem)
 
         let permissionItem = NSMenuItem(
             title: viewModel.permissionLabel,
@@ -218,18 +190,8 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     }
 
     @objc
-    private func handleRecordSelectionShortcut() {
-        viewModelProvider().startRecordingSelectionShortcut()
-    }
-
-    @objc
-    private func handleRecordClipboardShortcut() {
-        viewModelProvider().startRecordingClipboardShortcut()
-    }
-
-    @objc
-    private func handleCancelShortcutRecording() {
-        viewModelProvider().cancelShortcutRecording()
+    private func handleOpenKeyboardShortcuts() {
+        viewModelProvider().openKeyboardShortcuts()
     }
 
     @objc

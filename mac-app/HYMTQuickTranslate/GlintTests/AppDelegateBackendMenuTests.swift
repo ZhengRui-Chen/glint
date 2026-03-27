@@ -179,7 +179,7 @@ final class AppDelegateBackendMenuTests: XCTestCase {
     }
 
     @MainActor
-    func test_backend_refresh_preserves_existing_shortcut_and_translation_items() async throws {
+    func test_backend_refresh_exposes_keyboard_shortcuts_entry_and_hides_inline_recording_items() async throws {
         let apiChecker = SequencedBackendAPIHealthChecker(results: [.reachable, .reachable])
         let processChecker = SequencedBackendProcessChecker(results: [true, true])
         let monitor = BackendStatusMonitor(
@@ -214,21 +214,12 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         try scheduler.fire()
         _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
 
-        let selectionItem = await waitForMenuItem(titled: "Translate Selection", in: menu)
-        let clipboardItem = await waitForMenuItem(titled: "Translate Clipboard", in: menu)
-        let selectionShortcutItem = await waitForMenuItem(
-            titled: "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)",
-            in: menu
-        )
-        let clipboardShortcutItem = await waitForMenuItem(
-            titled: "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)",
-            in: menu
-        )
+        let keyboardShortcutsItem = await waitForMenuItem(titled: "Keyboard Shortcuts…", in: menu)
 
-        XCTAssertTrue(selectionItem.isEnabled)
-        XCTAssertTrue(clipboardItem.isEnabled)
-        XCTAssertTrue(selectionShortcutItem.isEnabled)
-        XCTAssertTrue(clipboardShortcutItem.isEnabled)
+        XCTAssertTrue(keyboardShortcutsItem.isEnabled)
+        XCTAssertNil(menu.items.first { $0.title == "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)" })
+        XCTAssertNil(menu.items.first { $0.title == "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)" })
+        XCTAssertNil(menu.items.first { $0.title == "Cancel Shortcut Recording" })
     }
 
     @MainActor
