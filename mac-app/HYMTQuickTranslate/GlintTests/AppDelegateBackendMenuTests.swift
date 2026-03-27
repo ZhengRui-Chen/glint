@@ -215,10 +215,17 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
 
         let keyboardShortcutsItem = await waitForMenuItem(titled: "Keyboard Shortcuts…", in: menu)
+        let selectionItem = await waitForMenuItem(titled: "Translate Selection", in: menu)
+        let clipboardItem = await waitForMenuItem(titled: "Translate Clipboard", in: menu)
+        let ocrItem = await waitForMenuItem(titled: "Translate OCR Area", in: menu)
 
+        XCTAssertTrue(selectionItem.isEnabled)
+        XCTAssertTrue(clipboardItem.isEnabled)
+        XCTAssertTrue(ocrItem.isEnabled)
         XCTAssertTrue(keyboardShortcutsItem.isEnabled)
         XCTAssertNil(menu.items.first { $0.title == "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)" })
         XCTAssertNil(menu.items.first { $0.title == "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)" })
+        XCTAssertNil(menu.items.first { $0.title == "OCR Shortcut: \(GlobalHotkeyShortcut.ocrDefault.displayName)" })
         XCTAssertNil(menu.items.first { $0.title == "Cancel Shortcut Recording" })
     }
 

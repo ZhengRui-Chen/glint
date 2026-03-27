@@ -6,14 +6,14 @@ import XCTest
 final class ShortcutPanelControllerTests: XCTestCase {
     func test_panel_frame_anchors_to_status_item_region() {
         let frame = ShortcutPanelPlacement.frame(
-            panelSize: CGSize(width: 440, height: 256),
+            panelSize: CGSize(width: 440, height: 304),
             anchorRect: CGRect(x: 1460, y: 880, width: 24, height: 24),
             screenFrame: CGRect(x: 0, y: 0, width: 1512, height: 982),
             visibleFrame: CGRect(x: 0, y: 32, width: 1512, height: 918)
         )
 
         XCTAssertEqual(frame.origin.x, 1048, accuracy: 0.5)
-        XCTAssertEqual(frame.origin.y, 692, accuracy: 0.5)
+        XCTAssertEqual(frame.origin.y, 644, accuracy: 0.5)
     }
 
     func test_controller_emits_actions_in_order() {
@@ -55,6 +55,10 @@ final class ShortcutPanelControllerTests: XCTestCase {
             state.clipboardShortcutLabel,
             GlobalHotkeyShortcut.default.displayName
         )
+        XCTAssertEqual(
+            state.ocrShortcutLabel,
+            GlobalHotkeyShortcut.ocrDefault.displayName
+        )
         XCTAssertNil(state.recordingTarget)
 
         state.startRecording(for: .clipboard)
@@ -87,6 +91,10 @@ final class ShortcutPanelControllerTests: XCTestCase {
         XCTAssertEqual(
             state.clipboardShortcutLabel,
             GlobalHotkeyShortcut.default.displayName
+        )
+        XCTAssertEqual(
+            state.ocrShortcutLabel,
+            GlobalHotkeyShortcut.ocrDefault.displayName
         )
         XCTAssertEqual(state.statusMessage, "Defaults restored")
     }

@@ -5,6 +5,7 @@ struct ShortcutPanelView: View {
 
     let onStartSelectionRecording: () -> Void
     let onStartClipboardRecording: () -> Void
+    let onStartOCRRecording: () -> Void
     let onResetToDefaults: () -> Void
     let onDone: () -> Void
 
@@ -26,6 +27,12 @@ struct ShortcutPanelView: View {
                     shortcut: state.clipboardShortcutLabel,
                     isRecording: state.isRecordingClipboardShortcut,
                     action: onStartClipboardRecording
+                )
+                shortcutRow(
+                    title: "Translate OCR Area",
+                    shortcut: state.ocrShortcutLabel,
+                    isRecording: state.isRecordingOCRShortcut,
+                    action: onStartOCRRecording
                 )
             }
 
@@ -58,7 +65,7 @@ struct ShortcutPanelView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Keyboard Shortcuts")
                 .font(.system(size: 23, weight: .semibold, design: .rounded))
-            Text("Set shortcuts for selection and clipboard translation.")
+            Text("Set shortcuts for selection, clipboard, and OCR translation.")
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(visualStyle.secondaryTextColor)
         }

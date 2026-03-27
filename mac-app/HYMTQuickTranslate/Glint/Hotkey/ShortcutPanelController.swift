@@ -6,7 +6,7 @@ import SwiftUI
 @MainActor
 final class ShortcutPanelController: NSObject, NSWindowDelegate {
     private static let panelWidth: CGFloat = 440
-    private static let panelHeight: CGFloat = 256
+    private static let panelHeight: CGFloat = 304
     private static let presentationOffset: CGFloat = 12
 
     let onAction: ((ShortcutPanelAction) -> Bool)?
@@ -38,6 +38,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
                 state: state,
                 onStartSelectionRecording: {},
                 onStartClipboardRecording: {},
+                onStartOCRRecording: {},
                 onResetToDefaults: {},
                 onDone: {}
             )
@@ -190,6 +191,9 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
             onStartClipboardRecording: { [weak self] in
                 self?.requestStartRecording(for: .clipboard)
             },
+            onStartOCRRecording: { [weak self] in
+                self?.requestStartRecording(for: .ocr)
+            },
             onResetToDefaults: { [weak self] in
                 self?.requestResetToDefaults()
             },
@@ -276,6 +280,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
 struct ShortcutPanelTestingSnapshot: Equatable {
     let selectionShortcutLabel: String
     let clipboardShortcutLabel: String
+    let ocrShortcutLabel: String
     let recordingTarget: ShortcutTarget?
     let statusMessage: String?
 }
@@ -284,6 +289,7 @@ struct ShortcutPanelTestingSnapshot: Equatable {
 final class ShortcutPanelViewState: ObservableObject {
     @Published private(set) var selectionShortcutLabel: String
     @Published private(set) var clipboardShortcutLabel: String
+    @Published private(set) var ocrShortcutLabel: String
     @Published private(set) var recordingTarget: ShortcutTarget?
     @Published private(set) var statusMessage: String?
 
@@ -295,6 +301,7 @@ final class ShortcutPanelViewState: ObservableObject {
         self.viewModel = ShortcutPanelViewModel(shortcutSettings: shortcutSettings)
         self.selectionShortcutLabel = viewModel.selectionShortcutLabel
         self.clipboardShortcutLabel = viewModel.clipboardShortcutLabel
+        self.ocrShortcutLabel = viewModel.ocrShortcutLabel
         self.recordingTarget = nil
         self.statusMessage = nil
     }
@@ -305,6 +312,10 @@ final class ShortcutPanelViewState: ObservableObject {
 
     var isRecordingClipboardShortcut: Bool {
         recordingTarget == .clipboard
+    }
+
+    var isRecordingOCRShortcut: Bool {
+        recordingTarget == .ocr
     }
 
     func update(shortcutSettings: ShortcutSettings) {
@@ -386,6 +397,7 @@ final class ShortcutPanelViewState: ObservableObject {
         ShortcutPanelTestingSnapshot(
             selectionShortcutLabel: selectionShortcutLabel,
             clipboardShortcutLabel: clipboardShortcutLabel,
+            ocrShortcutLabel: ocrShortcutLabel,
             recordingTarget: recordingTarget,
             statusMessage: statusMessage
         )
@@ -394,6 +406,7 @@ final class ShortcutPanelViewState: ObservableObject {
     private func syncLabelsFromViewModel() {
         selectionShortcutLabel = viewModel.selectionShortcutLabel
         clipboardShortcutLabel = viewModel.clipboardShortcutLabel
+        ocrShortcutLabel = viewModel.ocrShortcutLabel
     }
 }
 

@@ -9,6 +9,7 @@ enum TextInputSourceError: Error, Equatable {
     case permissionRequired
     case automationPermissionRequired
     case unsupportedHostApp
+    case ocrUnavailable
 }
 
 struct TextInputFailure: Error, Equatable {

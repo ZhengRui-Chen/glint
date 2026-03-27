@@ -11,6 +11,7 @@ struct MenuBarViewModel {
 
     private let onTranslateSelection: () -> Void
     private let onTranslateClipboard: () -> Void
+    private let onTranslateOCR: () -> Void
     private let onStartService: () -> Void
     private let onStopService: () -> Void
     private let onRestartService: () -> Void
@@ -25,6 +26,7 @@ struct MenuBarViewModel {
         ),
         onTranslateSelection: @escaping () -> Void = {},
         onTranslateClipboard: @escaping () -> Void = {},
+        onTranslateOCR: @escaping () -> Void = {},
         onStartService: @escaping () -> Void = {},
         onStopService: @escaping () -> Void = {},
         onRestartService: @escaping () -> Void = {},
@@ -36,6 +38,7 @@ struct MenuBarViewModel {
         self.backendStatus = backendStatus
         self.onTranslateSelection = onTranslateSelection
         self.onTranslateClipboard = onTranslateClipboard
+        self.onTranslateOCR = onTranslateOCR
         self.onStartService = onStartService
         self.onStopService = onStopService
         self.onRestartService = onRestartService
@@ -58,6 +61,10 @@ struct MenuBarViewModel {
 
     var translateClipboardLabel: String {
         "Translate Clipboard"
+    }
+
+    var translateOCRLabel: String {
+        "Translate OCR Area"
     }
 
     var startServiceLabel: String {
@@ -85,6 +92,10 @@ struct MenuBarViewModel {
     }
 
     var canTranslateClipboard: Bool {
+        backendStatus.canTranslate
+    }
+
+    var canTranslateOCR: Bool {
         backendStatus.canTranslate
     }
 
@@ -124,6 +135,10 @@ struct MenuBarViewModel {
 
     func translateClipboard() {
         onTranslateClipboard()
+    }
+
+    func translateOCR() {
+        onTranslateOCR()
     }
 
     func startService() {

@@ -125,6 +125,15 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         clipboardItem.isEnabled = viewModel.canTranslateClipboard
         menu.addItem(clipboardItem)
 
+        let ocrItem = NSMenuItem(
+            title: viewModel.translateOCRLabel,
+            action: #selector(handleTranslateOCR),
+            keyEquivalent: ""
+        )
+        ocrItem.target = self
+        ocrItem.isEnabled = viewModel.canTranslateOCR
+        menu.addItem(ocrItem)
+
         menu.addItem(.separator())
 
         let keyboardShortcutsItem = NSMenuItem(
@@ -179,6 +188,11 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     @objc
     private func handleTranslateClipboard() {
         viewModelProvider().translateClipboard()
+    }
+
+    @objc
+    private func handleTranslateOCR() {
+        viewModelProvider().translateOCR()
     }
 
     @objc

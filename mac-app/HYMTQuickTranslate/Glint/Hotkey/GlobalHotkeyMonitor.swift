@@ -20,6 +20,11 @@ struct GlobalHotkeyShortcut {
         modifiers: UInt32(controlKey | optionKey | cmdKey)
     )
 
+    static let ocrDefault = GlobalHotkeyShortcut(
+        keyCode: UInt32(kVK_ANSI_O),
+        modifiers: UInt32(controlKey | optionKey | cmdKey)
+    )
+
     var displayName: String {
         Self.displayString(modifiers: modifiers, keyCode: keyCode)
     }

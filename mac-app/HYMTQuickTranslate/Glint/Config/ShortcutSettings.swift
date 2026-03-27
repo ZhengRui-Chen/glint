@@ -8,18 +8,31 @@ enum ShortcutSettingsError: Error, Equatable {
 enum ShortcutTarget: Equatable {
     case clipboard
     case selection
+    case ocr
 }
 
 struct ShortcutSettings: Equatable, Codable {
     let clipboardShortcut: GlobalHotkeyShortcut
     let selectionShortcut: GlobalHotkeyShortcut
+    let ocrShortcut: GlobalHotkeyShortcut
 
     static let `default` = ShortcutSettings(
         clipboardShortcut: .default,
-        selectionShortcut: .selectionDefault
+        selectionShortcut: .selectionDefault,
+        ocrShortcut: .ocrDefault
     )
 
     private static let userDefaultsKey = "shortcutSettings"
+
+    init(
+        clipboardShortcut: GlobalHotkeyShortcut,
+        selectionShortcut: GlobalHotkeyShortcut,
+        ocrShortcut: GlobalHotkeyShortcut = .ocrDefault
+    ) {
+        self.clipboardShortcut = clipboardShortcut
+        self.selectionShortcut = selectionShortcut
+        self.ocrShortcut = ocrShortcut
+    }
 
     static func load(from userDefaults: UserDefaults = .standard) -> ShortcutSettings {
         guard let data = userDefaults.data(forKey: userDefaultsKey),
@@ -42,6 +55,8 @@ struct ShortcutSettings: Equatable, Codable {
             clipboardShortcut
         case .selection:
             selectionShortcut
+        case .ocr:
+            ocrShortcut
         }
     }
 
@@ -54,16 +69,26 @@ struct ShortcutSettings: Equatable, Codable {
         case .clipboard:
             candidate = ShortcutSettings(
                 clipboardShortcut: shortcut,
-                selectionShortcut: selectionShortcut
+                selectionShortcut: selectionShortcut,
+                ocrShortcut: ocrShortcut
             )
         case .selection:
             candidate = ShortcutSettings(
                 clipboardShortcut: clipboardShortcut,
-                selectionShortcut: shortcut
+                selectionShortcut: shortcut,
+                ocrShortcut: ocrShortcut
+            )
+        case .ocr:
+            candidate = ShortcutSettings(
+                clipboardShortcut: clipboardShortcut,
+                selectionShortcut: selectionShortcut,
+                ocrShortcut: shortcut
             )
         }
 
-        guard candidate.clipboardShortcut != candidate.selectionShortcut else {
+        guard candidate.clipboardShortcut != candidate.selectionShortcut,
+              candidate.clipboardShortcut != candidate.ocrShortcut,
+              candidate.selectionShortcut != candidate.ocrShortcut else {
             return .failure(.duplicateShortcut)
         }
         return .success(candidate)

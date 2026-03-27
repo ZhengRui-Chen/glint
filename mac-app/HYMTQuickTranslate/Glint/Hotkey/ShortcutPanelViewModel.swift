@@ -20,6 +20,10 @@ final class ShortcutPanelViewModel {
         shortcutLabel(for: .clipboard)
     }
 
+    var ocrShortcutLabel: String {
+        shortcutLabel(for: .ocr)
+    }
+
     var isRecordingSelectionShortcut: Bool {
         recordingTarget == .selection
     }
@@ -85,6 +89,8 @@ final class ShortcutPanelViewModel {
             shortcutSettings.clipboardShortcut
         case .selection:
             shortcutSettings.selectionShortcut
+        case .ocr:
+            shortcutSettings.ocrShortcut
         }
 
         return shortcut.displayName

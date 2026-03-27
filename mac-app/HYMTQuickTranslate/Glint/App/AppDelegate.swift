@@ -75,6 +75,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let accessibilityPermission = AccessibilityPermission()
     private let overlayController = OverlayPanelController()
     private let workflow = TranslateClipboardWorkflow()
+    private let ocrWorkflow = TranslateOCRWorkflow()
     private let selectionWorkflow = TranslateTextWorkflow(
         inputSource: SelectionInputSource(),
         noTextMessage: "No selected text was found.",
@@ -84,6 +85,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         rejectedTextMessage: "Selected text exceeds the maximum length."
     )
     private let overlayPlacementResolver = OverlayPlacementResolver()
+    private let screenRegionSelectionController = ScreenRegionSelectionController()
     private let launchCoordinator: any AppLaunchCoordinating
     private let shortcutRecorderUserDefaults: UserDefaults
     private let hotkeyMonitorFactory: HotkeyMonitorFactory
@@ -102,6 +104,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     private var clipboardHotkeyMonitor: GlobalHotkeyMonitoring?
     private var selectionHotkeyMonitor: GlobalHotkeyMonitoring?
+    private var ocrHotkeyMonitor: GlobalHotkeyMonitoring?
     private var statusBarController: StatusBarController?
     private var recordingTarget: ShortcutTarget?
     private var shortcutStatusLabel: String?
@@ -165,6 +168,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         clipboardHotkeyMonitor = nil
         selectionHotkeyMonitor?.stop()
         selectionHotkeyMonitor = nil
+        ocrHotkeyMonitor?.stop()
+        ocrHotkeyMonitor = nil
         removeShortcutRecordingMonitors()
         backendRefreshTimer?.invalidate()
         backendRefreshTimer = nil
@@ -196,6 +201,49 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 present(state, placement: placement)
             case let .final(state):
                 present(state, placement: placement)
+            }
+        }
+    }
+
+    private func handleOCRTranslation() {
+        screenRegionSelectionController.present { [weak self] result in
+            guard let self else {
+                return
+            }
+
+            switch result {
+            case .cancelled:
+                return
+            case let .captureFailed(message):
+                self.present(.error(message), placement: .centered)
+            case let .selected(image, rect):
+                let placement = overlayPlacementResolver.resolve(
+                    cursorAnchor: CGPoint(x: rect.midX, y: rect.minY)
+                )
+                Task {
+                    switch await ocrWorkflow.prepare(image: image) {
+                    case let .translate(recognition):
+                        overlayController.show(state: .loading, placement: placement)
+                        let state = await ocrWorkflow.confirmTranslation(for: recognition)
+                        present(state, placement: placement)
+                    case let .confirm(recognition):
+                        overlayController.show(
+                            state: .confirmLongText(recognition.text),
+                            placement: placement
+                        ) { [weak self] _ in
+                            guard let self else {
+                                return
+                            }
+                            Task {
+                                self.overlayController.show(state: .loading, placement: placement)
+                                let state = await self.ocrWorkflow.confirmTranslation(for: recognition)
+                                self.present(state, placement: placement)
+                            }
+                        }
+                    case let .final(state):
+                        present(state, placement: placement)
+                    }
+                }
             }
         }
     }
@@ -248,6 +296,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             },
             onTranslateClipboard: { [weak self] in
                 self?.translateClipboard()
+            },
+            onTranslateOCR: { [weak self] in
+                self?.handleOCRTranslation()
             },
             onStartService: { [weak self] in
                 self?.startBackendService()
@@ -429,6 +480,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             configuredShortcut: shortcutSettings.selectionShortcut,
             defaultShortcut: .selectionDefault
         )
+
+        if ocrHotkeyMonitor == nil {
+            ocrHotkeyMonitor = hotkeyMonitorFactory(
+                3,
+                shortcutSettings.ocrShortcut
+            ) { [weak self] in
+                self?.handleOCRTranslation()
+            }
+        }
+        startHotkeyMonitor(
+            ocrHotkeyMonitor,
+            target: .ocr,
+            configuredShortcut: shortcutSettings.ocrShortcut,
+            defaultShortcut: .ocrDefault
+        )
     }
 
     private func startHotkeyMonitor(
@@ -450,6 +516,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             "Clipboard"
         case .selection:
             "Selection"
+        case .ocr:
+            "OCR"
         }
 
         if configuredShortcut != defaultShortcut,
@@ -486,6 +554,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     func selectionHotkeyMonitorForTesting() -> GlobalHotkeyMonitoring? {
         selectionHotkeyMonitor
+    }
+
+    @MainActor
+    func ocrHotkeyMonitorForTesting() -> GlobalHotkeyMonitoring? {
+        ocrHotkeyMonitor
     }
 
     private func handleShortcutPanelAction(_ action: ShortcutPanelAction) -> Bool {
@@ -540,6 +613,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return false
         }
 
+        guard reloadHotkeyMonitor(for: .ocr, shortcut: defaultSettings.ocrShortcut) else {
+            guard recoverHotkeyMonitors(afterFailedResetToDefaultsWith: previousSettings) else {
+                return false
+            }
+            return false
+        }
+
         restoreShortcutSettings(defaultSettings)
         return true
     }
@@ -553,6 +633,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return clipboardHotkeyMonitor?.reload(shortcut: shortcut) ?? false
         case .selection:
             return selectionHotkeyMonitor?.reload(shortcut: shortcut) ?? false
+        case .ocr:
+            return ocrHotkeyMonitor?.reload(shortcut: shortcut) ?? false
         }
     }
 
@@ -576,6 +658,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             for: .selection,
             shortcut: previousSettings.selectionShortcut
         )
+        _ = reloadHotkeyMonitor(
+            for: .ocr,
+            shortcut: previousSettings.ocrShortcut
+        )
 
         if restoreLiveShortcutSettingsIfPossible(expectedSettings: previousSettings) {
             return true
@@ -589,6 +675,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             for: .selection,
             shortcut: previousSettings.selectionShortcut
         )
+        rebuildHotkeyMonitor(
+            for: .ocr,
+            shortcut: previousSettings.ocrShortcut
+        )
         return restoreLiveShortcutSettingsIfPossible(expectedSettings: previousSettings)
     }
 
@@ -597,6 +687,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ) -> Bool {
         guard ensureHotkeyMonitorRunning(for: .clipboard),
               ensureHotkeyMonitorRunning(for: .selection),
+              ensureHotkeyMonitorRunning(for: .ocr),
               let effectiveSettings = liveShortcutSettingsSnapshot(),
               effectiveSettings == expectedSettings else {
             return false
@@ -629,13 +720,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func liveShortcutSettingsSnapshot() -> ShortcutSettings? {
         guard let clipboardHotkeyMonitor,
               let selectionHotkeyMonitor,
+              let ocrHotkeyMonitor,
               clipboardHotkeyMonitor.isRunning,
-              selectionHotkeyMonitor.isRunning else {
+              selectionHotkeyMonitor.isRunning,
+              ocrHotkeyMonitor.isRunning else {
             return nil
         }
         return ShortcutSettings(
             clipboardShortcut: clipboardHotkeyMonitor.configuredShortcut,
-            selectionShortcut: selectionHotkeyMonitor.configuredShortcut
+            selectionShortcut: selectionHotkeyMonitor.configuredShortcut,
+            ocrShortcut: ocrHotkeyMonitor.configuredShortcut
         )
     }
 
@@ -645,6 +739,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             clipboardHotkeyMonitor
         case .selection:
             selectionHotkeyMonitor
+        case .ocr:
+            ocrHotkeyMonitor
         }
     }
 
@@ -657,6 +753,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             clipboardHotkeyMonitor = monitor
         case .selection:
             selectionHotkeyMonitor = monitor
+        case .ocr:
+            ocrHotkeyMonitor = monitor
         }
     }
 
@@ -672,6 +770,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .selection:
             hotkeyMonitorFactory(2, shortcut) { [weak self] in
                 self?.handleSelectionTranslation()
+            }
+        case .ocr:
+            hotkeyMonitorFactory(3, shortcut) { [weak self] in
+                self?.handleOCRTranslation()
             }
         }
     }
@@ -693,6 +795,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutStatusLabel = recordingStatusLabel(for: target)
         clipboardHotkeyMonitor?.stop()
         selectionHotkeyMonitor?.stop()
+        ocrHotkeyMonitor?.stop()
         installShortcutRecordingMonitors()
         NSApp.activate(ignoringOtherApps: true)
     }
@@ -709,6 +812,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if wasRecording, restartHotkeyMonitors {
             _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
             _ = selectionHotkeyMonitor?.reload(shortcut: shortcutSettings.selectionShortcut)
+            _ = ocrHotkeyMonitor?.reload(shortcut: shortcutSettings.ocrShortcut)
         }
     }
 
@@ -798,6 +902,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 shortcutSettings = savedSettings
                 _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
                 finishShortcutRecording(restartHotkeyMonitors: false)
+            case .ocr:
+                guard ocrHotkeyMonitor?.reload(shortcut: shortcut) ?? false else {
+                    shortcutStatusLabel = "Shortcut could not be registered. Try another combination."
+                    return
+                }
+                guard case let .success(savedSettings) = shortcutRecorder.save(shortcut, for: .ocr) else {
+                    shortcutStatusLabel = "Shortcut already in use. Try another combination."
+                    _ = ocrHotkeyMonitor?.reload(shortcut: shortcutSettings.ocrShortcut)
+                    return
+                }
+                shortcutSettings = savedSettings
+                _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
+                _ = selectionHotkeyMonitor?.reload(shortcut: shortcutSettings.selectionShortcut)
+                finishShortcutRecording(restartHotkeyMonitors: false)
             }
         case .failure(.duplicateShortcut):
             shortcutStatusLabel = "Shortcut already in use. Try another combination."
@@ -810,6 +928,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             "Clipboard"
         case .selection:
             "Selection"
+        case .ocr:
+            "OCR"
         }
         return "Recording \(title) Shortcut. Press the new key combination."
     }

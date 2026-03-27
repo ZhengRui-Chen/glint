@@ -15,6 +15,10 @@ final class ShortcutPanelViewModelTests: XCTestCase {
             viewModel.clipboardShortcutLabel,
             GlobalHotkeyShortcut.default.displayName
         )
+        XCTAssertEqual(
+            viewModel.ocrShortcutLabel,
+            GlobalHotkeyShortcut.ocrDefault.displayName
+        )
         XCTAssertNil(viewModel.recordingTarget)
         XCTAssertFalse(viewModel.isRecordingSelectionShortcut)
         XCTAssertFalse(viewModel.isRecordingClipboardShortcut)
@@ -92,6 +96,10 @@ final class ShortcutPanelViewModelTests: XCTestCase {
             viewModel.selectionShortcutLabel,
             customSettings.selectionShortcut.displayName
         )
+        XCTAssertEqual(
+            viewModel.ocrShortcutLabel,
+            customSettings.ocrShortcut.displayName
+        )
     }
 
     func test_reset_restores_both_defaults_with_feedback_message() {
@@ -118,6 +126,10 @@ final class ShortcutPanelViewModelTests: XCTestCase {
         XCTAssertEqual(
             viewModel.clipboardShortcutLabel,
             GlobalHotkeyShortcut.default.displayName
+        )
+        XCTAssertEqual(
+            viewModel.ocrShortcutLabel,
+            GlobalHotkeyShortcut.ocrDefault.displayName
         )
         XCTAssertEqual(viewModel.statusMessage, "Defaults restored")
     }

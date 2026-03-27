@@ -14,6 +14,7 @@ struct TranslateTextWorkflow: Sendable {
     let permissionRequiredMessage: String
     let automationPermissionRequiredMessage: String
     let unsupportedHostAppMessage: String
+    let ocrUnavailableMessage: String
     let rejectedTextMessage: String
 
     init(
@@ -25,6 +26,7 @@ struct TranslateTextWorkflow: Sendable {
         permissionRequiredMessage: String? = nil,
         automationPermissionRequiredMessage: String? = nil,
         unsupportedHostAppMessage: String? = nil,
+        ocrUnavailableMessage: String? = nil,
         rejectedTextMessage: String = "Text exceeds the maximum length."
     ) {
         self.inputSource = inputSource
@@ -35,6 +37,7 @@ struct TranslateTextWorkflow: Sendable {
         self.permissionRequiredMessage = permissionRequiredMessage ?? noTextMessage
         self.automationPermissionRequiredMessage = automationPermissionRequiredMessage ?? noTextMessage
         self.unsupportedHostAppMessage = unsupportedHostAppMessage ?? noTextMessage
+        self.ocrUnavailableMessage = ocrUnavailableMessage ?? noTextMessage
         self.rejectedTextMessage = rejectedTextMessage
     }
 
@@ -102,6 +105,8 @@ struct TranslateTextWorkflow: Sendable {
             baseMessage = automationPermissionRequiredMessage
         case .unsupportedHostApp:
             baseMessage = unsupportedHostAppMessage
+        case .ocrUnavailable:
+            baseMessage = ocrUnavailableMessage
         }
 
         guard let diagnostics = failure.diagnostics,

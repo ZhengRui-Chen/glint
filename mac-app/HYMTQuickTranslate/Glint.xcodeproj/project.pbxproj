@@ -12,6 +12,7 @@
 		0C8B402801446D49E97E7BF8 /* ClipboardInputSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CF48D1B6CED4DB23532C15 /* ClipboardInputSource.swift */; };
 		1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */; };
 		244E3E51D4F288ED4B93B187 /* OverlayDismissalPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */; };
+		24A1B2C3D4E5F60718293A51 /* OCRImageInputSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24A1B2C3D4E5F60718293A50 /* OCRImageInputSource.swift */; };
 		2F4A6C8E0B1D3F5A7C9E1A2B /* AccessibilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C7E9F1B2D4F6A8C0E2B3C /* AccessibilityPermission.swift */; };
 		2C6AC15A3DC20E3690AA0ADF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */; };
 		34C1DDB0BD903BB23B8FFB7E /* GlobalHotkeyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */; };
@@ -28,8 +29,14 @@
 		430F9AB6B3CB4F7E0F0E6771 /* OverlayDismissalPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */; };
 		4B5B55D28F0713F55D1FE1FA /* LocalTranslationClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */; };
 		4C741E38AAE445DB0417666D /* TranslationPromptBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */; };
+		4D7E8F90123456789ABCDE01 /* OCRWorkflowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7E8F90123456789ABCDE00 /* OCRWorkflowTests.swift */; };
+		4D7E8F90123456789ABCDE03 /* ScreenRegionSelectionModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7E8F90123456789ABCDE02 /* ScreenRegionSelectionModelTests.swift */; };
 		4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A767EF72CE237474EB211A9D /* AppConfig.swift */; };
 		4F2B8D1C3A4E5F60718293A4 /* BackendStatusSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */; };
+		4F3A2B1C0D9E8F7766554433 /* VisionOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3A2B1C0D9E8F7766554432 /* VisionOCRService.swift */; };
+		4F3A2B1C0D9E8F7766554435 /* ScreenRegionSelectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3A2B1C0D9E8F7766554434 /* ScreenRegionSelectionController.swift */; };
+		4F3A2B1C0D9E8F7766554437 /* ScreenRegionSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3A2B1C0D9E8F7766554436 /* ScreenRegionSelectionView.swift */; };
+		4F3A2B1C0D9E8F7766554439 /* ScreenRegionSelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3A2B1C0D9E8F7766554438 /* ScreenRegionSelectionModel.swift */; };
 		51A02F7B49C84BE8A3D8A1F1 /* AppDelegateBackendMenuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A02F7B49C84BE8A3D8A1F0 /* AppDelegateBackendMenuTests.swift */; };
 		59C1D2E3F40516273849A5B1 /* BackendControlServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C1D2E3F40516273849A5B0 /* BackendControlServiceTests.swift */; };
 		59C1D2E3F40516273849A5B3 /* BackendControlService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C1D2E3F40516273849A5B2 /* BackendControlService.swift */; };
@@ -89,6 +96,7 @@
 		053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = App/AppDelegate.swift; sourceTree = "<group>"; };
 		0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GlobalHotkeyMonitorTests.swift; sourceTree = "<group>"; };
 		1687ED94B1D0A6E8467917C5 /* TranslateClipboardWorkflow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TranslateClipboardWorkflow.swift; path = Workflow/TranslateClipboardWorkflow.swift; sourceTree = "<group>"; };
+		24A1B2C3D4E5F60718293A50 /* OCRImageInputSource.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OCRImageInputSource.swift; path = OCR/OCRImageInputSource.swift; sourceTree = "<group>"; };
 		18B6C96CEA5F60B882E660DF /* TextInputSourceWorkflowTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextInputSourceWorkflowTests.swift; sourceTree = "<group>"; };
 		20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GlobalHotkeyMonitor.swift; path = Hotkey/GlobalHotkeyMonitor.swift; sourceTree = "<group>"; };
 		256D57BF55CAA7F38948E365 /* OverlayContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayContentView.swift; path = UI/OverlayContentView.swift; sourceTree = "<group>"; };
@@ -125,6 +133,12 @@
 		98A4C1E45F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlayPlacementResolverTests.swift; sourceTree = "<group>"; };
 		98A4C1E65F2B4A7700D6B122 /* OverlayPlacementResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayPlacementResolver.swift; path = UI/OverlayPlacementResolver.swift; sourceTree = "<group>"; };
 		4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendStatusSnapshot.swift; path = Backend/BackendStatusSnapshot.swift; sourceTree = "<group>"; };
+		4D7E8F90123456789ABCDE00 /* OCRWorkflowTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OCRWorkflowTests.swift; sourceTree = "<group>"; };
+		4D7E8F90123456789ABCDE02 /* ScreenRegionSelectionModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScreenRegionSelectionModelTests.swift; sourceTree = "<group>"; };
+		4F3A2B1C0D9E8F7766554432 /* VisionOCRService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VisionOCRService.swift; path = OCR/VisionOCRService.swift; sourceTree = "<group>"; };
+		4F3A2B1C0D9E8F7766554434 /* ScreenRegionSelectionController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ScreenRegionSelectionController.swift; path = OCR/ScreenRegionSelectionController.swift; sourceTree = "<group>"; };
+		4F3A2B1C0D9E8F7766554436 /* ScreenRegionSelectionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ScreenRegionSelectionView.swift; path = OCR/ScreenRegionSelectionView.swift; sourceTree = "<group>"; };
+		4F3A2B1C0D9E8F7766554438 /* ScreenRegionSelectionModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ScreenRegionSelectionModel.swift; path = OCR/ScreenRegionSelectionModel.swift; sourceTree = "<group>"; };
 		51A02F7B49C84BE8A3D8A1F0 /* AppDelegateBackendMenuTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegateBackendMenuTests.swift; sourceTree = "<group>"; };
 		A6AE9BBED22A1C8FD6485335 /* OverlayPanelController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayPanelController.swift; path = UI/OverlayPanelController.swift; sourceTree = "<group>"; };
 		A767EF72CE237474EB211A9D /* AppConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = Config/AppConfig.swift; sourceTree = "<group>"; };
@@ -227,6 +241,11 @@
 				9F06EDB02CB1EEFD2CACEFD2 /* TranslationPromptBuilder.swift */,
 				EB7AEFEB50D84538DA24CABB /* LocalTranslationClient.swift */,
 				1687ED94B1D0A6E8467917C5 /* TranslateClipboardWorkflow.swift */,
+				4F3A2B1C0D9E8F7766554432 /* VisionOCRService.swift */,
+				24A1B2C3D4E5F60718293A50 /* OCRImageInputSource.swift */,
+				4F3A2B1C0D9E8F7766554438 /* ScreenRegionSelectionModel.swift */,
+				4F3A2B1C0D9E8F7766554436 /* ScreenRegionSelectionView.swift */,
+				4F3A2B1C0D9E8F7766554434 /* ScreenRegionSelectionController.swift */,
 				67F92AF84BF95A00B1EAA003 /* MenuBarViewModel.swift */,
 				779AD1A28C553316316D509A /* OverlayViewModel.swift */,
 				256D57BF55CAA7F38948E365 /* OverlayContentView.swift */,
@@ -267,6 +286,8 @@
 				67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */,
 				3F1FCDA1BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift */,
 				3F1FCDA5BAB6D739F058A51C /* ShortcutPanelControllerTests.swift */,
+				4D7E8F90123456789ABCDE00 /* OCRWorkflowTests.swift */,
+				4D7E8F90123456789ABCDE02 /* ScreenRegionSelectionModelTests.swift */,
 				D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */,
 				052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */,
 				7DC8F7BBA7C829ED18EC9776 /* TranslateClipboardWorkflowTests.swift */,
@@ -392,6 +413,11 @@
 				8D8EF327B0B7F14C8B9BF561 /* TranslationPromptBuilder.swift in Sources */,
 				02DE59A8465021E8EBFAD86C /* LocalTranslationClient.swift in Sources */,
 				ECF93753A573674D125D96AC /* TranslateClipboardWorkflow.swift in Sources */,
+				4F3A2B1C0D9E8F7766554433 /* VisionOCRService.swift in Sources */,
+				24A1B2C3D4E5F60718293A51 /* OCRImageInputSource.swift in Sources */,
+				4F3A2B1C0D9E8F7766554439 /* ScreenRegionSelectionModel.swift in Sources */,
+				4F3A2B1C0D9E8F7766554437 /* ScreenRegionSelectionView.swift in Sources */,
+				4F3A2B1C0D9E8F7766554435 /* ScreenRegionSelectionController.swift in Sources */,
 				67F92AF94BF95A00B1EAA003 /* MenuBarViewModel.swift in Sources */,
 				EF43FD1949B75F070072B0D4 /* OverlayViewModel.swift in Sources */,
 				8562635D6940198B616B1F7F /* OverlayContentView.swift in Sources */,
@@ -431,6 +457,8 @@
 				67F92B014BF95A00B1EAA003 /* ShortcutRecorderTests.swift in Sources */,
 				3F1FCDB2BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift in Sources */,
 				3F1FCDB6BAB6D739F058A51C /* ShortcutPanelControllerTests.swift in Sources */,
+				4D7E8F90123456789ABCDE01 /* OCRWorkflowTests.swift in Sources */,
+				4D7E8F90123456789ABCDE03 /* ScreenRegionSelectionModelTests.swift in Sources */,
 				4C741E38AAE445DB0417666D /* TranslationPromptBuilderTests.swift in Sources */,
 				4B5B55D28F0713F55D1FE1FA /* LocalTranslationClientTests.swift in Sources */,
 				F5D5D61EB3A36A308C0A306A /* TranslateClipboardWorkflowTests.swift in Sources */,
