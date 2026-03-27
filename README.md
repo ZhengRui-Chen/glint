@@ -62,6 +62,14 @@ Glint 依赖一个 OpenAI-compatible API，当前会使用：
 zsh scripts/build_mac_app.sh
 ```
 
+如果你要生成一个普通可分发的 DMG：
+
+```bash
+zsh scripts/build_dmg.sh
+```
+
+产物会写到 `dist/Glint.dmg`。
+
 ### API Settings
 
 `API Settings…` 面板提供三项配置：

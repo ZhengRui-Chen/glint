@@ -63,6 +63,14 @@ You can also build the app directly:
 zsh scripts/build_mac_app.sh
 ```
 
+If you want a plain distributable DMG:
+
+```bash
+zsh scripts/build_dmg.sh
+```
+
+The output will be written to `dist/Glint.dmg`.
+
 ### API Settings
 
 The `API Settings…` panel exposes:
