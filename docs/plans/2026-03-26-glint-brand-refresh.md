@@ -13,9 +13,9 @@
 ### Task 1: Add a regression test for Glint menu bar branding
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/MenuBarViewModelTests.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/MenuBar/StatusBarController.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/Config/AppConfig.swift`
+- Modify: `mac-app/GlintTests/MenuBarViewModelTests.swift`
+- Modify: `mac-app/Glint/MenuBar/StatusBarController.swift`
+- Modify: `mac-app/Glint/Config/AppConfig.swift`
 
 **Step 1: Write the failing test**
 
@@ -28,7 +28,7 @@ Add a test asserting that the status item:
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests`
 
 Expected: FAIL because the controller still uses a text title and the old tooltip.
 
@@ -38,16 +38,16 @@ Update `StatusBarController` to load a menu bar icon asset, clear the button tit
 
 **Step 4: Run test to verify it passes**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests`
 
 Expected: PASS
 
 ### Task 2: Generate and install Glint icon assets
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/Glint/Assets.xcassets/AppIcon.appiconset/*`
-- Create: `mac-app/HYMTQuickTranslate/Glint/Assets.xcassets/MenuBarIcon.imageset/Contents.json`
-- Create: `mac-app/HYMTQuickTranslate/Glint/Assets.xcassets/MenuBarIcon.imageset/MenuBarIcon.png`
+- Modify: `mac-app/Glint/Assets.xcassets/AppIcon.appiconset/*`
+- Create: `mac-app/Glint/Assets.xcassets/MenuBarIcon.imageset/Contents.json`
+- Create: `mac-app/Glint/Assets.xcassets/MenuBarIcon.imageset/MenuBarIcon.png`
 
 **Step 1: Generate the source logo**
 
@@ -72,25 +72,25 @@ Ensure `Contents.json` includes the new menu bar image set and the app icon slot
 
 **Step 4: Verify resource presence**
 
-Run: `find mac-app/HYMTQuickTranslate/Glint/Assets.xcassets -maxdepth 2 -type f | sort`
+Run: `find mac-app/Glint/Assets.xcassets -maxdepth 2 -type f | sort`
 
 Expected: the refreshed app icon files and new `MenuBarIcon.imageset` files are present.
 
 ### Task 3: Rename the Xcode-facing project to Glint
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/Glint.xcodeproj/project.pbxproj`
-- Modify: `mac-app/HYMTQuickTranslate/Glint.xcodeproj/xcshareddata/xcschemes/Glint.xcscheme`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/*.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/App/GlintApp.swift`
+- Modify: `mac-app/Glint.xcodeproj/project.pbxproj`
+- Modify: `mac-app/Glint.xcodeproj/xcshareddata/xcschemes/Glint.xcscheme`
+- Modify: `mac-app/GlintTests/*.swift`
+- Modify: `mac-app/Glint/App/GlintApp.swift`
 
 **Step 1: Write the failing change surface**
 
-Rename the test module imports and app entry type references from the legacy `HYMTQuickTranslate` names to `Glint`.
+Rename the test module imports and app entry type references from the legacy app module names to `Glint`.
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 
 Expected: FAIL until the Xcode target, product, and scheme metadata are renamed consistently.
 
@@ -100,7 +100,7 @@ Update the project metadata so the project, app target, test target, product nam
 
 **Step 4: Run test to verify it passes**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 
 Expected: PASS
 
@@ -118,13 +118,13 @@ Expected: PASS
 
 **Step 2: Run macOS unit tests**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 
 Expected: PASS
 
 **Step 3: Run app build**
 
-Run: `xcodebuild build -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
+Run: `xcodebuild build -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 
 Expected: PASS
 

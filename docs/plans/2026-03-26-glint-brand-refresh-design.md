@@ -48,7 +48,7 @@ Internal Xcode naming should be aligned as well:
 - test target name: `GlintTests`
 - built product names: `Glint.app` and `GlintTests.xctest`
 
-This keeps Xcode, DerivedData outputs, and test imports aligned with the current brand instead of mixing `HYMTQuickTranslate` and `Glint`.
+This keeps Xcode, DerivedData outputs, and test imports aligned with the current brand instead of mixing legacy module names and `Glint`.
 
 ## Asset Strategy
 

@@ -13,14 +13,14 @@
 ### Task 1: Add a persisted shortcut settings model
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Config/ShortcutSettings.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/ShortcutSettingsTests.swift`
+- Create: `mac-app/Glint/Config/ShortcutSettings.swift`
+- Create: `mac-app/GlintTests/ShortcutSettingsTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class ShortcutSettingsTests: XCTestCase {
     func test_settings_use_distinct_default_shortcuts() {
@@ -32,7 +32,7 @@ final class ShortcutSettingsTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/ShortcutSettingsTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutSettingsTests`
 Expected: FAIL because the settings type does not exist.
 
 **Step 3: Write minimal implementation**
@@ -57,29 +57,29 @@ Implement:
 
 **Step 4: Run test to verify it passes**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/ShortcutSettingsTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutSettingsTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "feat: add shortcut settings model"
 ```
 
 ### Task 2: Generalize workflow input around text sources
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Input/TextInputSource.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Input/ClipboardInputSource.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Workflow/TranslateClipboardWorkflow.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/TextInputSourceWorkflowTests.swift`
+- Create: `mac-app/Glint/Input/TextInputSource.swift`
+- Create: `mac-app/Glint/Input/ClipboardInputSource.swift`
+- Modify: `mac-app/Glint/Workflow/TranslateClipboardWorkflow.swift`
+- Create: `mac-app/GlintTests/TextInputSourceWorkflowTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class TextInputSourceWorkflowTests: XCTestCase {
     func test_workflow_returns_error_when_input_source_has_no_text() async {
@@ -96,7 +96,7 @@ final class TextInputSourceWorkflowTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/TextInputSourceWorkflowTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/TextInputSourceWorkflowTests`
 Expected: FAIL because the generalized workflow and input-source types do not exist.
 
 **Step 3: Write minimal implementation**
@@ -119,28 +119,28 @@ Implement:
 
 **Step 4: Run test to verify it passes**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/TextInputSourceWorkflowTests -only-testing:HYMTQuickTranslateTests/TranslateClipboardWorkflowTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/TextInputSourceWorkflowTests -only-testing:GlintTests/TranslateClipboardWorkflowTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "refactor: generalize translation workflow inputs"
 ```
 
 ### Task 3: Add selected-text input source with accessibility-aware errors
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Input/SelectionInputSource.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Input/AccessibilityPermission.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/SelectionInputSourceTests.swift`
+- Create: `mac-app/Glint/Input/SelectionInputSource.swift`
+- Create: `mac-app/Glint/Input/AccessibilityPermission.swift`
+- Create: `mac-app/GlintTests/SelectionInputSourceTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class SelectionInputSourceTests: XCTestCase {
     func test_selection_input_reports_missing_permission() async {
@@ -156,7 +156,7 @@ final class SelectionInputSourceTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/SelectionInputSourceTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/SelectionInputSourceTests`
 Expected: FAIL because selection input types do not exist.
 
 **Step 3: Write minimal implementation**
@@ -178,29 +178,29 @@ Implement:
 
 **Step 4: Run test to verify it passes**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/SelectionInputSourceTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/SelectionInputSourceTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "feat: add accessibility-based selection input"
 ```
 
 ### Task 4: Add menu bar app state and actions
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/MenuBar/StatusBarController.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/MenuBar/MenuBarViewModel.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/App/AppDelegate.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/MenuBarViewModelTests.swift`
+- Create: `mac-app/Glint/MenuBar/StatusBarController.swift`
+- Create: `mac-app/Glint/MenuBar/MenuBarViewModel.swift`
+- Modify: `mac-app/Glint/App/AppDelegate.swift`
+- Create: `mac-app/GlintTests/MenuBarViewModelTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class MenuBarViewModelTests: XCTestCase {
     func test_menu_bar_exposes_permission_status() {
@@ -212,7 +212,7 @@ final class MenuBarViewModelTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/MenuBarViewModelTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests`
 Expected: FAIL because the menu bar view model does not exist.
 
 **Step 3: Write minimal implementation**
@@ -232,29 +232,29 @@ Implement:
 
 **Step 4: Run test to verify it passes**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/MenuBarViewModelTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "feat: add menu bar control surface"
 ```
 
 ### Task 5: Add shortcut recording and persistence for both paths
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Hotkey/ShortcutRecorder.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Hotkey/GlobalHotkeyMonitor.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/MenuBar/MenuBarViewModel.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/ShortcutRecorderTests.swift`
+- Create: `mac-app/Glint/Hotkey/ShortcutRecorder.swift`
+- Modify: `mac-app/Glint/Hotkey/GlobalHotkeyMonitor.swift`
+- Modify: `mac-app/Glint/MenuBar/MenuBarViewModel.swift`
+- Create: `mac-app/GlintTests/ShortcutRecorderTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class ShortcutRecorderTests: XCTestCase {
     func test_recorder_rejects_duplicate_shortcuts() {
@@ -268,7 +268,7 @@ final class ShortcutRecorderTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/ShortcutRecorderTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutRecorderTests`
 Expected: FAIL because the recorder does not exist.
 
 **Step 3: Write minimal implementation**
@@ -288,29 +288,29 @@ Implement:
 
 **Step 4: Run test to verify it passes**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/ShortcutRecorderTests -only-testing:HYMTQuickTranslateTests/ShortcutSettingsTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutRecorderTests -only-testing:GlintTests/ShortcutSettingsTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "feat: add configurable dual shortcuts"
 ```
 
 ### Task 6: Add selection-trigger path and cursor-near overlay placement
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlayPlacementResolver.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlayPanelController.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/App/AppDelegate.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/OverlayPlacementResolverTests.swift`
+- Create: `mac-app/Glint/UI/OverlayPlacementResolver.swift`
+- Modify: `mac-app/Glint/UI/OverlayPanelController.swift`
+- Modify: `mac-app/Glint/App/AppDelegate.swift`
+- Create: `mac-app/GlintTests/OverlayPlacementResolverTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class OverlayPlacementResolverTests: XCTestCase {
     func test_resolver_falls_back_to_center_when_cursor_anchor_is_unavailable() {
@@ -323,7 +323,7 @@ final class OverlayPlacementResolverTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/OverlayPlacementResolverTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/OverlayPlacementResolverTests`
 Expected: FAIL because the placement resolver does not exist.
 
 **Step 3: Write minimal implementation**
@@ -343,13 +343,13 @@ Implement:
 
 **Step 4: Run test to verify it passes**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/OverlayPlacementResolverTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/OverlayPlacementResolverTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "feat: add selection-triggered overlay placement"
 ```
 
@@ -371,7 +371,7 @@ Checklist:
 
 **Step 2: Run current full verification**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS'`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 Expected: PASS only after all earlier tasks are complete.
 
 **Step 3: Write minimal documentation**
@@ -386,10 +386,10 @@ Add README sections for:
 
 **Step 4: Run final verification**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS'`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 Expected: PASS
 
-Run: `xcodebuild build -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS'`
+Run: `xcodebuild build -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 Expected: BUILD SUCCEEDED
 
 Run: `uv run python -m pytest -q`
@@ -407,6 +407,6 @@ Manual verification:
 **Step 5: Commit**
 
 ```bash
-git add README.md mac-app/HYMTQuickTranslate
+git add README.md mac-app
 git commit -m "feat: add dual input translation controls"
 ```
