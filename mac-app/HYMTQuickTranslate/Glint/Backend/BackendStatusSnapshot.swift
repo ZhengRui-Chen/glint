@@ -1,7 +1,7 @@
 import Foundation
 
 enum BackendStatusSnapshot: Equatable {
-    case checking(detail: String = "Checking backend availability")
+    case checking(detail: String = L10n.checkingBackendAvailability)
     case available(detail: String)
     case starting(detail: String)
     case unavailable(detail: String)
@@ -10,15 +10,15 @@ enum BackendStatusSnapshot: Equatable {
     var headline: String {
         switch self {
         case .checking:
-            "Service Status: Checking..."
+            L10n.serviceStatusChecking
         case .available:
-            "Service Status: Available"
+            L10n.serviceStatusAvailable
         case .starting:
-            "Service Status: Starting"
+            L10n.serviceStatusStarting
         case .unavailable:
-            "Service Status: Unavailable"
+            L10n.serviceStatusUnavailable
         case .error:
-            "Service Status: Error"
+            L10n.serviceStatusError
         }
     }
 

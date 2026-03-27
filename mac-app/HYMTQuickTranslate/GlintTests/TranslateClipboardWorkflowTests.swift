@@ -11,7 +11,7 @@ final class TranslateClipboardWorkflowTests: XCTestCase {
 
         let state = await workflow.handleShortcut()
 
-        XCTAssertEqual(state, .error("Clipboard does not contain text."))
+        XCTAssertEqual(state, .error(L10n.clipboardDoesNotContainText))
     }
 
     func test_workflow_requires_confirmation_for_medium_text() async {
@@ -37,7 +37,7 @@ final class TranslateClipboardWorkflowTests: XCTestCase {
 
         let state = await workflow.handleShortcut()
 
-        XCTAssertEqual(state, .error("Clipboard text exceeds the maximum length."))
+        XCTAssertEqual(state, .error(L10n.clipboardTextExceedsMaximumLength))
     }
 }
 

@@ -5,20 +5,23 @@ final class MenuBarViewModelTests: XCTestCase {
     func test_menu_bar_exposes_permission_status() {
         let viewModel = MenuBarViewModel(permissionStatus: .required)
 
-        XCTAssertEqual(viewModel.permissionLabel, "Accessibility Permission: Required")
+        XCTAssertEqual(
+            viewModel.permissionLabel,
+            L10n.accessibilityPermission(status: L10n.accessibilityPermissionRequired)
+        )
     }
 
     func test_menu_bar_exposes_expected_actions() {
         let viewModel = MenuBarViewModel(permissionStatus: .granted)
 
-        XCTAssertEqual(viewModel.translateSelectionLabel, "Translate Selection")
-        XCTAssertEqual(viewModel.translateClipboardLabel, "Translate Clipboard")
-        XCTAssertEqual(viewModel.translateOCRLabel, "Translate OCR Area")
-        XCTAssertEqual(viewModel.startServiceLabel, "Start Service")
-        XCTAssertEqual(viewModel.stopServiceLabel, "Stop Service")
-        XCTAssertEqual(viewModel.restartServiceLabel, "Restart Service")
-        XCTAssertEqual(viewModel.refreshStatusLabel, "Refresh Status")
-        XCTAssertEqual(viewModel.quitLabel, "Quit Glint")
+        XCTAssertEqual(viewModel.translateSelectionLabel, L10n.translateSelection)
+        XCTAssertEqual(viewModel.translateClipboardLabel, L10n.translateClipboard)
+        XCTAssertEqual(viewModel.translateOCRLabel, L10n.translateOCRArea)
+        XCTAssertEqual(viewModel.startServiceLabel, L10n.startService)
+        XCTAssertEqual(viewModel.stopServiceLabel, L10n.stopService)
+        XCTAssertEqual(viewModel.restartServiceLabel, L10n.restartService)
+        XCTAssertEqual(viewModel.refreshStatusLabel, L10n.refreshStatus)
+        XCTAssertEqual(viewModel.quitLabel, L10n.quitApp(appName: AppBranding.displayName))
     }
 
     @MainActor
@@ -29,29 +32,33 @@ final class MenuBarViewModelTests: XCTestCase {
 
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
         let keyboardShortcutsItem = try XCTUnwrap(
-            menu.items.first { $0.title == "Keyboard Shortcuts…" }
+            menu.items.first { $0.title == L10n.keyboardShortcuts }
         )
 
         XCTAssertTrue(keyboardShortcutsItem.isEnabled)
-        XCTAssertNil(menu.items.first { $0.title == "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)" })
-        XCTAssertNil(menu.items.first { $0.title == "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)" })
+        XCTAssertNil(menu.items.first {
+            $0.title == "\(L10n.shortcutTargetSelection) Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)"
+        })
+        XCTAssertNil(menu.items.first {
+            $0.title == "\(L10n.shortcutTargetClipboard) Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+        })
         XCTAssertNil(menu.items.first { $0.title == "Cancel Shortcut Recording" })
     }
 
     func test_menu_bar_shows_available_backend_status() {
         let viewModel = MenuBarViewModel(
             permissionStatus: .granted,
-            backendStatus: .available(detail: "Translation backend is reachable")
+            backendStatus: .available(detail: L10n.backendReachable)
         )
 
-        XCTAssertEqual(viewModel.backendHeadline, "Service Status: Available")
-        XCTAssertEqual(viewModel.backendDetail, "Translation backend is reachable")
+        XCTAssertEqual(viewModel.backendHeadline, L10n.serviceStatusAvailable)
+        XCTAssertEqual(viewModel.backendDetail, L10n.backendReachable)
     }
 
     func test_menu_bar_disables_translation_actions_when_backend_is_unavailable() {
         let viewModel = MenuBarViewModel(
             permissionStatus: .granted,
-            backendStatus: .unavailable(detail: "Backend is currently unavailable")
+            backendStatus: .unavailable(detail: L10n.backendCurrentlyUnavailable)
         )
 
         XCTAssertFalse(viewModel.canTranslateSelection)
@@ -66,7 +73,7 @@ final class MenuBarViewModelTests: XCTestCase {
     func test_menu_bar_disables_conflicting_actions_while_backend_is_starting() {
         let viewModel = MenuBarViewModel(
             permissionStatus: .granted,
-            backendStatus: .starting(detail: "Backend is starting, please wait")
+            backendStatus: .starting(detail: L10n.backendStartingPleaseWait)
         )
 
         XCTAssertFalse(viewModel.canTranslateSelection)
@@ -127,10 +134,10 @@ final class MenuBarViewModelTests: XCTestCase {
 
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
         let selectionItem = try XCTUnwrap(
-            menu.items.first { $0.title == "Translate Selection" }
+            menu.items.first { $0.title == L10n.translateSelection }
         )
         let ocrItem = try XCTUnwrap(
-            menu.items.first { $0.title == "Translate OCR Area" }
+            menu.items.first { $0.title == L10n.translateOCRArea }
         )
 
         XCTAssertTrue(selectionItem.isEnabled)
@@ -142,13 +149,13 @@ final class MenuBarViewModelTests: XCTestCase {
         let controller = StatusBarController(statusBar: NSStatusBar()) {
             MenuBarViewModel(
                 permissionStatus: .granted,
-                backendStatus: .available(detail: "Translation backend is reachable")
+                backendStatus: .available(detail: L10n.backendReachable)
             )
         }
 
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        let headlineItem = try XCTUnwrap(menu.items.first { $0.title == "Service Status: Available" })
-        let detailItem = try XCTUnwrap(menu.items.first { $0.title == "Translation backend is reachable" })
+        let headlineItem = try XCTUnwrap(menu.items.first { $0.title == L10n.serviceStatusAvailable })
+        let detailItem = try XCTUnwrap(menu.items.first { $0.title == L10n.backendReachable })
 
         XCTAssertFalse(headlineItem.isEnabled)
         XCTAssertFalse(detailItem.isEnabled)
@@ -159,18 +166,18 @@ final class MenuBarViewModelTests: XCTestCase {
         let controller = StatusBarController(statusBar: NSStatusBar()) {
             MenuBarViewModel(
                 permissionStatus: .granted,
-                backendStatus: .unavailable(detail: "Backend is currently unavailable")
+                backendStatus: .unavailable(detail: L10n.backendCurrentlyUnavailable)
             )
         }
 
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        let selectionItem = try XCTUnwrap(menu.items.first { $0.title == "Translate Selection" })
-        let clipboardItem = try XCTUnwrap(menu.items.first { $0.title == "Translate Clipboard" })
-        let ocrItem = try XCTUnwrap(menu.items.first { $0.title == "Translate OCR Area" })
-        let startItem = try XCTUnwrap(menu.items.first { $0.title == "Start Service" })
-        let stopItem = try XCTUnwrap(menu.items.first { $0.title == "Stop Service" })
-        let restartItem = try XCTUnwrap(menu.items.first { $0.title == "Restart Service" })
-        let refreshItem = try XCTUnwrap(menu.items.first { $0.title == "Refresh Status" })
+        let selectionItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateSelection })
+        let clipboardItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateClipboard })
+        let ocrItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateOCRArea })
+        let startItem = try XCTUnwrap(menu.items.first { $0.title == L10n.startService })
+        let stopItem = try XCTUnwrap(menu.items.first { $0.title == L10n.stopService })
+        let restartItem = try XCTUnwrap(menu.items.first { $0.title == L10n.restartService })
+        let refreshItem = try XCTUnwrap(menu.items.first { $0.title == L10n.refreshStatus })
 
         XCTAssertFalse(selectionItem.isEnabled)
         XCTAssertFalse(clipboardItem.isEnabled)

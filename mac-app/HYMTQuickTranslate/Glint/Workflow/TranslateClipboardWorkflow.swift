@@ -22,12 +22,12 @@ struct TranslateTextWorkflow: Sendable {
         client: any TranslationClienting = LocalTranslationClient(),
         policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
         detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect,
-        noTextMessage: String = "No text was provided.",
+        noTextMessage: String = L10n.noTextProvided,
         permissionRequiredMessage: String? = nil,
         automationPermissionRequiredMessage: String? = nil,
         unsupportedHostAppMessage: String? = nil,
         ocrUnavailableMessage: String? = nil,
-        rejectedTextMessage: String = "Text exceeds the maximum length."
+        rejectedTextMessage: String = L10n.textExceedsMaximumLength
     ) {
         self.inputSource = inputSource
         self.client = client
@@ -78,19 +78,19 @@ struct TranslateTextWorkflow: Sendable {
         } catch let error as LocalTranslationClientError {
             switch error {
             case .invalidResponse, .emptyChoices:
-                return .error("Local translation service returned an invalid response.")
+                return .error(L10n.localTranslationServiceInvalidResponse)
             case .invalidStatusCode:
-                return .error("Local translation service is unavailable.")
+                return .error(L10n.localTranslationServiceUnavailable)
             }
         } catch let error as URLError {
             switch error.code {
             case .timedOut:
-                return .error("Translation request timed out.")
+                return .error(L10n.translationRequestTimedOut)
             default:
-                return .error("Local translation service is unavailable.")
+                return .error(L10n.localTranslationServiceUnavailable)
             }
         } catch {
-            return .error("Local translation service is unavailable.")
+            return .error(L10n.localTranslationServiceUnavailable)
         }
     }
 
@@ -135,8 +135,8 @@ struct TranslateClipboardWorkflow: Sendable {
             client: client,
             policy: policy,
             detectDirection: detectDirection,
-            noTextMessage: "Clipboard does not contain text.",
-            rejectedTextMessage: "Clipboard text exceeds the maximum length."
+            noTextMessage: L10n.clipboardDoesNotContainText,
+            rejectedTextMessage: L10n.clipboardTextExceedsMaximumLength
         )
     }
 

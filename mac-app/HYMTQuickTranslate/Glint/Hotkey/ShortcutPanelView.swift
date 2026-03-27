@@ -17,19 +17,19 @@ struct ShortcutPanelView: View {
 
             VStack(spacing: 12) {
                 shortcutRow(
-                    title: "Translate Selection",
+                    title: L10n.translateSelection,
                     shortcut: state.selectionShortcutLabel,
                     isRecording: state.isRecordingSelectionShortcut,
                     action: onStartSelectionRecording
                 )
                 shortcutRow(
-                    title: "Translate Clipboard",
+                    title: L10n.translateClipboard,
                     shortcut: state.clipboardShortcutLabel,
                     isRecording: state.isRecordingClipboardShortcut,
                     action: onStartClipboardRecording
                 )
                 shortcutRow(
-                    title: "Translate OCR Area",
+                    title: L10n.translateOCRArea,
                     shortcut: state.ocrShortcutLabel,
                     isRecording: state.isRecordingOCRShortcut,
                     action: onStartOCRRecording
@@ -39,10 +39,10 @@ struct ShortcutPanelView: View {
             statusBlock
 
             HStack(spacing: 12) {
-                Button("Reset to Defaults", action: onResetToDefaults)
+                Button(L10n.resetToDefaults, action: onResetToDefaults)
                     .buttonStyle(.bordered)
                 Spacer()
-                Button("Done", action: onDone)
+                Button(L10n.done, action: onDone)
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
             }
@@ -63,9 +63,9 @@ struct ShortcutPanelView: View {
     @ViewBuilder
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Keyboard Shortcuts")
+            Text(L10n.keyboardShortcutsTitle)
                 .font(.system(size: 23, weight: .semibold, design: .rounded))
-            Text("Set shortcuts for selection, clipboard, and OCR translation.")
+            Text(L10n.shortcutPanelSubtitle)
                 .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(visualStyle.secondaryTextColor)
         }
@@ -84,7 +84,7 @@ struct ShortcutPanelView: View {
     }
 
     private var statusText: String {
-        state.statusMessage ?? "Choose a shortcut to edit."
+        state.statusMessage ?? L10n.chooseShortcutToEdit
     }
 
     private var statusForegroundColor: Color {
@@ -105,7 +105,7 @@ struct ShortcutPanelView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 15, weight: .medium, design: .rounded))
-                Text(isRecording ? "Press keys" : "Click to change")
+                Text(isRecording ? L10n.pressKeys : L10n.clickToChange)
                     .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundStyle(visualStyle.secondaryTextColor)
             }

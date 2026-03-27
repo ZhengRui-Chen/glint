@@ -78,11 +78,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let ocrWorkflow = TranslateOCRWorkflow()
     private let selectionWorkflow = TranslateTextWorkflow(
         inputSource: SelectionInputSource(),
-        noTextMessage: "No selected text was found.",
-        permissionRequiredMessage: "Accessibility permission is not granted.",
-        automationPermissionRequiredMessage: "Browser automation permission is not granted. Allow Glint to control the browser and try again.",
-        unsupportedHostAppMessage: "Frontmost app does not expose selected text through Accessibility APIs.",
-        rejectedTextMessage: "Selected text exceeds the maximum length."
+        noTextMessage: L10n.noSelectedTextFound,
+        permissionRequiredMessage: L10n.accessibilityPermissionNotGranted,
+        automationPermissionRequiredMessage: L10n.browserAutomationPermissionRetry,
+        unsupportedHostAppMessage: L10n.unsupportedHostApp,
+        rejectedTextMessage: L10n.textExceedsMaximumLength
     )
     private let overlayPlacementResolver = OverlayPlacementResolver()
     private let screenRegionSelectionController = ScreenRegionSelectionController()
@@ -187,7 +187,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let placement = overlayPlacementResolver.resolve(cursorAnchor: NSEvent.mouseLocation)
         guard accessibilityPermission.isGranted else {
             overlayController.show(
-                state: .error("Accessibility permission is required for selection translation."),
+                state: .error(L10n.accessibilityPermissionRequiredForSelectionTranslation),
                 placement: placement
             )
             return
@@ -325,7 +325,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         invalidateInFlightBackendRefreshes()
         isBackendControlActionInFlight = true
         backendActionContext = BackendActionContext(action: .start, requestedAt: Date())
-        updateBackendStatus(.starting(detail: "Backend is starting, please wait"))
+        updateBackendStatus(.starting(detail: L10n.backendStartingPleaseWait))
         Task { @MainActor [weak self] in
             guard let self else {
                 return
@@ -338,7 +338,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             } catch {
                 isBackendControlActionInFlight = false
                 updateBackendStatus(
-                    .error(detail: "Failed to start the service"),
+                    .error(detail: L10n.failedToStartService),
                     clearActionContext: true
                 )
             }
@@ -349,7 +349,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         invalidateInFlightBackendRefreshes()
         isBackendControlActionInFlight = true
         backendActionContext = nil
-        updateBackendStatus(.unavailable(detail: "Backend is currently unavailable"))
+        updateBackendStatus(.unavailable(detail: L10n.backendCurrentlyUnavailable))
         Task { @MainActor [weak self] in
             guard let self else {
                 return
@@ -361,7 +361,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 refreshBackendStatus()
             } catch {
                 isBackendControlActionInFlight = false
-                updateBackendStatus(.error(detail: "Failed to stop the service"))
+                updateBackendStatus(.error(detail: L10n.failedToStopService))
             }
         }
     }
@@ -370,7 +370,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         invalidateInFlightBackendRefreshes()
         isBackendControlActionInFlight = true
         backendActionContext = BackendActionContext(action: .restart, requestedAt: Date())
-        updateBackendStatus(.starting(detail: "Backend is starting, please wait"))
+        updateBackendStatus(.starting(detail: L10n.backendStartingPleaseWait))
         Task { @MainActor [weak self] in
             guard let self else {
                 return
@@ -383,7 +383,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             } catch {
                 isBackendControlActionInFlight = false
                 updateBackendStatus(
-                    .error(detail: "Failed to restart the service"),
+                    .error(detail: L10n.failedToRestartService),
                     clearActionContext: true
                 )
             }
@@ -513,21 +513,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let targetLabel = switch target {
         case .clipboard:
-            "Clipboard"
+            L10n.shortcutTargetClipboard
         case .selection:
-            "Selection"
+            L10n.shortcutTargetSelection
         case .ocr:
-            "OCR"
+            L10n.shortcutTargetOCR
         }
 
         if configuredShortcut != defaultShortcut,
            monitor.reload(shortcut: defaultShortcut) {
             persist(defaultShortcut, for: target)
-            shortcutStatusLabel = "\(targetLabel) shortcut was reset to the default because the saved combination could not be registered."
+            shortcutStatusLabel = L10n.shortcutResetToDefault(target: targetLabel)
             return
         }
 
-        shortcutStatusLabel = "\(targetLabel) shortcut could not be registered. Choose another combination from the menu bar."
+        shortcutStatusLabel = L10n.shortcutCouldNotBeRegisteredFromMenu(target: targetLabel)
     }
 
     private func openShortcutPanel() {
@@ -878,11 +878,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             switch target {
             case .clipboard:
                 guard clipboardHotkeyMonitor?.reload(shortcut: shortcut) ?? false else {
-                    shortcutStatusLabel = "Shortcut could not be registered. Try another combination."
+                    shortcutStatusLabel = L10n.shortcutCouldNotBeRegisteredTryAnother
                     return
                 }
                 guard case let .success(savedSettings) = shortcutRecorder.save(shortcut, for: .clipboard) else {
-                    shortcutStatusLabel = "Shortcut already in use. Try another combination."
+                    shortcutStatusLabel = L10n.shortcutAlreadyInUseTryAnother
                     _ = clipboardHotkeyMonitor?.reload(shortcut: shortcutSettings.clipboardShortcut)
                     return
                 }
@@ -891,11 +891,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 finishShortcutRecording(restartHotkeyMonitors: false)
             case .selection:
                 guard selectionHotkeyMonitor?.reload(shortcut: shortcut) ?? false else {
-                    shortcutStatusLabel = "Shortcut could not be registered. Try another combination."
+                    shortcutStatusLabel = L10n.shortcutCouldNotBeRegisteredTryAnother
                     return
                 }
                 guard case let .success(savedSettings) = shortcutRecorder.save(shortcut, for: .selection) else {
-                    shortcutStatusLabel = "Shortcut already in use. Try another combination."
+                    shortcutStatusLabel = L10n.shortcutAlreadyInUseTryAnother
                     _ = selectionHotkeyMonitor?.reload(shortcut: shortcutSettings.selectionShortcut)
                     return
                 }
@@ -904,11 +904,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 finishShortcutRecording(restartHotkeyMonitors: false)
             case .ocr:
                 guard ocrHotkeyMonitor?.reload(shortcut: shortcut) ?? false else {
-                    shortcutStatusLabel = "Shortcut could not be registered. Try another combination."
+                    shortcutStatusLabel = L10n.shortcutCouldNotBeRegisteredTryAnother
                     return
                 }
                 guard case let .success(savedSettings) = shortcutRecorder.save(shortcut, for: .ocr) else {
-                    shortcutStatusLabel = "Shortcut already in use. Try another combination."
+                    shortcutStatusLabel = L10n.shortcutAlreadyInUseTryAnother
                     _ = ocrHotkeyMonitor?.reload(shortcut: shortcutSettings.ocrShortcut)
                     return
                 }
@@ -918,19 +918,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 finishShortcutRecording(restartHotkeyMonitors: false)
             }
         case .failure(.duplicateShortcut):
-            shortcutStatusLabel = "Shortcut already in use. Try another combination."
+            shortcutStatusLabel = L10n.shortcutAlreadyInUseTryAnother
         }
     }
 
     private func recordingStatusLabel(for target: ShortcutTarget) -> String {
         let title = switch target {
         case .clipboard:
-            "Clipboard"
+            L10n.shortcutTargetClipboard
         case .selection:
-            "Selection"
+            L10n.shortcutTargetSelection
         case .ocr:
-            "OCR"
+            L10n.shortcutTargetOCR
         }
-        return "Recording \(title) Shortcut. Press the new key combination."
+        return L10n.recordingShortcut(target: title)
     }
 }

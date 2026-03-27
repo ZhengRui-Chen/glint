@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		017B4A0A4D854E2B8F7A0001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 017B4A0A4D854E2B8F7A0002 /* Assets.xcassets */; };
+		A1B2C3D4E5F60718293A4101 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4104 /* L10n.swift */; };
+		A1B2C3D4E5F60718293A4102 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4105 /* Localizable.xcstrings */; };
+		A1B2C3D4E5F60718293A4103 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4106 /* LocalizationTests.swift */; };
 		02DE59A8465021E8EBFAD86C /* LocalTranslationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7AEFEB50D84538DA24CABB /* LocalTranslationClient.swift */; };
 		0C8B402801446D49E97E7BF8 /* ClipboardInputSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CF48D1B6CED4DB23532C15 /* ClipboardInputSource.swift */; };
 		1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */; };
@@ -92,6 +95,9 @@
 
 /* Begin PBXFileReference section */
 		017B4A0A4D854E2B8F7A0002 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4104 /* L10n.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = L10n.swift; path = Localization/L10n.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4105 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = Localizable.xcstrings; path = Localization/Localizable.xcstrings; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4106 /* LocalizationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalTranslationClientTests.swift; sourceTree = "<group>"; };
 		053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = App/AppDelegate.swift; sourceTree = "<group>"; };
 		0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GlobalHotkeyMonitorTests.swift; sourceTree = "<group>"; };
@@ -224,6 +230,7 @@
 			isa = PBXGroup;
 			children = (
 				017B4A0A4D854E2B8F7A0002 /* Assets.xcassets */,
+				A1B2C3D4E5F60718293A4105 /* Localizable.xcstrings */,
 				DDADDFCAE51D0B4E3FF13DD4 /* GlintApp.swift */,
 				053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */,
 				A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */,
@@ -234,6 +241,7 @@
 				6A1B2C3D4E5F60718293A402 /* BackendHealthChecker.swift */,
 				6A1B2C3D4E5F60718293A404 /* ShellCommandRunner.swift */,
 				E536E02711038F959B64A810 /* ClipboardTextReader.swift */,
+				A1B2C3D4E5F60718293A4104 /* L10n.swift */,
 				5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */,
 				800983F77AF1EE6EF8E788EC /* DirectionDetector.swift */,
 				CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */,
@@ -283,6 +291,7 @@
 				E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */,
 				6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */,
 				67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */,
+				A1B2C3D4E5F60718293A4106 /* LocalizationTests.swift */,
 				67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */,
 				3F1FCDA1BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift */,
 				3F1FCDA5BAB6D739F058A51C /* ShortcutPanelControllerTests.swift */,
@@ -358,6 +367,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				zh-Hans,
+				zh-Hant,
 				Base,
 			);
 			mainGroup = 9A1AB20D4773E0BFE04ECF51;
@@ -385,6 +396,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3D4E5F60718293A4102 /* Localizable.xcstrings in Resources */,
 				017B4A0A4D854E2B8F7A0001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -406,6 +418,7 @@
 				A36D1B90B9C54B12A1F79011 /* AppLaunchCoordinator.swift in Sources */,
 				4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */,
 				8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */,
+				A1B2C3D4E5F60718293A4101 /* L10n.swift in Sources */,
 				42F3CD2B101BB299A6DB09BF /* TranslationDirection.swift in Sources */,
 				3BB859C5818A4EA38E3F0FEB /* DirectionDetector.swift in Sources */,
 				9ACA3D2DC5AA4C653C9DB0B2 /* TextLengthPolicy.swift in Sources */,
@@ -454,6 +467,7 @@
 				A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */,
 				76C0BD70306C0A9E62C6CC6B /* TextLengthPolicyTests.swift in Sources */,
 				67F92AF34BF95A00B1EAA003 /* MenuBarViewModelTests.swift in Sources */,
+				A1B2C3D4E5F60718293A4103 /* LocalizationTests.swift in Sources */,
 				67F92B014BF95A00B1EAA003 /* ShortcutRecorderTests.swift in Sources */,
 				3F1FCDB2BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift in Sources */,
 				3F1FCDB6BAB6D739F058A51C /* ShortcutPanelControllerTests.swift in Sources */,

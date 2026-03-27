@@ -66,7 +66,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         XCTAssertTrue(state.isRecordingClipboardShortcut)
         XCTAssertEqual(
             state.statusMessage,
-            "Press a shortcut. Esc cancels."
+            L10n.pressShortcutEscCancels
         )
 
         XCTAssertEqual(
@@ -85,7 +85,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
             state.clipboardShortcutLabel,
             updatedShortcut.displayName
         )
-        XCTAssertEqual(state.statusMessage, "Shortcut saved")
+        XCTAssertEqual(state.statusMessage, L10n.shortcutSaved)
 
         state.resetToDefaults()
         XCTAssertEqual(
@@ -96,7 +96,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
             state.ocrShortcutLabel,
             GlobalHotkeyShortcut.ocrDefault.displayName
         )
-        XCTAssertEqual(state.statusMessage, "Defaults restored")
+        XCTAssertEqual(state.statusMessage, L10n.defaultsRestored)
     }
 
     func test_refresh_preserves_in_progress_recording_and_transient_status() {
@@ -117,7 +117,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         XCTAssertTrue(state.isRecordingSelectionShortcut)
         XCTAssertEqual(
             state.statusMessage,
-            "Press a shortcut. Esc cancels."
+            L10n.pressShortcutEscCancels
         )
         XCTAssertEqual(
             state.selectionShortcutLabel,
@@ -174,7 +174,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         XCTAssertEqual(state.recordingTarget, .clipboard)
         XCTAssertEqual(
             state.statusMessage,
-            "Shortcut could not be registered. Try another combination."
+            L10n.shortcutCouldNotBeRegisteredTryAnother
         )
         XCTAssertEqual(
             state.clipboardShortcutLabel,

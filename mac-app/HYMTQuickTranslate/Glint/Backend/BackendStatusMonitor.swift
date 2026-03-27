@@ -38,17 +38,17 @@ struct BackendStatusMonitor {
         do {
             let apiReachability = try await apiChecker.checkAPIReachability()
             if apiReachability == .reachable {
-                return .available(detail: "Translation backend is reachable")
+                return .available(detail: L10n.backendReachable)
             }
 
             let isProcessRunning = try await processChecker.isBackendProcessRunning()
             if isStarting(actionContext: actionContext, isProcessRunning: isProcessRunning) {
-                return .starting(detail: "Backend is starting, please wait")
+                return .starting(detail: L10n.backendStartingPleaseWait)
             }
 
-            return .unavailable(detail: "Backend is currently unavailable")
+            return .unavailable(detail: L10n.backendCurrentlyUnavailable)
         } catch {
-            return .error(detail: "Unable to verify backend status")
+            return .error(detail: L10n.unableVerifyBackendStatus)
         }
     }
 
