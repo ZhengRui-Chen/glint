@@ -48,6 +48,33 @@ final class GlobalHotkeyMonitorTests: XCTestCase {
             ]
         )
     }
+
+    func test_multiple_monitors_do_not_swallow_other_hotkey_events() throws {
+        let clipboardRecorder = WorkflowRecorder()
+        let selectionRecorder = WorkflowRecorder()
+        let clipboardMonitor = GlobalHotkeyMonitor(
+            identifier: 1,
+            onTrigger: clipboardRecorder.record,
+            simulatedRegistrationResult: { _ in true }
+        )
+        let selectionMonitor = GlobalHotkeyMonitor(
+            identifier: 2,
+            onTrigger: selectionRecorder.record,
+            simulatedRegistrationResult: { _ in true }
+        )
+        defer {
+            selectionMonitor.stop()
+            clipboardMonitor.stop()
+        }
+
+        XCTAssertTrue(clipboardMonitor.start())
+        XCTAssertTrue(selectionMonitor.start())
+
+        try dispatchHotkeyPressedEvent(identifier: 1)
+
+        XCTAssertEqual(clipboardRecorder.callCount, 1)
+        XCTAssertEqual(selectionRecorder.callCount, 0)
+    }
 }
 
 private final class WorkflowRecorder {
@@ -56,4 +83,36 @@ private final class WorkflowRecorder {
     func record() {
         callCount += 1
     }
+}
+
+private func dispatchHotkeyPressedEvent(identifier: UInt32) throws {
+    var eventRef: EventRef?
+    let createStatus = CreateEvent(
+        nil,
+        UInt32(kEventClassKeyboard),
+        UInt32(kEventHotKeyPressed),
+        GetCurrentEventTime(),
+        EventAttributes(),
+        &eventRef
+    )
+    XCTAssertEqual(createStatus, noErr)
+    guard let eventRef else {
+        throw NSError(domain: "GlobalHotkeyMonitorTests", code: Int(createStatus))
+    }
+    defer {
+        ReleaseEvent(eventRef)
+    }
+
+    var hotKeyID = EventHotKeyID(signature: OSType(0x48594D54), id: identifier)
+    let setStatus = SetEventParameter(
+        eventRef,
+        EventParamName(kEventParamDirectObject),
+        EventParamType(typeEventHotKeyID),
+        MemoryLayout<EventHotKeyID>.size,
+        &hotKeyID
+    )
+    XCTAssertEqual(setStatus, noErr)
+
+    let dispatchStatus = SendEventToEventTarget(eventRef, GetApplicationEventTarget())
+    XCTAssertEqual(dispatchStatus, noErr)
 }

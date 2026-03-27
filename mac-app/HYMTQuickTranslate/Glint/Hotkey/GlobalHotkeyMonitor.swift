@@ -219,8 +219,12 @@ final class GlobalHotkeyMonitor: GlobalHotkeyMonitoring {
             &hotKeyID
         )
 
-        guard status == noErr, hotKeyID.id == identifier else {
-            return noErr
+        guard status == noErr else {
+            return OSStatus(eventNotHandledErr)
+        }
+
+        guard hotKeyID.id == identifier else {
+            return OSStatus(eventNotHandledErr)
         }
 
         onTrigger()
