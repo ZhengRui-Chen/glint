@@ -53,7 +53,7 @@ final class AppDelegateBackendMenuTests: XCTestCase {
     }
 
     @MainActor
-    func test_opening_menu_triggers_refresh_path_and_updates_backend_status() async throws {
+    func test_opening_menu_does_not_trigger_backend_refresh() async throws {
         let apiChecker = SequencedBackendAPIHealthChecker(results: [.unreachable, .reachable])
         let monitor = BackendStatusMonitor(
             apiChecker: apiChecker
@@ -84,18 +84,18 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         controller.menuNeedsUpdate(menu)
 
-        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        XCTAssertEqual(menu.items.first?.title, L10n.serviceStatusUnavailable)
         let callCount = await apiChecker.recordedCallCount()
-        XCTAssertEqual(callCount, 2)
+        XCTAssertEqual(callCount, 1)
     }
 
     @MainActor
-    func test_background_refresh_keeps_backend_snapshot_current() async throws {
+    func test_application_launch_does_not_schedule_background_refresh_timer() async throws {
         let apiChecker = SequencedBackendAPIHealthChecker(results: [.unreachable, .reachable])
         let monitor = BackendStatusMonitor(
             apiChecker: apiChecker
         )
-        let scheduler = TestBackendRefreshScheduler()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
@@ -104,8 +104,7 @@ final class AppDelegateBackendMenuTests: XCTestCase {
             backendStatusMonitor: monitor,
             apiSettingsStore: APISettingsStore(
                 userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-            ),
-            backendRefreshScheduler: scheduler
+            )
         )
 
         appDelegate.applicationDidFinishLaunching(
@@ -121,11 +120,10 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
         _ = await waitForMenuItem(titled: L10n.serviceStatusUnavailable, in: menu)
 
-        try scheduler.fire()
-
-        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        XCTAssertEqual(menu.items.first?.title, L10n.serviceStatusUnavailable)
         let callCount = await apiChecker.recordedCallCount()
-        XCTAssertEqual(callCount, 2)
+        XCTAssertEqual(callCount, 1)
     }
 
     @MainActor
@@ -134,7 +132,6 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         let monitor = BackendStatusMonitor(
             apiChecker: apiChecker
         )
-        let scheduler = TestBackendRefreshScheduler()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
@@ -143,8 +140,7 @@ final class AppDelegateBackendMenuTests: XCTestCase {
             backendStatusMonitor: monitor,
             apiSettingsStore: APISettingsStore(
                 userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-            ),
-            backendRefreshScheduler: scheduler
+            )
         )
 
         appDelegate.applicationDidFinishLaunching(
@@ -158,9 +154,6 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
-
-        try scheduler.fire()
         _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
 
         let apiSettingsItem = await waitForMenuItem(titled: L10n.apiSettings, in: menu)
@@ -216,7 +209,7 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
 
         let firstRequest = await apiChecker.waitForRequest(number: 1)
-        controller.menuNeedsUpdate(menu)
+        try triggerMenuItem(titled: L10n.refreshStatus, in: menu)
         let secondRequest = await apiChecker.waitForRequest(number: 2)
 
         await apiChecker.resolve(request: secondRequest, with: .unreachable)
@@ -309,28 +302,6 @@ private final class NoopHotkeyMonitor: GlobalHotkeyMonitoring {
     func reload(shortcut: GlobalHotkeyShortcut) -> Bool {
         true
     }
-}
-
-@MainActor
-private final class TestBackendRefreshScheduler: BackendRefreshScheduling {
-    private var action: (() -> Void)?
-
-    func schedule(
-        interval: TimeInterval,
-        action: @escaping () -> Void
-    ) -> any BackendRefreshControlling {
-        self.action = action
-        return TestBackendRefreshTimer()
-    }
-
-    func fire() throws {
-        let action = try XCTUnwrap(action)
-        action()
-    }
-}
-
-private struct TestBackendRefreshTimer: BackendRefreshControlling {
-    func invalidate() {}
 }
 
 @MainActor

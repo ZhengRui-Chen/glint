@@ -1,58 +1,5 @@
 import AppKit
 
-protocol BackendRefreshControlling {
-    func invalidate()
-}
-
-private final class BackendRefreshTimerTarget: NSObject {
-    private let action: () -> Void
-
-    init(action: @escaping () -> Void) {
-        self.action = action
-    }
-
-    @objc
-    func fire() {
-        action()
-    }
-}
-
-@MainActor
-protocol BackendRefreshScheduling {
-    func schedule(
-        interval: TimeInterval,
-        action: @escaping () -> Void
-    ) -> any BackendRefreshControlling
-}
-
-private struct BackendRefreshTimer: BackendRefreshControlling {
-    let timer: Timer
-    let target: BackendRefreshTimerTarget
-
-    func invalidate() {
-        timer.invalidate()
-    }
-}
-
-@MainActor
-private struct TimerBackendRefreshScheduler: BackendRefreshScheduling {
-    func schedule(
-        interval: TimeInterval,
-        action: @escaping () -> Void
-    ) -> any BackendRefreshControlling {
-        let target = BackendRefreshTimerTarget(action: action)
-        let timer = Timer(
-            timeInterval: interval,
-            target: target,
-            selector: #selector(BackendRefreshTimerTarget.fire),
-            userInfo: nil,
-            repeats: true
-        )
-        RunLoop.main.add(timer, forMode: .common)
-        return BackendRefreshTimer(timer: timer, target: target)
-    }
-}
-
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     typealias HotkeyMonitorFactory = (
@@ -91,7 +38,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let hotkeyMonitorFactory: HotkeyMonitorFactory
     nonisolated(unsafe) private let backendStatusMonitor: BackendStatusMonitor
     private let apiSettingsStore: APISettingsStore
-    private let backendRefreshScheduler: any BackendRefreshScheduling
     private var shortcutSettings: ShortcutSettings
     private lazy var shortcutRecorder = ShortcutRecorder(
         existingSettings: shortcutSettings,
@@ -116,7 +62,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var shortcutStatusLabel: String?
     private var backendStatus = BackendStatusSnapshot.checking()
     private var backendRefreshGeneration = 0
-    private var backendRefreshTimer: (any BackendRefreshControlling)?
     private var localShortcutRecordingMonitor: Any?
     private var globalShortcutRecordingMonitor: Any?
 
@@ -127,7 +72,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotkeyMonitorFactory = Self.defaultHotkeyMonitorFactory
         backendStatusMonitor = BackendStatusMonitor()
         apiSettingsStore = APISettingsStore()
-        backendRefreshScheduler = TimerBackendRefreshScheduler()
         super.init()
     }
 
@@ -137,8 +81,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutRecorderUserDefaults: UserDefaults = .standard,
         hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory,
         backendStatusMonitor: BackendStatusMonitor = BackendStatusMonitor(),
-        apiSettingsStore: APISettingsStore = APISettingsStore(),
-        backendRefreshScheduler: any BackendRefreshScheduling = TimerBackendRefreshScheduler()
+        apiSettingsStore: APISettingsStore = APISettingsStore()
     ) {
         self.shortcutSettings = shortcutSettings
         self.launchCoordinator = launchCoordinator
@@ -146,23 +89,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.hotkeyMonitorFactory = hotkeyMonitorFactory
         self.backendStatusMonitor = backendStatusMonitor
         self.apiSettingsStore = apiSettingsStore
-        self.backendRefreshScheduler = backendRefreshScheduler
         super.init()
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
-        statusBarController = StatusBarController(
-            onMenuWillOpen: { [weak self] in
-                self?.refreshBackendStatus()
-            }
-        ) { [weak self] in
+        statusBarController = StatusBarController { [weak self] in
             self?.makeMenuBarViewModel() ?? MenuBarViewModel(
                 permissionStatus: .required,
                 backendStatus: .checking()
             )
         }
-        startBackendRefreshTimer()
         refreshBackendStatus()
         registerHotkeysIfNeeded(immediatelyAfterLaunch: true)
     }
@@ -175,8 +112,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ocrHotkeyMonitor?.stop()
         ocrHotkeyMonitor = nil
         removeShortcutRecordingMonitors()
-        backendRefreshTimer?.invalidate()
-        backendRefreshTimer = nil
     }
 
     private func translateClipboard() {
@@ -355,16 +290,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         backendStatus = snapshot
         statusBarController?.refreshMenu()
     }
-
-    private func startBackendRefreshTimer() {
-        backendRefreshTimer?.invalidate()
-        backendRefreshTimer = backendRefreshScheduler.schedule(
-            interval: AppConfig.default.backendStatusRefreshInterval
-        ) { [weak self] in
-            self?.refreshBackendStatus()
-        }
-    }
-
     private func configureHotkeyMonitors() {
         if clipboardHotkeyMonitor == nil {
             clipboardHotkeyMonitor = hotkeyMonitorFactory(

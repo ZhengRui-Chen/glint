@@ -11,7 +11,6 @@ struct AppConfig {
     let model: String
     let apiKey: String
     let requestTimeout: TimeInterval
-    let backendStatusRefreshInterval: TimeInterval
     let backendAPITimeout: TimeInterval
 
     var backendModelsURL: URL {
@@ -21,7 +20,6 @@ struct AppConfig {
     init(
         settings: APISettings,
         requestTimeout: TimeInterval = 20,
-        backendStatusRefreshInterval: TimeInterval = 15,
         backendAPITimeout: TimeInterval = 5
     ) {
         baseURLString = settings.baseURLString
@@ -29,7 +27,6 @@ struct AppConfig {
         model = settings.model
         apiKey = settings.apiKey
         self.requestTimeout = requestTimeout
-        self.backendStatusRefreshInterval = backendStatusRefreshInterval
         self.backendAPITimeout = backendAPITimeout
     }
 
