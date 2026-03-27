@@ -125,6 +125,36 @@ zsh scripts/status_omlx_launch_agent.sh
 
 对应的停止、重启和卸载脚本也都在 `scripts/` 下。
 
+### 验证命令
+
+CLI smoke test：
+
+```bash
+uv run python scripts/smoke_cli.py \
+  --model-id ./models/HY-MT1.5-1.8B-4bit \
+  --text "It is a pleasure to meet you." \
+  --target-language 中文 \
+  --max-tokens 64
+```
+
+Expected output：
+
+```text
+很高兴能见到您。
+```
+
+Full smoke suite：
+
+```bash
+uv run python scripts/smoke_suite.py
+```
+
+OpenAI-compatible API smoke test：
+
+```bash
+python3 scripts/api_smoke.py
+```
+
 ## Model And Prompt
 
 推荐使用的本地模型目录：
@@ -166,36 +196,6 @@ At minimum, place these files into `models/HY-MT1.5-1.8B-4bit/`:
 - Model path: `models/HY-MT1.5-1.8B-4bit`
 - Local service overrides: `configs/omlx.env`
 - Glint app: `mac-app/HYMTQuickTranslate/Glint.xcodeproj`
-
-## Smoke Tests
-
-CLI smoke test:
-
-```bash
-uv run python scripts/smoke_cli.py \
-  --model-id ./models/HY-MT1.5-1.8B-4bit \
-  --text "It is a pleasure to meet you." \
-  --target-language 中文 \
-  --max-tokens 64
-```
-
-Expected output:
-
-```text
-很高兴能见到您。
-```
-
-Full smoke suite:
-
-```bash
-uv run python scripts/smoke_suite.py
-```
-
-OpenAI-compatible API smoke test:
-
-```bash
-python3 scripts/api_smoke.py
-```
 
 ## Upstream
 
