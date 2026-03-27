@@ -14,7 +14,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     ) {
         self.viewModelProvider = viewModelProvider
         self.onMenuWillOpen = onMenuWillOpen
-        self.statusItem = statusBar.statusItem(withLength: NSStatusItem.variableLength)
+        self.statusItem = statusBar.statusItem(withLength: NSStatusItem.squareLength)
         super.init()
 
         menu.autoenablesItems = false
@@ -182,6 +182,8 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let image = NSImage(named: AppBranding.menuBarIconAssetName)
             ?? NSImage(systemSymbolName: "sparkles", accessibilityDescription: AppBranding.displayName)
         image?.isTemplate = true
+        image?.size = NSSize(width: 20, height: 20)
+        button.imageScaling = .scaleProportionallyDown
         button.image = image
     }
 
