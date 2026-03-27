@@ -26,3 +26,11 @@ struct ChatCompletionResponse: Decodable, Equatable {
 
     let choices: [Choice]
 }
+
+struct ModelListResponse: Decodable, Equatable {
+    struct Model: Decodable, Equatable {
+        let id: String
+    }
+
+    let data: [Model]
+}
