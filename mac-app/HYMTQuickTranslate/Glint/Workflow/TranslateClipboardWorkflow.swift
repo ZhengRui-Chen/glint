@@ -77,6 +77,8 @@ struct TranslateTextWorkflow: Sendable {
             return .result(result)
         } catch let error as LocalTranslationClientError {
             switch error {
+            case .missingConfiguration:
+                return .error(L10n.localTranslationServiceUnavailable)
             case .invalidResponse, .emptyChoices:
                 return .error(L10n.localTranslationServiceInvalidResponse)
             case .invalidStatusCode:

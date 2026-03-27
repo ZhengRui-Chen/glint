@@ -5,6 +5,7 @@ protocol TranslationClienting: Sendable {
 }
 
 enum LocalTranslationClientError: Error, Equatable {
+    case missingConfiguration
     case invalidResponse
     case invalidStatusCode(Int)
     case emptyChoices
@@ -20,6 +21,11 @@ struct LocalTranslationClient: TranslationClienting, Sendable {
     }
 
     func translate(text: String, direction: TranslationDirection) async throws -> String {
+        guard !config.baseURLString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !config.model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw LocalTranslationClientError.missingConfiguration
+        }
+
         let prompt = TranslationPromptBuilder.makePrompt(
             text: text,
             targetLanguage: direction.targetLanguage
@@ -39,7 +45,9 @@ struct LocalTranslationClient: TranslationClienting, Sendable {
         request.httpMethod = "POST"
         request.timeoutInterval = config.requestTimeout
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(config.apiKey)", forHTTPHeaderField: "Authorization")
+        if !config.apiKey.isEmpty {
+            request.setValue("Bearer \(config.apiKey)", forHTTPHeaderField: "Authorization")
+        }
         request.httpBody = try JSONEncoder().encode(payload)
 
         let (data, response) = try await session.data(for: request)

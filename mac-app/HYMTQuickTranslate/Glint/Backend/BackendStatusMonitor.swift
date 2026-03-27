@@ -41,27 +41,9 @@ struct BackendStatusMonitor {
                 return .available(detail: L10n.backendReachable)
             }
 
-            let isProcessRunning = try await processChecker.isBackendProcessRunning()
-            if isStarting(actionContext: actionContext, isProcessRunning: isProcessRunning) {
-                return .starting(detail: L10n.backendStartingPleaseWait)
-            }
-
             return .unavailable(detail: L10n.backendCurrentlyUnavailable)
         } catch {
             return .error(detail: L10n.unableVerifyBackendStatus)
         }
-    }
-
-    private func isStarting(
-        actionContext: BackendActionContext?,
-        isProcessRunning: Bool
-    ) -> Bool {
-        guard isProcessRunning, let actionContext else {
-            return false
-        }
-        guard actionContext.action == .start || actionContext.action == .restart else {
-            return false
-        }
-        return now().timeIntervalSince(actionContext.requestedAt) <= startupGracePeriod
     }
 }

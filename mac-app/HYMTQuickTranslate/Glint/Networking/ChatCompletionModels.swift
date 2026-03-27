@@ -5,7 +5,7 @@ struct ChatMessage: Codable, Equatable {
     let content: String
 }
 
-struct ChatCompletionRequest: Encodable, Equatable {
+struct ChatCompletionRequest: Codable, Equatable {
     let model: String
     let messages: [ChatMessage]
     let maxTokens: Int
