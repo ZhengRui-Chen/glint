@@ -7,7 +7,8 @@ final class GlintTests: XCTestCase {
     }
 
     func test_app_config_defaults_to_empty_runtime_api_settings() {
-        let config = AppConfig.default
+        let userDefaults = UserDefaults(suiteName: UUID().uuidString)!
+        let config = AppConfig(settings: APISettingsStore(userDefaults: userDefaults).load())
         XCTAssertEqual(config.baseURLString, "")
         XCTAssertEqual(config.apiKey, "")
         XCTAssertEqual(config.model, "")

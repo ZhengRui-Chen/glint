@@ -1,6 +1,11 @@
 import AppKit
 import SwiftUI
 
+private enum APISettingsPanelLayout {
+    static let width: CGFloat = 460
+    static let height: CGFloat = 360
+}
+
 protocol ModelDiscoveryFetching {
     func fetchModels() async throws -> [String]
 }
@@ -16,9 +21,6 @@ struct APISettingsPanelTestingSnapshot: Equatable {
 
 @MainActor
 final class APISettingsPanelController: NSObject, NSWindowDelegate {
-    private static let panelWidth: CGFloat = 460
-    private static let panelHeight: CGFloat = 312
-
     private let store: APISettingsStore
     private let makeDiscoveryClient: (APISettings) -> any ModelDiscoveryFetching
     private let onSave: (() -> Void)?
@@ -41,8 +43,8 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
             contentRect: NSRect(
                 x: 0,
                 y: 0,
-                width: Self.panelWidth,
-                height: Self.panelHeight
+                width: APISettingsPanelLayout.width,
+                height: APISettingsPanelLayout.height
             ),
             styleMask: [.titled, .closable, .fullSizeContentView, .utilityWindow],
             backing: .buffered,
@@ -127,6 +129,10 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
         panel.isVisible
     }
 
+    var testingPanelFrame: CGRect {
+        panel.frame
+    }
+
     func updateDraftForTesting(_ settings: APISettings) {
         state.updateDraft(settings)
     }
@@ -151,8 +157,10 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
     }
 
     private func resolvedTargetFrame(anchorRect: CGRect?) -> CGRect {
-        let panelSize = CGSize(width: Self.panelWidth, height: Self.panelHeight)
-
+        let panelSize = CGSize(
+            width: APISettingsPanelLayout.width,
+            height: APISettingsPanelLayout.height
+        )
         if let anchorRect {
             let screen = NSScreen.screens.first { $0.frame.intersects(anchorRect) } ?? NSScreen.main
             if let screen {
@@ -314,7 +322,10 @@ private struct APISettingsPanelView: View {
             }
         }
         .padding(20)
-        .frame(width: 460, height: 312)
+        .frame(
+            width: APISettingsPanelLayout.width,
+            height: APISettingsPanelLayout.height
+        )
     }
 
     private func field<Content: View>(

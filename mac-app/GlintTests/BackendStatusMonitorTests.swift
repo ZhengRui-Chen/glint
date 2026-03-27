@@ -49,6 +49,44 @@ final class BackendStatusMonitorTests: XCTestCase {
 
         await XCTAssertThrowsErrorAsync(try await checker.checkAPIReachability())
     }
+
+    func test_api_health_checker_uses_latest_saved_runtime_settings() async throws {
+        let userDefaults = UserDefaults(suiteName: UUID().uuidString)!
+        let store = APISettingsStore(userDefaults: userDefaults)
+        let source = RuntimeAppConfigSource(store: store)
+        let session = makeMockedSession()
+        let checker = BackendAPIHealthChecker(
+            urlSession: session,
+            configProvider: source.load
+        )
+
+        store.save(
+            APISettings(
+                baseURLString: "https://runtime.invalid",
+                apiKey: "runtime-key",
+                model: "runtime-model"
+            )
+        )
+
+        MockURLProtocol.requestHandler = { request in
+            XCTAssertEqual(request.url?.absoluteString, "https://runtime.invalid/v1/models")
+            XCTAssertEqual(
+                request.value(forHTTPHeaderField: "Authorization"),
+                "Bearer runtime-key"
+            )
+            let response = HTTPURLResponse(
+                url: try XCTUnwrap(request.url),
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, Data())
+        }
+
+        let reachability = try await checker.checkAPIReachability()
+
+        XCTAssertEqual(reachability, .reachable)
+    }
 }
 
 private struct StubBackendAPIHealthChecker: BackendAPIHealthChecking {
@@ -61,6 +99,18 @@ private struct StubBackendAPIHealthChecker: BackendAPIHealthChecking {
 
 private enum StubError: Error {
     case apiFailed
+}
+
+private final class RuntimeAppConfigSource: @unchecked Sendable {
+    private let store: APISettingsStore
+
+    init(store: APISettingsStore) {
+        self.store = store
+    }
+
+    func load() -> AppConfig {
+        AppConfig(settings: store.load())
+    }
 }
 
 private final class MockURLProtocol: URLProtocol {

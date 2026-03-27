@@ -98,6 +98,14 @@ final class APISettingsPanelControllerTests: XCTestCase {
         )
         XCTAssertNil(controller.testingSnapshot.statusMessage)
     }
+
+    func test_controller_uses_panel_height_that_keeps_action_buttons_visible() {
+        let controller = APISettingsPanelController(
+            store: APISettingsStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
+        )
+
+        XCTAssertEqual(controller.testingPanelFrame.height, 360)
+    }
 }
 
 private struct FailingModelDiscoveryClient: ModelDiscoveryFetching {

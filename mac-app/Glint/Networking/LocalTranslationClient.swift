@@ -12,15 +12,27 @@ enum LocalTranslationClientError: Error, Equatable {
 }
 
 struct LocalTranslationClient: TranslationClienting, Sendable {
-    let config: AppConfig
     let session: URLSession
+    private let configProvider: @Sendable () -> AppConfig
 
-    init(config: AppConfig = .default, session: URLSession = .shared) {
-        self.config = config
+    init(
+        session: URLSession = .shared,
+        configProvider: @escaping @Sendable () -> AppConfig = { AppConfig.default }
+    ) {
         self.session = session
+        self.configProvider = configProvider
+    }
+
+    init(
+        config: AppConfig,
+        session: URLSession = .shared
+    ) {
+        self.session = session
+        configProvider = { config }
     }
 
     func translate(text: String, direction: TranslationDirection) async throws -> String {
+        let config = configProvider()
         guard !config.baseURLString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               !config.model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw LocalTranslationClientError.missingConfiguration

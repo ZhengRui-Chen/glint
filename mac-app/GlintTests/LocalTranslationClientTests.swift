@@ -68,6 +68,52 @@ final class LocalTranslationClientTests: XCTestCase {
 
         XCTAssertEqual(translated, "translated")
     }
+
+    func test_client_uses_latest_saved_runtime_settings() async throws {
+        let userDefaults = UserDefaults(suiteName: UUID().uuidString)!
+        let store = APISettingsStore(userDefaults: userDefaults)
+        let source = RuntimeTranslationConfigSource(store: store)
+        let session = makeLocalTranslationClientMockedSession()
+        let client = LocalTranslationClient(
+            session: session,
+            configProvider: source.load
+        )
+
+        store.save(
+            APISettings(
+                baseURLString: "https://runtime.invalid",
+                apiKey: "fresh-key",
+                model: "fresh-model"
+            )
+        )
+
+        LocalTranslationClientMockURLProtocol.requestHandler = { request in
+            XCTAssertEqual(
+                request.url?.absoluteString,
+                "https://runtime.invalid/v1/chat/completions"
+            )
+            XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer fresh-key")
+
+            let payload = try XCTUnwrap(requestBody(from: request))
+            let decoded = try JSONDecoder().decode(ChatCompletionRequest.self, from: payload)
+            XCTAssertEqual(decoded.model, "fresh-model")
+
+            let response = HTTPURLResponse(
+                url: try XCTUnwrap(request.url),
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            let data = """
+            {"choices":[{"message":{"content":"runtime translation"}}]}
+            """.data(using: .utf8)!
+            return (response, data)
+        }
+
+        let translated = try await client.translate(text: "hello", direction: .enToZh)
+
+        XCTAssertEqual(translated, "runtime translation")
+    }
 }
 
 private final class LocalTranslationClientMockURLProtocol: URLProtocol {
@@ -101,6 +147,18 @@ private final class LocalTranslationClientMockURLProtocol: URLProtocol {
     }
 
     override func stopLoading() {}
+}
+
+private final class RuntimeTranslationConfigSource: @unchecked Sendable {
+    private let store: APISettingsStore
+
+    init(store: APISettingsStore) {
+        self.store = store
+    }
+
+    func load() -> AppConfig {
+        AppConfig(settings: store.load())
+    }
 }
 
 private func makeLocalTranslationClientMockedSession() -> URLSession {
