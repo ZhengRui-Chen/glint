@@ -74,24 +74,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let accessibilityPermission = AccessibilityPermission()
     private let overlayController = OverlayPanelController()
-    private let workflow = TranslateClipboardWorkflow()
-    private let ocrWorkflow = TranslateOCRWorkflow()
-    private let selectionWorkflow = TranslateTextWorkflow(
-        inputSource: SelectionInputSource(),
-        noTextMessage: L10n.noSelectedTextFound,
-        permissionRequiredMessage: L10n.accessibilityPermissionNotGranted,
-        automationPermissionRequiredMessage: L10n.browserAutomationPermissionRetry,
-        unsupportedHostAppMessage: L10n.unsupportedHostApp,
-        rejectedTextMessage: L10n.textExceedsMaximumLength
-    )
     private let overlayPlacementResolver = OverlayPlacementResolver()
     private let screenRegionSelectionController = ScreenRegionSelectionController()
     private let launchCoordinator: any AppLaunchCoordinating
     private let shortcutRecorderUserDefaults: UserDefaults
     private let hotkeyMonitorFactory: HotkeyMonitorFactory
-    nonisolated(unsafe) private let backendStatusMonitor: BackendStatusMonitor
-    nonisolated(unsafe) private let backendControlService: any BackendControlServicing
+    private let backendRuntimeBuilder: any BackendRuntimeBuilding
     private let backendRefreshScheduler: any BackendRefreshScheduling
+    private var backendSettings: BackendSettings
+    private var backendRuntime: BackendRuntime
+    private var backendStatusMonitor: BackendStatusMonitor
+    private var backendControlService: (any BackendControlServicing)?
     private var shortcutSettings: ShortcutSettings
     private lazy var shortcutRecorder = ShortcutRecorder(
         existingSettings: shortcutSettings,
@@ -121,8 +114,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         launchCoordinator = AppLaunchCoordinator()
         shortcutRecorderUserDefaults = .standard
         hotkeyMonitorFactory = Self.defaultHotkeyMonitorFactory
-        backendStatusMonitor = BackendStatusMonitor()
-        backendControlService = BackendControlService()
+        backendSettings = .load()
+        backendRuntimeBuilder = DefaultBackendRuntimeBuilder()
+        backendRuntime = backendRuntimeBuilder.makeRuntime(settings: backendSettings)
+        backendStatusMonitor = backendRuntime.statusMonitor
+        backendControlService = backendRuntime.controlService
         backendRefreshScheduler = TimerBackendRefreshScheduler()
         super.init()
     }
@@ -132,16 +128,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         launchCoordinator: any AppLaunchCoordinating = AppLaunchCoordinator(),
         shortcutRecorderUserDefaults: UserDefaults = .standard,
         hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory,
-        backendStatusMonitor: BackendStatusMonitor = BackendStatusMonitor(),
-        backendControlService: any BackendControlServicing = BackendControlService(),
+        backendSettings: BackendSettings = .load(),
+        backendRuntimeBuilder: (any BackendRuntimeBuilding)? = nil,
+        backendStatusMonitor: BackendStatusMonitor? = nil,
+        backendControlService: (any BackendControlServicing)? = nil,
         backendRefreshScheduler: any BackendRefreshScheduling = TimerBackendRefreshScheduler()
     ) {
         self.shortcutSettings = shortcutSettings
         self.launchCoordinator = launchCoordinator
         self.shortcutRecorderUserDefaults = shortcutRecorderUserDefaults
         self.hotkeyMonitorFactory = hotkeyMonitorFactory
-        self.backendStatusMonitor = backendStatusMonitor
-        self.backendControlService = backendControlService
+        self.backendSettings = backendSettings
+        let resolvedRuntimeBuilder = backendRuntimeBuilder ?? DefaultBackendRuntimeBuilder(
+            backendStatusMonitorOverride: backendStatusMonitor,
+            backendControlServiceOverride: backendControlService
+        )
+        self.backendRuntimeBuilder = resolvedRuntimeBuilder
+        self.backendRuntime = resolvedRuntimeBuilder.makeRuntime(settings: backendSettings)
+        self.backendStatusMonitor = self.backendRuntime.statusMonitor
+        self.backendControlService = self.backendRuntime.controlService
         self.backendRefreshScheduler = backendRefreshScheduler
         super.init()
     }
@@ -176,6 +181,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func translateClipboard() {
+        let workflow = makeClipboardWorkflow()
         Task {
             overlayController.show(state: .loading, placement: .centered)
             let state = await workflow.handleShortcut()
@@ -193,6 +199,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
+        let selectionWorkflow = makeSelectionWorkflow()
         Task {
             switch await selectionWorkflow.prepare() {
             case let .translate(text):
@@ -206,6 +213,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func handleOCRTranslation() {
+        let ocrWorkflow = makeOCRWorkflow()
         screenRegionSelectionController.present { [weak self] result in
             guard let self else {
                 return
@@ -236,7 +244,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                             }
                             Task {
                                 self.overlayController.show(state: .loading, placement: placement)
-                                let state = await self.ocrWorkflow.confirmTranslation(for: recognition)
+                                let state = await self.makeOCRWorkflow().confirmTranslation(for: recognition)
                                 self.present(state, placement: placement)
                             }
                         }
@@ -252,6 +260,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         _ text: String,
         placement: OverlayPlacement = .centered
     ) {
+        let workflow = makeClipboardWorkflow()
         Task {
             overlayController.show(state: .loading, placement: placement)
             let state = await workflow.confirmTranslation(for: text)
@@ -332,6 +341,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             do {
+                guard let backendControlService else {
+                    isBackendControlActionInFlight = false
+                    updateBackendStatus(
+                        .error(detail: L10n.failedToStartService),
+                        clearActionContext: true
+                    )
+                    return
+                }
                 try await backendControlService.start()
                 isBackendControlActionInFlight = false
                 refreshBackendStatus()
@@ -356,6 +373,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             do {
+                guard let backendControlService else {
+                    isBackendControlActionInFlight = false
+                    updateBackendStatus(.error(detail: L10n.failedToStopService))
+                    return
+                }
                 try await backendControlService.stop()
                 isBackendControlActionInFlight = false
                 refreshBackendStatus()
@@ -377,6 +399,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             do {
+                guard let backendControlService else {
+                    isBackendControlActionInFlight = false
+                    updateBackendStatus(
+                        .error(detail: L10n.failedToRestartService),
+                        clearActionContext: true
+                    )
+                    return
+                }
                 try await backendControlService.restart()
                 isBackendControlActionInFlight = false
                 refreshBackendStatus()
@@ -444,10 +474,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func startBackendRefreshTimer() {
         backendRefreshTimer?.invalidate()
         backendRefreshTimer = backendRefreshScheduler.schedule(
-            interval: AppConfig.default.backendStatusRefreshInterval
+            interval: backendRuntime.appConfig.backendStatusRefreshInterval
         ) { [weak self] in
             self?.refreshBackendStatus()
         }
+    }
+
+    private func applyBackendSettings(_ settings: BackendSettings) {
+        backendSettings = settings
+        backendRuntime = backendRuntimeBuilder.makeRuntime(settings: settings)
+        backendStatusMonitor = backendRuntime.statusMonitor
+        backendControlService = backendRuntime.controlService
+    }
+
+    private func makeClipboardWorkflow() -> TranslateClipboardWorkflow {
+        TranslateClipboardWorkflow(client: backendRuntime.translationClient)
+    }
+
+    private func makeSelectionWorkflow() -> TranslateTextWorkflow {
+        TranslateTextWorkflow(
+            inputSource: SelectionInputSource(),
+            client: backendRuntime.translationClient,
+            noTextMessage: L10n.noSelectedTextFound,
+            permissionRequiredMessage: L10n.accessibilityPermissionNotGranted,
+            automationPermissionRequiredMessage: L10n.browserAutomationPermissionRetry,
+            unsupportedHostAppMessage: L10n.unsupportedHostApp,
+            rejectedTextMessage: L10n.textExceedsMaximumLength
+        )
+    }
+
+    private func makeOCRWorkflow() -> TranslateOCRWorkflow {
+        TranslateOCRWorkflow(client: backendRuntime.translationClient)
     }
 
     private func configureHotkeyMonitors() {
@@ -559,6 +616,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     func ocrHotkeyMonitorForTesting() -> GlobalHotkeyMonitoring? {
         ocrHotkeyMonitor
+    }
+
+    @MainActor
+    func applyBackendSettingsForTesting(_ settings: BackendSettings) {
+        applyBackendSettings(settings)
+    }
+
+    @MainActor
+    func activeBackendConfigForTesting() -> AppConfig {
+        backendRuntime.appConfig
+    }
+
+    @MainActor
+    var supportsManagedBackendControlActionsForTesting: Bool {
+        backendRuntime.supportsManagedControlActions
     }
 
     private func handleShortcutPanelAction(_ action: ShortcutPanelAction) -> Bool {

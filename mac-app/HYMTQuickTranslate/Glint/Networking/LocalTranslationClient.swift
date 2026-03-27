@@ -19,6 +19,10 @@ struct LocalTranslationClient: TranslationClienting, Sendable {
         self.session = session
     }
 
+    init(settings: BackendSettings, session: URLSession = .shared) {
+        self.init(config: AppConfig(settings: settings), session: session)
+    }
+
     func translate(text: String, direction: TranslationDirection) async throws -> String {
         let prompt = TranslationPromptBuilder.makePrompt(
             text: text,

@@ -5,11 +5,11 @@ enum BackendAPIReachability: Equatable {
     case unreachable
 }
 
-protocol BackendAPIHealthChecking {
+protocol BackendAPIHealthChecking: Sendable {
     func checkAPIReachability() async throws -> BackendAPIReachability
 }
 
-protocol BackendProcessChecking {
+protocol BackendProcessChecking: Sendable {
     func isBackendProcessRunning() async throws -> Bool
 }
 
@@ -63,5 +63,13 @@ struct BackendProcessChecker: BackendProcessChecking {
         default:
             throw BackendStatusMonitorError.processCheckFailed
         }
+    }
+}
+
+struct StaticBackendProcessChecker: BackendProcessChecking {
+    let isRunning: Bool
+
+    func isBackendProcessRunning() async throws -> Bool {
+        isRunning
     }
 }

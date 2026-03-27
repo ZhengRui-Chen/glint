@@ -1,11 +1,11 @@
 import Foundation
 
-enum BackendActionKind: Equatable {
+enum BackendActionKind: Equatable, Sendable {
     case start
     case restart
 }
 
-struct BackendActionContext: Equatable {
+struct BackendActionContext: Equatable, Sendable {
     let action: BackendActionKind
     let requestedAt: Date
 }
@@ -14,16 +14,16 @@ enum BackendStatusMonitorError: Error {
     case processCheckFailed
 }
 
-struct BackendStatusMonitor {
+struct BackendStatusMonitor: Sendable {
     let apiChecker: any BackendAPIHealthChecking
     let processChecker: any BackendProcessChecking
-    let now: () -> Date
+    let now: @Sendable () -> Date
     let startupGracePeriod: TimeInterval
 
     init(
         apiChecker: any BackendAPIHealthChecking = BackendAPIHealthChecker(),
         processChecker: any BackendProcessChecking = BackendProcessChecker(),
-        now: @escaping () -> Date = Date.init,
+        now: @escaping @Sendable () -> Date = Date.init,
         startupGracePeriod: TimeInterval = 15
     ) {
         self.apiChecker = apiChecker

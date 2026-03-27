@@ -1,6 +1,6 @@
 import Foundation
 
-protocol ShellCommandRunning {
+protocol ShellCommandRunning: Sendable {
     func run(_ executableURL: URL, arguments: [String]) async throws -> ShellCommandResult
 }
 

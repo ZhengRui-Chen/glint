@@ -1,6 +1,6 @@
 import Foundation
 
-protocol BackendControlServicing {
+protocol BackendControlServicing: Sendable {
     func start() async throws
     func stop() async throws
     func restart() async throws
