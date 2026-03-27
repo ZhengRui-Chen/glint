@@ -9,7 +9,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
     private static let panelHeight: CGFloat = 284
     private static let presentationOffset: CGFloat = 12
 
-    let onAction: ((ShortcutPanelAction) -> Void)?
+    let onAction: ((ShortcutPanelAction) -> Bool)?
 
     private let state: ShortcutPanelViewState
     private let panel: ShortcutPanelWindow
@@ -18,7 +18,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
 
     init(
         shortcutSettings: ShortcutSettings = .default,
-        onAction: ((ShortcutPanelAction) -> Void)? = nil
+        onAction: ((ShortcutPanelAction) -> Bool)? = nil
     ) {
         self.state = ShortcutPanelViewState(shortcutSettings: shortcutSettings)
         self.onAction = onAction
@@ -79,14 +79,26 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
             return
         }
 
-        if case .saved = state.applyRecordedShortcut(shortcut) {
-            emit(.saveRecordedShortcut(target: target, shortcut: shortcut))
+        switch state.applyRecordedShortcut(shortcut) {
+        case .saved:
+            guard emit(.saveRecordedShortcut(target: target, shortcut: shortcut)) else {
+                state.rejectRecording(
+                    "Shortcut could not be registered. Try another combination."
+                )
+                return
+            }
+            state.commitRecordedShortcut(shortcut, for: target)
+        case .failed, .ignored:
+            break
         }
     }
 
     func requestResetToDefaults() {
+        guard emit(.resetToDefaults) else {
+            state.rejectRecording("Defaults could not be restored.")
+            return
+        }
         state.resetToDefaults()
-        emit(.resetToDefaults)
     }
 
     func requestDone() {
@@ -118,6 +130,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
     }
 
     func closePanel() {
+        state.cancelRecording()
         guard panel.isVisible, isClosing == false else {
             return
         }
@@ -167,8 +180,9 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         )
     }
 
-    private func emit(_ action: ShortcutPanelAction) {
-        onAction?(action)
+    @discardableResult
+    private func emit(_ action: ShortcutPanelAction) -> Bool {
+        onAction?(action) ?? true
     }
 
     private func orderPanelFront() {
@@ -185,8 +199,10 @@ final class ShortcutPanelViewState: ObservableObject {
     @Published private(set) var statusMessage: String?
 
     private var viewModel: ShortcutPanelViewModel
+    private var shortcutSettings: ShortcutSettings
 
     init(shortcutSettings: ShortcutSettings) {
+        self.shortcutSettings = shortcutSettings
         self.viewModel = ShortcutPanelViewModel(shortcutSettings: shortcutSettings)
         self.selectionShortcutLabel = viewModel.selectionShortcutLabel
         self.clipboardShortcutLabel = viewModel.clipboardShortcutLabel
@@ -203,6 +219,7 @@ final class ShortcutPanelViewState: ObservableObject {
     }
 
     func update(shortcutSettings: ShortcutSettings) {
+        self.shortcutSettings = shortcutSettings
         let preservedRecordingTarget = recordingTarget
         let preservedStatusMessage = statusMessage
         viewModel = ShortcutPanelViewModel(shortcutSettings: shortcutSettings)
@@ -229,13 +246,9 @@ final class ShortcutPanelViewState: ObservableObject {
             return .ignored
         }
 
-        let recorder = ShortcutRecorder(existingSettings: viewModel.shortcutSettings)
+        let recorder = ShortcutRecorder(existingSettings: shortcutSettings)
         switch recorder.validate(shortcut, for: target) {
-        case let .success(updatedSettings):
-            viewModel = ShortcutPanelViewModel(shortcutSettings: updatedSettings)
-            syncLabelsFromViewModel()
-            recordingTarget = nil
-            statusMessage = "Shortcut saved"
+        case .success:
             return .saved(target: target)
         case .failure(.duplicateShortcut):
             recordingTarget = target
@@ -244,7 +257,27 @@ final class ShortcutPanelViewState: ObservableObject {
         }
     }
 
+    func commitRecordedShortcut(
+        _ shortcut: GlobalHotkeyShortcut,
+        for target: ShortcutTarget
+    ) {
+        guard case let .success(updatedSettings) = shortcutSettings.replacing(shortcut, for: target) else {
+            return
+        }
+
+        shortcutSettings = updatedSettings
+        viewModel = ShortcutPanelViewModel(shortcutSettings: updatedSettings)
+        syncLabelsFromViewModel()
+        recordingTarget = nil
+        statusMessage = "Shortcut saved"
+    }
+
+    func rejectRecording(_ message: String) {
+        statusMessage = message
+    }
+
     func resetToDefaults() {
+        shortcutSettings = .default
         viewModel.resetToDefaults()
         syncLabelsFromViewModel()
         recordingTarget = nil

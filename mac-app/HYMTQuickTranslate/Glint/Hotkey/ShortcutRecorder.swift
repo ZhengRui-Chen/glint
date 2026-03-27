@@ -39,6 +39,12 @@ final class ShortcutRecorder {
         return result
     }
 
+    func resetToDefaults() -> ShortcutSettings {
+        settings = .default
+        settings.save(to: userDefaults)
+        return settings
+    }
+
     static func shortcut(from event: NSEvent) -> GlobalHotkeyShortcut? {
         guard event.type == .keyDown else {
             return nil

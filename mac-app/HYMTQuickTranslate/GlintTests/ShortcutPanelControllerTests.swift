@@ -12,6 +12,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         var actions: [ShortcutPanelAction] = []
         let controller = ShortcutPanelController(shortcutSettings: .default) { action in
             actions.append(action)
+            return true
         }
 
         controller.requestStartRecording(for: .clipboard)
@@ -56,6 +57,13 @@ final class ShortcutPanelControllerTests: XCTestCase {
             state.applyRecordedShortcut(updatedShortcut),
             .saved(target: .clipboard)
         )
+        XCTAssertEqual(state.recordingTarget, .clipboard)
+        XCTAssertEqual(
+            state.clipboardShortcutLabel,
+            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+        )
+
+        state.commitRecordedShortcut(updatedShortcut, for: .clipboard)
         XCTAssertNil(state.recordingTarget)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
@@ -107,6 +115,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         var actions: [ShortcutPanelAction] = []
         let controller = ShortcutPanelController(shortcutSettings: .default) { action in
             actions.append(action)
+            return true
         }
 
         controller.requestStartRecording(for: .clipboard)
@@ -116,4 +125,64 @@ final class ShortcutPanelControllerTests: XCTestCase {
             .startRecording(.clipboard)
         ])
     }
+
+    func test_controller_keeps_recording_state_when_panel_save_fails() throws {
+        let newShortcut = GlobalHotkeyShortcut(
+            keyCode: UInt32(kVK_ANSI_X),
+            modifiers: UInt32(controlKey | optionKey | cmdKey)
+        )
+        var actions: [ShortcutPanelAction] = []
+        let controller = ShortcutPanelController(shortcutSettings: .default) { action in
+            actions.append(action)
+            if case .saveRecordedShortcut = action {
+                return false
+            }
+            return true
+        }
+
+        controller.requestStartRecording(for: .clipboard)
+        controller.requestApplyRecordedShortcut(newShortcut)
+
+        let state = try XCTUnwrap(reflectedState(from: controller))
+        XCTAssertEqual(
+            actions,
+            [
+                .startRecording(.clipboard),
+                .saveRecordedShortcut(target: .clipboard, shortcut: newShortcut)
+            ]
+        )
+        XCTAssertEqual(state.recordingTarget, .clipboard)
+        XCTAssertEqual(
+            state.statusMessage,
+            "Shortcut could not be registered. Try another combination."
+        )
+        XCTAssertEqual(
+            state.clipboardShortcutLabel,
+            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+        )
+    }
+
+    func test_controller_clears_recording_state_when_done_or_closed() throws {
+        let controller = ShortcutPanelController(shortcutSettings: .default)
+
+        controller.requestStartRecording(for: .selection)
+        controller.requestDone()
+
+        let doneState = try XCTUnwrap(reflectedState(from: controller))
+        XCTAssertNil(doneState.recordingTarget)
+        XCTAssertNil(doneState.statusMessage)
+
+        controller.requestStartRecording(for: .clipboard)
+        controller.closePanel()
+
+        let closedState = try XCTUnwrap(reflectedState(from: controller))
+        XCTAssertNil(closedState.recordingTarget)
+        XCTAssertNil(closedState.statusMessage)
+    }
+}
+
+private func reflectedState(from controller: ShortcutPanelController) -> ShortcutPanelViewState? {
+    Mirror(reflecting: controller).children
+        .first { $0.label == "state" }?
+        .value as? ShortcutPanelViewState
 }
