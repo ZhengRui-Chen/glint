@@ -45,6 +45,32 @@ final class ShortcutPanelViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.statusMessage)
     }
 
+    func test_previewing_modifier_input_updates_active_shortcut_label() {
+        let viewModel = ShortcutPanelViewModel(shortcutSettings: .default)
+
+        viewModel.startRecording(for: .clipboard)
+        viewModel.previewModifierInput(UInt32(controlKey | optionKey | cmdKey))
+
+        XCTAssertEqual(viewModel.clipboardShortcutLabel, "⌃⌥⌘")
+        XCTAssertEqual(
+            viewModel.selectionShortcutLabel,
+            GlobalHotkeyShortcut.selectionDefault.displayName
+        )
+    }
+
+    func test_cancel_restores_original_shortcut_label_after_preview() {
+        let viewModel = ShortcutPanelViewModel(shortcutSettings: .default)
+
+        viewModel.startRecording(for: .clipboard)
+        viewModel.previewModifierInput(UInt32(controlKey | optionKey | cmdKey))
+        viewModel.cancelRecording()
+
+        XCTAssertEqual(
+            viewModel.clipboardShortcutLabel,
+            GlobalHotkeyShortcut.default.displayName
+        )
+    }
+
     func test_custom_settings_are_reflected_in_visible_labels() {
         let customSettings = ShortcutSettings(
             clipboardShortcut: GlobalHotkeyShortcut(

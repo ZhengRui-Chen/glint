@@ -8,6 +8,8 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
     private static let panelWidth: CGFloat = 440
     private static let panelHeight: CGFloat = 256
     private static let presentationOffset: CGFloat = 12
+    fileprivate static let horizontalAnchorInset: CGFloat = 4
+    fileprivate static let topInset: CGFloat = 8
 
     let onAction: ((ShortcutPanelAction) -> Bool)?
 
@@ -60,6 +62,9 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         panel.onCancel = { [weak self] in
             self?.handleCancelOperation()
         }
+        panel.onShortcutInput = { [weak self] event in
+            self?.handleShortcutInput(event) ?? false
+        }
 
         hostingView.rootView = makeRootView()
         hostingView.wantsLayer = true
@@ -106,14 +111,14 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         closePanel()
     }
 
-    func show() {
+    func show(anchorRect: CGRect? = nil) {
         if panel.isVisible {
             orderPanelFront()
             return
         }
 
         isClosing = false
-        let targetFrame = panel.frame
+        let targetFrame = resolvedTargetFrame(anchorRect: anchorRect)
         let transition = ShortcutPanelTransition.present(offset: Self.presentationOffset)
         let startingFrame = transition.frame(fromVisibleFrame: targetFrame)
 
@@ -174,6 +179,10 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         panel.isVisible
     }
 
+    func previewModifierInputForTesting(_ modifiers: UInt32) {
+        state.previewModifierInput(modifiers)
+    }
+
     private func makeRootView() -> ShortcutPanelView {
         ShortcutPanelView(
             state: state,
@@ -200,6 +209,61 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
     private func orderPanelFront() {
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
+    }
+
+    private func resolvedTargetFrame(anchorRect: CGRect?) -> CGRect {
+        let panelSize = CGSize(width: Self.panelWidth, height: Self.panelHeight)
+
+        if let anchorRect {
+            let screen = NSScreen.screens.first { $0.frame.intersects(anchorRect) } ?? NSScreen.main
+            if let screen {
+                return ShortcutPanelPlacement.frame(
+                    panelSize: panelSize,
+                    anchorRect: anchorRect,
+                    screenFrame: screen.frame,
+                    visibleFrame: screen.visibleFrame
+                )
+            }
+        }
+
+        let visibleFrame = NSScreen.main?.visibleFrame ?? CGRect(
+            x: 0,
+            y: 0,
+            width: panelSize.width,
+            height: panelSize.height
+        )
+        return CGRect(
+            x: visibleFrame.midX - panelSize.width / 2,
+            y: visibleFrame.midY - panelSize.height / 2,
+            width: panelSize.width,
+            height: panelSize.height
+        )
+    }
+
+    private func handleShortcutInput(_ event: NSEvent) -> Bool {
+        guard state.recordingTarget != nil else {
+            return false
+        }
+
+        if ShortcutRecorder.isCancelEvent(event) {
+            state.cancelRecording()
+            return true
+        }
+
+        switch event.type {
+        case .flagsChanged:
+            state.previewModifierInput(ShortcutRecorder.modifiers(from: event.modifierFlags))
+            return true
+        case .keyDown:
+            guard let shortcut = ShortcutRecorder.shortcut(from: event) else {
+                state.rejectRecording("Use at least one modifier key.")
+                return true
+            }
+            requestApplyRecordedShortcut(shortcut)
+            return true
+        default:
+            return false
+        }
     }
 
     private func handleCancelOperation() {
@@ -258,13 +322,20 @@ final class ShortcutPanelViewState: ObservableObject {
     func startRecording(for target: ShortcutTarget) {
         viewModel.startRecording(for: target)
         recordingTarget = target
+        syncLabelsFromViewModel()
         statusMessage = "Press a shortcut. Esc cancels."
     }
 
     func cancelRecording() {
         viewModel.cancelRecording()
         recordingTarget = nil
+        syncLabelsFromViewModel()
         statusMessage = nil
+    }
+
+    func previewModifierInput(_ modifiers: UInt32) {
+        viewModel.previewModifierInput(modifiers)
+        syncLabelsFromViewModel()
     }
 
     @discardableResult
@@ -273,6 +344,8 @@ final class ShortcutPanelViewState: ObservableObject {
             return .ignored
         }
 
+        viewModel.previewRecordedShortcut(shortcut)
+        syncLabelsFromViewModel()
         let recorder = ShortcutRecorder(existingSettings: shortcutSettings)
         switch recorder.validate(shortcut, for: target) {
         case .success:
@@ -339,6 +412,41 @@ enum ShortcutPanelAction: Equatable {
     case done
 }
 
+struct ShortcutPanelPlacement {
+    private static let horizontalAnchorInset: CGFloat = 4
+    private static let topInset: CGFloat = 8
+
+    static func frame(
+        panelSize: CGSize,
+        anchorRect: CGRect?,
+        screenFrame: CGRect,
+        visibleFrame: CGRect
+    ) -> CGRect {
+        let fallbackOrigin = CGPoint(
+            x: visibleFrame.midX - panelSize.width / 2,
+            y: visibleFrame.midY - panelSize.height / 2
+        )
+
+        guard let anchorRect else {
+            return CGRect(origin: fallbackOrigin, size: panelSize)
+        }
+
+        let minX = visibleFrame.minX + 12
+        let maxX = visibleFrame.maxX - panelSize.width - 12
+        let proposedX = anchorRect.maxX - panelSize.width + Self.horizontalAnchorInset
+        let x = min(max(proposedX, minX), maxX)
+        let topBound = min(screenFrame.maxY, visibleFrame.maxY)
+        let y = topBound - panelSize.height - Self.topInset
+
+        return CGRect(
+            x: x,
+            y: y,
+            width: panelSize.width,
+            height: panelSize.height
+        )
+    }
+}
+
 private struct ShortcutPanelTransition {
     let duration: TimeInterval
     let initialAlpha: CGFloat
@@ -382,6 +490,7 @@ private struct ShortcutPanelTransition {
 
 private final class ShortcutPanelWindow: NSPanel {
     var onCancel: (() -> Void)?
+    var onShortcutInput: ((NSEvent) -> Bool)?
 
     override var canBecomeKey: Bool {
         true
@@ -393,5 +502,13 @@ private final class ShortcutPanelWindow: NSPanel {
 
     override func cancelOperation(_ sender: Any?) {
         onCancel?()
+    }
+
+    override func sendEvent(_ event: NSEvent) {
+        if (event.type == .keyDown || event.type == .flagsChanged),
+           onShortcutInput?(event) == true {
+            return
+        }
+        super.sendEvent(event)
     }
 }

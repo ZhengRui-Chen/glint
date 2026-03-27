@@ -10,7 +10,7 @@ struct ShortcutRecorderButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 10) {
-                Text(isRecording ? "Type shortcut" : shortcut)
+                Text(shortcut)
                     .font(.system(size: 13, weight: .semibold, design: .monospaced))
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)

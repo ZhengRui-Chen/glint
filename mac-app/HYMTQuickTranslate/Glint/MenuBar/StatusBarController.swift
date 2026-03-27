@@ -34,6 +34,18 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         rebuildMenu()
     }
 
+    var statusButtonFrameInScreen: CGRect? {
+        guard
+            let button = statusItem.button,
+            let window = button.window
+        else {
+            return nil
+        }
+
+        let buttonFrameInWindow = button.convert(button.bounds, to: nil)
+        return window.convertToScreen(buttonFrameInWindow)
+    }
+
     private func rebuildMenu() {
         let viewModel = viewModelProvider()
 

@@ -21,21 +21,28 @@ struct GlobalHotkeyShortcut {
     )
 
     var displayName: String {
-        let modifierNames: [(UInt32, String)] = [
-            (UInt32(controlKey), "Control"),
-            (UInt32(optionKey), "Option"),
-            (UInt32(shiftKey), "Shift"),
-            (UInt32(cmdKey), "Command"),
+        Self.displayString(modifiers: modifiers, keyCode: keyCode)
+    }
+
+    static func displayString(
+        modifiers: UInt32,
+        keyCode: UInt32? = nil
+    ) -> String {
+        let modifierSymbols: [(UInt32, String)] = [
+            (UInt32(controlKey), "⌃"),
+            (UInt32(optionKey), "⌥"),
+            (UInt32(shiftKey), "⇧"),
+            (UInt32(cmdKey), "⌘"),
         ]
-        let parts = modifierNames
+        let symbols = modifierSymbols
             .filter { modifiers & $0.0 != 0 }
             .map(\.1)
+            .joined()
 
-        let keyName = Self.keyName(for: keyCode)
-        if parts.isEmpty {
-            return keyName
+        guard let keyCode else {
+            return symbols
         }
-        return (parts + [keyName]).joined(separator: " + ")
+        return symbols + Self.keyName(for: keyCode)
     }
 
     private static func keyName(for keyCode: UInt32) -> String {

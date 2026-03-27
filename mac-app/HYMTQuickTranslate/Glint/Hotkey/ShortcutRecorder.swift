@@ -44,7 +44,7 @@ final class ShortcutRecorder {
             return nil
         }
 
-        let modifiers = carbonModifiers(from: event.modifierFlags)
+        let modifiers = modifiers(from: event.modifierFlags)
         guard modifiers != 0 else {
             return nil
         }
@@ -59,7 +59,7 @@ final class ShortcutRecorder {
         event.type == .keyDown && event.keyCode == UInt16(kVK_Escape)
     }
 
-    private static func carbonModifiers(from flags: NSEvent.ModifierFlags) -> UInt32 {
+    static func modifiers(from flags: NSEvent.ModifierFlags) -> UInt32 {
         var modifiers: UInt32 = 0
 
         if flags.contains(.control) {

@@ -4,6 +4,18 @@ import XCTest
 
 @MainActor
 final class ShortcutPanelControllerTests: XCTestCase {
+    func test_panel_frame_anchors_to_status_item_region() {
+        let frame = ShortcutPanelPlacement.frame(
+            panelSize: CGSize(width: 440, height: 256),
+            anchorRect: CGRect(x: 1460, y: 880, width: 24, height: 24),
+            screenFrame: CGRect(x: 0, y: 0, width: 1512, height: 982),
+            visibleFrame: CGRect(x: 0, y: 32, width: 1512, height: 918)
+        )
+
+        XCTAssertEqual(frame.origin.x, 1048, accuracy: 0.5)
+        XCTAssertEqual(frame.origin.y, 686, accuracy: 0.5)
+    }
+
     func test_controller_emits_actions_in_order() {
         let newShortcut = GlobalHotkeyShortcut(
             keyCode: UInt32(kVK_ANSI_X),
@@ -60,7 +72,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         XCTAssertEqual(state.recordingTarget, .clipboard)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            GlobalHotkeyShortcut.default.displayName
+            updatedShortcut.displayName
         )
 
         state.commitRecordedShortcut(updatedShortcut, for: .clipboard)
@@ -158,7 +170,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         )
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            GlobalHotkeyShortcut.default.displayName
+            newShortcut.displayName
         )
     }
 
@@ -167,12 +179,17 @@ final class ShortcutPanelControllerTests: XCTestCase {
 
         controller.show()
         controller.requestStartRecording(for: .selection)
+        controller.previewModifierInputForTesting(UInt32(controlKey | optionKey))
         controller.handleCancelForTesting()
 
         let state = controller.testingSnapshot
         XCTAssertTrue(controller.isPanelVisibleForTesting)
         XCTAssertNil(state.recordingTarget)
         XCTAssertNil(state.statusMessage)
+        XCTAssertEqual(
+            state.selectionShortcutLabel,
+            GlobalHotkeyShortcut.selectionDefault.displayName
+        )
 
         controller.closePanel()
     }

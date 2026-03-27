@@ -465,7 +465,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func openShortcutPanel() {
         cancelShortcutRecording()
         shortcutPanelController.update(shortcutSettings: shortcutSettings)
-        shortcutPanelController.show()
+        shortcutPanelController.show(anchorRect: statusBarController?.statusButtonFrameInScreen)
     }
 
     @MainActor
