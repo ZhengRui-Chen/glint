@@ -52,7 +52,10 @@ final class ShortcutPanelControllerTests: XCTestCase {
             "Press a new shortcut, or Esc to cancel"
         )
 
-        XCTAssertTrue(state.applyRecordedShortcut(updatedShortcut))
+        XCTAssertEqual(
+            state.applyRecordedShortcut(updatedShortcut),
+            .saved(target: .clipboard)
+        )
         XCTAssertNil(state.recordingTarget)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
@@ -66,5 +69,51 @@ final class ShortcutPanelControllerTests: XCTestCase {
             "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
         )
         XCTAssertEqual(state.statusMessage, "Defaults restored")
+    }
+
+    func test_refresh_preserves_in_progress_recording_and_transient_status() {
+        let state = ShortcutPanelViewState(shortcutSettings: .default)
+
+        state.startRecording(for: .selection)
+        state.update(
+            shortcutSettings: ShortcutSettings(
+                clipboardShortcut: GlobalHotkeyShortcut.default,
+                selectionShortcut: GlobalHotkeyShortcut(
+                    keyCode: UInt32(kVK_ANSI_A),
+                    modifiers: UInt32(controlKey | optionKey | cmdKey)
+                )
+            )
+        )
+
+        XCTAssertEqual(state.recordingTarget, .selection)
+        XCTAssertTrue(state.isRecordingSelectionShortcut)
+        XCTAssertEqual(
+            state.statusMessage,
+            "Press a new shortcut, or Esc to cancel"
+        )
+        XCTAssertEqual(
+            state.selectionShortcutLabel,
+            {
+                let refreshedShortcut = GlobalHotkeyShortcut(
+                    keyCode: UInt32(kVK_ANSI_A),
+                    modifiers: UInt32(controlKey | optionKey | cmdKey)
+                )
+                return "Selection Shortcut: \(refreshedShortcut.displayName)"
+            }()
+        )
+    }
+
+    func test_controller_does_not_emit_save_for_duplicate_shortcuts() {
+        var actions: [ShortcutPanelAction] = []
+        let controller = ShortcutPanelController(shortcutSettings: .default) { action in
+            actions.append(action)
+        }
+
+        controller.requestStartRecording(for: .clipboard)
+        controller.requestApplyRecordedShortcut(GlobalHotkeyShortcut.selectionDefault)
+
+        XCTAssertEqual(actions, [
+            .startRecording(.clipboard)
+        ])
     }
 }

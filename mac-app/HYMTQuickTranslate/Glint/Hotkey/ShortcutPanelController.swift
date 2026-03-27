@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import QuartzCore
 import SwiftUI
 
@@ -78,7 +79,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
             return
         }
 
-        if state.applyRecordedShortcut(shortcut) {
+        if case .saved = state.applyRecordedShortcut(shortcut) {
             emit(.saveRecordedShortcut(target: target, shortcut: shortcut))
         }
     }
@@ -189,8 +190,8 @@ final class ShortcutPanelViewState: ObservableObject {
         self.viewModel = ShortcutPanelViewModel(shortcutSettings: shortcutSettings)
         self.selectionShortcutLabel = viewModel.selectionShortcutLabel
         self.clipboardShortcutLabel = viewModel.clipboardShortcutLabel
-        self.recordingTarget = viewModel.recordingTarget
-        self.statusMessage = viewModel.statusMessage
+        self.recordingTarget = nil
+        self.statusMessage = nil
     }
 
     var isRecordingSelectionShortcut: Bool {
@@ -202,39 +203,64 @@ final class ShortcutPanelViewState: ObservableObject {
     }
 
     func update(shortcutSettings: ShortcutSettings) {
+        let preservedRecordingTarget = recordingTarget
+        let preservedStatusMessage = statusMessage
         viewModel = ShortcutPanelViewModel(shortcutSettings: shortcutSettings)
-        syncFromViewModel()
+        syncLabelsFromViewModel()
+        recordingTarget = preservedRecordingTarget
+        statusMessage = preservedStatusMessage
     }
 
     func startRecording(for target: ShortcutTarget) {
         viewModel.startRecording(for: target)
-        syncFromViewModel()
+        recordingTarget = target
+        statusMessage = "Press a new shortcut, or Esc to cancel"
     }
 
     func cancelRecording() {
         viewModel.cancelRecording()
-        syncFromViewModel()
+        recordingTarget = nil
+        statusMessage = nil
     }
 
     @discardableResult
-    func applyRecordedShortcut(_ shortcut: GlobalHotkeyShortcut) -> Bool {
-        let priorTarget = viewModel.recordingTarget
-        viewModel.applyRecordedShortcut(shortcut)
-        syncFromViewModel()
-        return priorTarget != nil && recordingTarget == nil && statusMessage == "Shortcut saved"
+    func applyRecordedShortcut(_ shortcut: GlobalHotkeyShortcut) -> ShortcutPanelApplyResult {
+        guard let target = recordingTarget else {
+            return .ignored
+        }
+
+        let recorder = ShortcutRecorder(existingSettings: viewModel.shortcutSettings)
+        switch recorder.validate(shortcut, for: target) {
+        case let .success(updatedSettings):
+            viewModel = ShortcutPanelViewModel(shortcutSettings: updatedSettings)
+            syncLabelsFromViewModel()
+            recordingTarget = nil
+            statusMessage = "Shortcut saved"
+            return .saved(target: target)
+        case .failure(.duplicateShortcut):
+            recordingTarget = target
+            statusMessage = "This shortcut is already used by Glint"
+            return .failed(.duplicateShortcut)
+        }
     }
 
     func resetToDefaults() {
         viewModel.resetToDefaults()
-        syncFromViewModel()
+        syncLabelsFromViewModel()
+        recordingTarget = nil
+        statusMessage = "Defaults restored"
     }
 
-    private func syncFromViewModel() {
+    private func syncLabelsFromViewModel() {
         selectionShortcutLabel = viewModel.selectionShortcutLabel
         clipboardShortcutLabel = viewModel.clipboardShortcutLabel
-        recordingTarget = viewModel.recordingTarget
-        statusMessage = viewModel.statusMessage
     }
+}
+
+enum ShortcutPanelApplyResult: Equatable {
+    case saved(target: ShortcutTarget)
+    case failed(ShortcutSettingsError)
+    case ignored
 }
 
 enum ShortcutPanelAction: Equatable {
