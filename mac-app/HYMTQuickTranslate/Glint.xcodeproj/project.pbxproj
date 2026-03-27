@@ -14,6 +14,8 @@
 		02DE59A8465021E8EBFAD86C /* LocalTranslationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7AEFEB50D84538DA24CABB /* LocalTranslationClient.swift */; };
 		0C8B402801446D49E97E7BF8 /* ClipboardInputSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CF48D1B6CED4DB23532C15 /* ClipboardInputSource.swift */; };
 		1AD55419D634A29FB4906167 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */; };
+		A9B7C6D5E4F3012345678902 /* APISettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B7C6D5E4F3012345678901 /* APISettings.swift */; };
+		A9B7C6D5E4F3012345678904 /* APISettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B7C6D5E4F3012345678903 /* APISettingsStoreTests.swift */; };
 		244E3E51D4F288ED4B93B187 /* OverlayDismissalPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */; };
 		24A1B2C3D4E5F60718293A51 /* OCRImageInputSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24A1B2C3D4E5F60718293A50 /* OCRImageInputSource.swift */; };
 		2F4A6C8E0B1D3F5A7C9E1A2B /* AccessibilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C7E9F1B2D4F6A8C0E2B3C /* AccessibilityPermission.swift */; };
@@ -100,6 +102,8 @@
 		A1B2C3D4E5F60718293A4106 /* LocalizationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalTranslationClientTests.swift; sourceTree = "<group>"; };
 		053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = App/AppDelegate.swift; sourceTree = "<group>"; };
+		A9B7C6D5E4F3012345678901 /* APISettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = APISettings.swift; path = Config/APISettings.swift; sourceTree = "<group>"; };
+		A9B7C6D5E4F3012345678903 /* APISettingsStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = APISettingsStoreTests.swift; sourceTree = "<group>"; };
 		0B8E30CF3556ABF214704A2A /* GlobalHotkeyMonitorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GlobalHotkeyMonitorTests.swift; sourceTree = "<group>"; };
 		1687ED94B1D0A6E8467917C5 /* TranslateClipboardWorkflow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TranslateClipboardWorkflow.swift; path = Workflow/TranslateClipboardWorkflow.swift; sourceTree = "<group>"; };
 		24A1B2C3D4E5F60718293A50 /* OCRImageInputSource.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OCRImageInputSource.swift; path = OCR/OCRImageInputSource.swift; sourceTree = "<group>"; };
@@ -235,6 +239,7 @@
 				053A3A126B5DE489E1BE66E1 /* AppDelegate.swift */,
 				A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */,
 				A767EF72CE237474EB211A9D /* AppConfig.swift */,
+				A9B7C6D5E4F3012345678901 /* APISettings.swift */,
 				4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */,
 				59C1D2E3F40516273849A5B2 /* BackendControlService.swift */,
 				6A1B2C3D4E5F60718293A400 /* BackendStatusMonitor.swift */,
@@ -284,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				9E4804D656F5D78FD399E45C /* GlintTests.swift */,
+				A9B7C6D5E4F3012345678903 /* APISettingsStoreTests.swift */,
 				51A02F7B49C84BE8A3D8A1F0 /* AppDelegateBackendMenuTests.swift */,
 				59C1D2E3F40516273849A5B0 /* BackendControlServiceTests.swift */,
 				5B7A9D0C1E2F304152637484 /* BackendStatusMonitorTests.swift */,
@@ -417,6 +423,7 @@
 				6A1B2C3D4E5F60718293A405 /* ShellCommandRunner.swift in Sources */,
 				A36D1B90B9C54B12A1F79011 /* AppLaunchCoordinator.swift in Sources */,
 				4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */,
+				A9B7C6D5E4F3012345678902 /* APISettings.swift in Sources */,
 				8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */,
 				A1B2C3D4E5F60718293A4101 /* L10n.swift in Sources */,
 				42F3CD2B101BB299A6DB09BF /* TranslationDirection.swift in Sources */,
@@ -460,6 +467,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BAA4E0E8A9912D1A5015A3BE /* GlintTests.swift in Sources */,
+				A9B7C6D5E4F3012345678904 /* APISettingsStoreTests.swift in Sources */,
 				51A02F7B49C84BE8A3D8A1F1 /* AppDelegateBackendMenuTests.swift in Sources */,
 				59C1D2E3F40516273849A5B1 /* BackendControlServiceTests.swift in Sources */,
 				5B7A9D0C1E2F304152637485 /* BackendStatusMonitorTests.swift in Sources */,

@@ -6,6 +6,7 @@ enum AppBranding {
 }
 
 struct AppConfig {
+    let baseURLString: String
     let baseURL: URL
     let model: String
     let apiKey: String
@@ -17,12 +18,22 @@ struct AppConfig {
         baseURL.appending(path: "/v1/models")
     }
 
-    static let `default` = AppConfig(
-        baseURL: URL(string: "http://127.0.0.1:8001")!,
-        model: "HY-MT1.5-1.8B-4bit",
-        apiKey: "local-hy-key",
-        requestTimeout: 20,
-        backendStatusRefreshInterval: 15,
-        backendAPITimeout: 5
-    )
+    init(
+        settings: APISettings,
+        requestTimeout: TimeInterval = 20,
+        backendStatusRefreshInterval: TimeInterval = 15,
+        backendAPITimeout: TimeInterval = 5
+    ) {
+        baseURLString = settings.baseURLString
+        baseURL = URL(string: settings.baseURLString) ?? URL(string: "about:blank")!
+        model = settings.model
+        apiKey = settings.apiKey
+        self.requestTimeout = requestTimeout
+        self.backendStatusRefreshInterval = backendStatusRefreshInterval
+        self.backendAPITimeout = backendAPITimeout
+    }
+
+    static var `default`: AppConfig {
+        AppConfig(settings: APISettingsStore().load())
+    }
 }
