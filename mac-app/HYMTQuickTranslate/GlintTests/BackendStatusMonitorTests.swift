@@ -49,6 +49,19 @@ final class BackendStatusMonitorTests: XCTestCase {
         XCTAssertEqual(snapshot, .unavailable(detail: L10n.backendCurrentlyUnavailable))
     }
 
+    func test_monitor_reports_unavailable_without_process_check_when_process_fallback_is_disabled() async {
+        let monitor = BackendStatusMonitor(
+            apiChecker: StubBackendAPIHealthChecker(result: .success(.unreachable)),
+            processChecker: StubBackendProcessChecker(result: .failure(StubError.processFailed)),
+            now: { Date(timeIntervalSince1970: 100) },
+            checksProcessWhenAPIIsUnreachable: false
+        )
+
+        let snapshot = await monitor.refresh()
+
+        XCTAssertEqual(snapshot, .unavailable(detail: L10n.backendCurrentlyUnavailable))
+    }
+
     func test_monitor_reports_error_when_process_check_fails() async {
         let monitor = BackendStatusMonitor(
             apiChecker: StubBackendAPIHealthChecker(result: .success(.unreachable)),

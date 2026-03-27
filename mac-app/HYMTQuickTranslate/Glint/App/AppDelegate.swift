@@ -101,7 +101,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusBarController: StatusBarController?
     private var recordingTarget: ShortcutTarget?
     private var shortcutStatusLabel: String?
-    private var backendStatus = BackendStatusSnapshot.checking()
+    private var backendStatus = BackendStatusSnapshot.notChecked()
     private var backendActionContext: BackendActionContext?
     private var isBackendControlActionInFlight = false
     private var backendRefreshGeneration = 0
@@ -154,17 +154,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         statusBarController = StatusBarController(
-            onMenuWillOpen: { [weak self] in
-                self?.refreshBackendStatus()
-            }
+            onMenuWillOpen: {}
         ) { [weak self] in
             self?.makeMenuBarViewModel() ?? MenuBarViewModel(
                 permissionStatus: .required,
-                backendStatus: .checking()
+                backendStatus: .notChecked()
             )
         }
-        startBackendRefreshTimer()
-        refreshBackendStatus()
         registerHotkeysIfNeeded(immediatelyAfterLaunch: true)
     }
 
@@ -481,10 +477,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func applyBackendSettings(_ settings: BackendSettings) {
+        let didChangeSettings = backendSettings != settings
         backendSettings = settings
         backendRuntime = backendRuntimeBuilder.makeRuntime(settings: settings)
         backendStatusMonitor = backendRuntime.statusMonitor
         backendControlService = backendRuntime.controlService
+        invalidateInFlightBackendRefreshes()
+        updateBackendStatus(.notChecked(), clearActionContext: true)
+        guard didChangeSettings else {
+            return
+        }
+        refreshBackendStatus()
     }
 
     private func makeClipboardWorkflow() -> TranslateClipboardWorkflow {

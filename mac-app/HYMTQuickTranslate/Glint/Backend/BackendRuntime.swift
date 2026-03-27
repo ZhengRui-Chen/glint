@@ -47,7 +47,8 @@ struct DefaultBackendRuntimeBuilder: BackendRuntimeBuilding {
             apiChecker: BackendAPIHealthChecker(urlSession: urlSession, config: appConfig),
             processChecker: processChecker(for: settings),
             now: now,
-            startupGracePeriod: startupGracePeriod
+            startupGracePeriod: startupGracePeriod,
+            checksProcessWhenAPIIsUnreachable: settings.mode == .managedLocal
         )
         let controlService = controlService(for: settings)
 

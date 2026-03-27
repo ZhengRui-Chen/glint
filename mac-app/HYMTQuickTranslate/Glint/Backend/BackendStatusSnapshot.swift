@@ -1,6 +1,12 @@
 import Foundation
 
 enum BackendStatusSnapshot: Equatable {
+    case notChecked(
+        detail: String = String(
+            localized: "Backend status has not been checked yet",
+            comment: "Backend status detail before the first explicit status check"
+        )
+    )
     case checking(detail: String = L10n.checkingBackendAvailability)
     case available(detail: String)
     case starting(detail: String)
@@ -9,6 +15,11 @@ enum BackendStatusSnapshot: Equatable {
 
     var headline: String {
         switch self {
+        case .notChecked:
+            String(
+                localized: "Service Status: Not Checked",
+                comment: "Backend status headline before the first explicit status check"
+            )
         case .checking:
             L10n.serviceStatusChecking
         case .available:
@@ -24,7 +35,8 @@ enum BackendStatusSnapshot: Equatable {
 
     var detail: String {
         switch self {
-        case let .checking(detail),
+        case let .notChecked(detail),
+             let .checking(detail),
              let .available(detail),
              let .starting(detail),
              let .unavailable(detail),
@@ -42,6 +54,8 @@ enum BackendStatusSnapshot: Equatable {
 
     var canStartService: Bool {
         switch self {
+        case .notChecked:
+            true
         case .available, .starting, .checking:
             false
         case .unavailable, .error:
@@ -53,14 +67,14 @@ enum BackendStatusSnapshot: Equatable {
         switch self {
         case .available, .starting:
             true
-        case .checking, .unavailable, .error:
+        case .notChecked, .checking, .unavailable, .error:
             false
         }
     }
 
     var canRestartService: Bool {
         switch self {
-        case .starting, .checking:
+        case .notChecked, .starting, .checking:
             false
         case .available, .unavailable, .error:
             true
@@ -71,7 +85,7 @@ enum BackendStatusSnapshot: Equatable {
         switch self {
         case .starting, .checking:
             false
-        case .available, .unavailable, .error:
+        case .notChecked, .available, .unavailable, .error:
             true
         }
     }

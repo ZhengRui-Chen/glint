@@ -19,17 +19,20 @@ struct BackendStatusMonitor: Sendable {
     let processChecker: any BackendProcessChecking
     let now: @Sendable () -> Date
     let startupGracePeriod: TimeInterval
+    let checksProcessWhenAPIIsUnreachable: Bool
 
     init(
         apiChecker: any BackendAPIHealthChecking = BackendAPIHealthChecker(),
         processChecker: any BackendProcessChecking = BackendProcessChecker(),
         now: @escaping @Sendable () -> Date = Date.init,
-        startupGracePeriod: TimeInterval = 15
+        startupGracePeriod: TimeInterval = 15,
+        checksProcessWhenAPIIsUnreachable: Bool = true
     ) {
         self.apiChecker = apiChecker
         self.processChecker = processChecker
         self.now = now
         self.startupGracePeriod = startupGracePeriod
+        self.checksProcessWhenAPIIsUnreachable = checksProcessWhenAPIIsUnreachable
     }
 
     func refresh(
@@ -39,6 +42,10 @@ struct BackendStatusMonitor: Sendable {
             let apiReachability = try await apiChecker.checkAPIReachability()
             if apiReachability == .reachable {
                 return .available(detail: L10n.backendReachable)
+            }
+
+            guard checksProcessWhenAPIIsUnreachable else {
+                return .unavailable(detail: L10n.backendCurrentlyUnavailable)
             }
 
             let isProcessRunning = try await processChecker.isBackendProcessRunning()
