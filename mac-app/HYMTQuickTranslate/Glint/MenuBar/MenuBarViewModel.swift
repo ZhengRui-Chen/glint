@@ -16,6 +16,7 @@ struct MenuBarViewModel {
     private let onStopService: () -> Void
     private let onRestartService: () -> Void
     private let onRefreshStatus: () -> Void
+    private let onOpenBackendPanel: () -> Void
     private let onOpenShortcutPanel: () -> Void
     private let onQuit: () -> Void
 
@@ -31,6 +32,7 @@ struct MenuBarViewModel {
         onStopService: @escaping () -> Void = {},
         onRestartService: @escaping () -> Void = {},
         onRefreshStatus: @escaping () -> Void = {},
+        onOpenBackendPanel: @escaping () -> Void = {},
         onOpenShortcutPanel: @escaping () -> Void = {},
         onQuit: @escaping () -> Void = {}
     ) {
@@ -43,6 +45,7 @@ struct MenuBarViewModel {
         self.onStopService = onStopService
         self.onRestartService = onRestartService
         self.onRefreshStatus = onRefreshStatus
+        self.onOpenBackendPanel = onOpenBackendPanel
         self.onOpenShortcutPanel = onOpenShortcutPanel
         self.onQuit = onQuit
     }
@@ -85,6 +88,10 @@ struct MenuBarViewModel {
 
     var keyboardShortcutsLabel: String {
         L10n.keyboardShortcuts
+    }
+
+    var backendPanelLabel: String {
+        String(localized: "Backend...", comment: "Menu entry that opens the backend panel")
     }
 
     var canTranslateSelection: Bool {
@@ -155,6 +162,10 @@ struct MenuBarViewModel {
 
     func refreshStatus() {
         onRefreshStatus()
+    }
+
+    func openBackendPanel() {
+        onOpenBackendPanel()
     }
 
     func openKeyboardShortcuts() {

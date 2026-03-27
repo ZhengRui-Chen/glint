@@ -51,62 +51,6 @@ final class StatusBarController: NSObject, NSMenuDelegate {
 
         menu.removeAllItems()
 
-        let backendHeadlineItem = NSMenuItem(
-            title: viewModel.backendHeadline,
-            action: nil,
-            keyEquivalent: ""
-        )
-        backendHeadlineItem.isEnabled = false
-        menu.addItem(backendHeadlineItem)
-
-        let backendDetailItem = NSMenuItem(
-            title: viewModel.backendDetail,
-            action: nil,
-            keyEquivalent: ""
-        )
-        backendDetailItem.isEnabled = false
-        menu.addItem(backendDetailItem)
-
-        menu.addItem(.separator())
-
-        let startServiceItem = NSMenuItem(
-            title: viewModel.startServiceLabel,
-            action: #selector(handleStartService),
-            keyEquivalent: ""
-        )
-        startServiceItem.target = self
-        startServiceItem.isEnabled = viewModel.canStartService
-        menu.addItem(startServiceItem)
-
-        let stopServiceItem = NSMenuItem(
-            title: viewModel.stopServiceLabel,
-            action: #selector(handleStopService),
-            keyEquivalent: ""
-        )
-        stopServiceItem.target = self
-        stopServiceItem.isEnabled = viewModel.canStopService
-        menu.addItem(stopServiceItem)
-
-        let restartServiceItem = NSMenuItem(
-            title: viewModel.restartServiceLabel,
-            action: #selector(handleRestartService),
-            keyEquivalent: ""
-        )
-        restartServiceItem.target = self
-        restartServiceItem.isEnabled = viewModel.canRestartService
-        menu.addItem(restartServiceItem)
-
-        let refreshStatusItem = NSMenuItem(
-            title: viewModel.refreshStatusLabel,
-            action: #selector(handleRefreshStatus),
-            keyEquivalent: ""
-        )
-        refreshStatusItem.target = self
-        refreshStatusItem.isEnabled = viewModel.canRefreshStatus
-        menu.addItem(refreshStatusItem)
-
-        menu.addItem(.separator())
-
         let selectionItem = NSMenuItem(
             title: viewModel.translateSelectionLabel,
             action: #selector(handleTranslateSelection),
@@ -135,6 +79,14 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         menu.addItem(ocrItem)
 
         menu.addItem(.separator())
+
+        let backendPanelItem = NSMenuItem(
+            title: viewModel.backendPanelLabel,
+            action: #selector(handleOpenBackendPanel),
+            keyEquivalent: ""
+        )
+        backendPanelItem.target = self
+        menu.addItem(backendPanelItem)
 
         let keyboardShortcutsItem = NSMenuItem(
             title: viewModel.keyboardShortcutsLabel,
@@ -196,23 +148,8 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     }
 
     @objc
-    private func handleStartService() {
-        viewModelProvider().startService()
-    }
-
-    @objc
-    private func handleStopService() {
-        viewModelProvider().stopService()
-    }
-
-    @objc
-    private func handleRestartService() {
-        viewModelProvider().restartService()
-    }
-
-    @objc
-    private func handleRefreshStatus() {
-        viewModelProvider().refreshStatus()
+    private func handleOpenBackendPanel() {
+        viewModelProvider().openBackendPanel()
     }
 
     @objc

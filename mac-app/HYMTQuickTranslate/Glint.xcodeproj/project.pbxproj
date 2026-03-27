@@ -28,6 +28,10 @@
 		3F1FCDB4BAB6D739F058A51C /* ShortcutPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCDA3BAB6D739F058A51C /* ShortcutPanelView.swift */; };
 		3F1FCDB5BAB6D739F058A51C /* ShortcutRecorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCDA4BAB6D739F058A51C /* ShortcutRecorderButton.swift */; };
 		3F1FCDB6BAB6D739F058A51C /* ShortcutPanelControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCDA5BAB6D739F058A51C /* ShortcutPanelControllerTests.swift */; };
+		5E7A4B8C1D2F3A4B5C6D7E88 /* BackendPanelViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A4B8C1D2F3A4B5C6D7E89 /* BackendPanelViewModelTests.swift */; };
+		5E7A4B8C1D2F3A4B5C6D7E90 /* BackendPanelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A4B8C1D2F3A4B5C6D7E91 /* BackendPanelViewModel.swift */; };
+		5E7A4B8C1D2F3A4B5C6D7E92 /* BackendPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A4B8C1D2F3A4B5C6D7E93 /* BackendPanelController.swift */; };
+		5E7A4B8C1D2F3A4B5C6D7E94 /* BackendPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A4B8C1D2F3A4B5C6D7E95 /* BackendPanelView.swift */; };
 		5E7A4B8C1D2F3A4B5C6D7E81 /* BackendSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A4B8C1D2F3A4B5C6D7E80 /* BackendSettingsTests.swift */; };
 		5E7A4B8C1D2F3A4B5C6D7E84 /* AppDelegateBackendRuntimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A4B8C1D2F3A4B5C6D7E85 /* AppDelegateBackendRuntimeTests.swift */; };
 		5E7A4B8C1D2F3A4B5C6D7E86 /* BackendRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A4B8C1D2F3A4B5C6D7E87 /* BackendRuntime.swift */; };
@@ -132,6 +136,10 @@
 		3F1FCDA3BAB6D739F058A51C /* ShortcutPanelView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutPanelView.swift; path = Hotkey/ShortcutPanelView.swift; sourceTree = "<group>"; };
 		3F1FCDA4BAB6D739F058A51C /* ShortcutRecorderButton.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutRecorderButton.swift; path = Hotkey/ShortcutRecorderButton.swift; sourceTree = "<group>"; };
 		3F1FCDA5BAB6D739F058A51C /* ShortcutPanelControllerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutPanelControllerTests.swift; sourceTree = "<group>"; };
+		5E7A4B8C1D2F3A4B5C6D7E89 /* BackendPanelViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackendPanelViewModelTests.swift; sourceTree = "<group>"; };
+		5E7A4B8C1D2F3A4B5C6D7E91 /* BackendPanelViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendPanelViewModel.swift; path = Backend/BackendPanelViewModel.swift; sourceTree = "<group>"; };
+		5E7A4B8C1D2F3A4B5C6D7E93 /* BackendPanelController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendPanelController.swift; path = Backend/BackendPanelController.swift; sourceTree = "<group>"; };
+		5E7A4B8C1D2F3A4B5C6D7E95 /* BackendPanelView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendPanelView.swift; path = Backend/BackendPanelView.swift; sourceTree = "<group>"; };
 		5E7A4B8C1D2F3A4B5C6D7E80 /* BackendSettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackendSettingsTests.swift; sourceTree = "<group>"; };
 		5E7A4B8C1D2F3A4B5C6D7E85 /* AppDelegateBackendRuntimeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegateBackendRuntimeTests.swift; sourceTree = "<group>"; };
 		5E7A4B8C1D2F3A4B5C6D7E87 /* BackendRuntime.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendRuntime.swift; path = Backend/BackendRuntime.swift; sourceTree = "<group>"; };
@@ -245,6 +253,9 @@
 				A767EF72CE237474EB211A9D /* AppConfig.swift */,
 				5E7A4B8C1D2F3A4B5C6D7E83 /* BackendSettings.swift */,
 				5E7A4B8C1D2F3A4B5C6D7E87 /* BackendRuntime.swift */,
+				5E7A4B8C1D2F3A4B5C6D7E91 /* BackendPanelViewModel.swift */,
+				5E7A4B8C1D2F3A4B5C6D7E93 /* BackendPanelController.swift */,
+				5E7A4B8C1D2F3A4B5C6D7E95 /* BackendPanelView.swift */,
 				4F2B8D1C3A4E5F60718293A3 /* BackendStatusSnapshot.swift */,
 				59C1D2E3F40516273849A5B2 /* BackendControlService.swift */,
 				6A1B2C3D4E5F60718293A400 /* BackendStatusMonitor.swift */,
@@ -305,6 +316,7 @@
 				67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */,
 				3F1FCDA1BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift */,
 				3F1FCDA5BAB6D739F058A51C /* ShortcutPanelControllerTests.swift */,
+				5E7A4B8C1D2F3A4B5C6D7E89 /* BackendPanelViewModelTests.swift */,
 				4D7E8F90123456789ABCDE00 /* OCRWorkflowTests.swift */,
 				4D7E8F90123456789ABCDE02 /* ScreenRegionSelectionModelTests.swift */,
 				D148749C9E453DC16067AFA3 /* TranslationPromptBuilderTests.swift */,
@@ -431,6 +443,9 @@
 				4EB6491B0DDCDED13A20F159 /* AppConfig.swift in Sources */,
 				5E7A4B8C1D2F3A4B5C6D7E82 /* BackendSettings.swift in Sources */,
 				5E7A4B8C1D2F3A4B5C6D7E86 /* BackendRuntime.swift in Sources */,
+				5E7A4B8C1D2F3A4B5C6D7E90 /* BackendPanelViewModel.swift in Sources */,
+				5E7A4B8C1D2F3A4B5C6D7E92 /* BackendPanelController.swift in Sources */,
+				5E7A4B8C1D2F3A4B5C6D7E94 /* BackendPanelView.swift in Sources */,
 				8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */,
 				A1B2C3D4E5F60718293A4101 /* L10n.swift in Sources */,
 				42F3CD2B101BB299A6DB09BF /* TranslationDirection.swift in Sources */,
@@ -485,6 +500,7 @@
 				67F92B014BF95A00B1EAA003 /* ShortcutRecorderTests.swift in Sources */,
 				3F1FCDB2BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift in Sources */,
 				3F1FCDB6BAB6D739F058A51C /* ShortcutPanelControllerTests.swift in Sources */,
+				5E7A4B8C1D2F3A4B5C6D7E88 /* BackendPanelViewModelTests.swift in Sources */,
 				4D7E8F90123456789ABCDE01 /* OCRWorkflowTests.swift in Sources */,
 				4D7E8F90123456789ABCDE03 /* ScreenRegionSelectionModelTests.swift in Sources */,
 				4C741E38AAE445DB0417666D /* TranslationPromptBuilderTests.swift in Sources */,

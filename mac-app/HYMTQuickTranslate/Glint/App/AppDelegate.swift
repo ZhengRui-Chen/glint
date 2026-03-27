@@ -95,6 +95,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ) { [weak self] action in
         self?.handleShortcutPanelAction(action) ?? false
     }
+    private lazy var backendPanelController = BackendPanelController(
+        savedSettings: backendSettings,
+        statusSnapshot: backendStatus
+    ) { [weak self] action in
+        self?.handleBackendPanelAction(action) ?? false
+    }
     private var clipboardHotkeyMonitor: GlobalHotkeyMonitoring?
     private var selectionHotkeyMonitor: GlobalHotkeyMonitoring?
     private var ocrHotkeyMonitor: GlobalHotkeyMonitoring?
@@ -317,6 +323,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onRefreshStatus: { [weak self] in
                 self?.refreshBackendStatus()
             },
+            onOpenBackendPanel: { [weak self] in
+                self?.openBackendPanel()
+            },
             onOpenShortcutPanel: { [weak self] in
                 self?.openShortcutPanel()
             },
@@ -461,6 +470,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         clearActionContext: Bool = false
     ) {
         backendStatus = snapshot
+        backendPanelController.updateStatusSnapshot(snapshot)
         if clearActionContext {
             backendActionContext = nil
         }
@@ -596,9 +606,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutPanelController.show(anchorRect: statusBarController?.statusButtonFrameInScreen)
     }
 
+    private func openBackendPanel() {
+        backendPanelController.prepareForPresentation(
+            savedSettings: backendSettings,
+            statusSnapshot: backendStatus
+        )
+        backendPanelController.show(anchorRect: statusBarController?.statusButtonFrameInScreen)
+    }
+
     @MainActor
     func shortcutPanelControllerForTesting() -> ShortcutPanelController {
         shortcutPanelController
+    }
+
+    @MainActor
+    func backendPanelControllerForTesting() -> BackendPanelController {
+        backendPanelController
     }
 
     @MainActor
@@ -634,6 +657,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     var supportsManagedBackendControlActionsForTesting: Bool {
         backendRuntime.supportsManagedControlActions
+    }
+
+    private func handleBackendPanelAction(_ action: BackendPanelAction) -> Bool {
+        switch action {
+        case .save, .checkBackend, .startService, .stopService, .restartService, .close:
+            true
+        }
     }
 
     private func handleShortcutPanelAction(_ action: ShortcutPanelAction) -> Bool {
