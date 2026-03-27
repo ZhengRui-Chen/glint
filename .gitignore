@@ -15,3 +15,8 @@ configs/omlx.env
 # macOS
 .DS_Store
 .worktrees/
+
+# Xcode user state
+DerivedData/
+xcuserdata/
+*.xcuserstate
