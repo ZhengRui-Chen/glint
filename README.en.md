@@ -19,7 +19,11 @@ Glint is a macOS local translation app powered by `oMLX` and the current
 </p>
 
 <p align="center">
-  <img src="docs/assets/glint-demo.gif" alt="Glint demo" />
+  <img src="docs/assets/glint-ocr-demo.gif" alt="Glint OCR demo" />
+</p>
+
+<p align="center">
+  <a href="docs/assets/glint-ocr-demo.mp4">View the original OCR demo video</a>
 </p>
 
 ## Product Overview
