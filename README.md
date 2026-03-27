@@ -166,7 +166,7 @@ python3 scripts/api_smoke.py
 - `mlx-community/HY-MT1.5-1.8B-4bit`
 - `tencent/HY-MT1.5-1.8B`
 
-At minimum, place these files into `models/HY-MT1.5-1.8B-4bit/`:
+至少把以下文件放到 `models/HY-MT1.5-1.8B-4bit/`：
 
 - `model.safetensors`
 - `config.json`
