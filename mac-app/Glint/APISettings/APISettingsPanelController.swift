@@ -91,6 +91,7 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
     }
 
     func requestSave() {
+        syncDraftFromVisibleControls()
         store.save(state.draftSettings)
         onSave?()
         closePanel()
@@ -133,12 +134,22 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
         panel.frame
     }
 
+    var testingModelComboBox: NSComboBox? {
+        findModelComboBox(in: panel.contentView)
+    }
+
     func updateDraftForTesting(_ settings: APISettings) {
         state.updateDraft(settings)
     }
 
     private func closePanel() {
         panel.orderOut(nil)
+    }
+
+    private func syncDraftFromVisibleControls() {
+        if let comboBox = findModelComboBox(in: panel.contentView) {
+            state.model = comboBox.stringValue
+        }
     }
 
     private func makeRootView() -> APISettingsPanelView {
@@ -407,4 +418,23 @@ private final class APISettingsPanelWindow: NSPanel {
     override func cancelOperation(_ sender: Any?) {
         onCancel?()
     }
+}
+
+@MainActor
+private func findModelComboBox(in view: NSView?) -> NSComboBox? {
+    guard let view else {
+        return nil
+    }
+
+    if let comboBox = view as? NSComboBox {
+        return comboBox
+    }
+
+    for subview in view.subviews {
+        if let comboBox = findModelComboBox(in: subview) {
+            return comboBox
+        }
+    }
+
+    return nil
 }

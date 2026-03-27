@@ -106,6 +106,35 @@ final class APISettingsPanelControllerTests: XCTestCase {
 
         XCTAssertEqual(controller.testingPanelFrame.height, 360)
     }
+
+    func test_controller_persists_selected_model_from_combo_box() async throws {
+        let userDefaults = UserDefaults(suiteName: UUID().uuidString)!
+        let store = APISettingsStore(userDefaults: userDefaults)
+        let controller = APISettingsPanelController(
+            store: store,
+            makeDiscoveryClient: { _ in StubModelDiscoveryClient() }
+        )
+
+        controller.updateDraftForTesting(
+            APISettings(
+                baseURLString: "http://127.0.0.1:8001",
+                apiKey: "change-me",
+                model: ""
+            )
+        )
+        try await controller.refreshModels()
+        controller.show()
+        try await Task.sleep(for: .milliseconds(50))
+
+        let comboBox = try XCTUnwrap(
+            controller.testingModelComboBox,
+            "Expected API settings panel to contain a model combo box"
+        )
+        comboBox.selectItem(at: 1)
+        controller.requestSave()
+
+        XCTAssertEqual(store.load().model, "m-model")
+    }
 }
 
 private struct FailingModelDiscoveryClient: ModelDiscoveryFetching {
