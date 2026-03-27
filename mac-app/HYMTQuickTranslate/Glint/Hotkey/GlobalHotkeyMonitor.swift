@@ -2,6 +2,8 @@ import Carbon.HIToolbox
 import Foundation
 
 protocol GlobalHotkeyMonitoring: AnyObject {
+    var isRunning: Bool { get }
+    var configuredShortcut: GlobalHotkeyShortcut { get }
     @discardableResult
     func start() -> Bool
     func stop()
@@ -19,21 +21,28 @@ struct GlobalHotkeyShortcut {
     )
 
     var displayName: String {
-        let modifierNames: [(UInt32, String)] = [
-            (UInt32(controlKey), "Control"),
-            (UInt32(optionKey), "Option"),
-            (UInt32(shiftKey), "Shift"),
-            (UInt32(cmdKey), "Command"),
+        Self.displayString(modifiers: modifiers, keyCode: keyCode)
+    }
+
+    static func displayString(
+        modifiers: UInt32,
+        keyCode: UInt32? = nil
+    ) -> String {
+        let modifierSymbols: [(UInt32, String)] = [
+            (UInt32(controlKey), "⌃"),
+            (UInt32(optionKey), "⌥"),
+            (UInt32(shiftKey), "⇧"),
+            (UInt32(cmdKey), "⌘"),
         ]
-        let parts = modifierNames
+        let symbols = modifierSymbols
             .filter { modifiers & $0.0 != 0 }
             .map(\.1)
+            .joined()
 
-        let keyName = Self.keyName(for: keyCode)
-        if parts.isEmpty {
-            return keyName
+        guard let keyCode else {
+            return symbols
         }
-        return (parts + [keyName]).joined(separator: " + ")
+        return symbols + Self.keyName(for: keyCode)
     }
 
     private static func keyName(for keyCode: UInt32) -> String {
@@ -81,6 +90,10 @@ final class GlobalHotkeyMonitor: GlobalHotkeyMonitoring {
     private var eventHandler: EventHandlerRef?
     private var hotKeyRef: EventHotKeyRef?
     private(set) var isRunning = false
+
+    var configuredShortcut: GlobalHotkeyShortcut {
+        shortcut
+    }
 
     init(
         identifier: UInt32 = 1,
@@ -219,8 +232,12 @@ final class GlobalHotkeyMonitor: GlobalHotkeyMonitoring {
             &hotKeyID
         )
 
-        guard status == noErr, hotKeyID.id == identifier else {
-            return noErr
+        guard status == noErr else {
+            return OSStatus(eventNotHandledErr)
+        }
+
+        guard hotKeyID.id == identifier else {
+            return OSStatus(eventNotHandledErr)
         }
 
         onTrigger()

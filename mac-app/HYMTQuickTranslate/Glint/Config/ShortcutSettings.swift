@@ -36,6 +36,15 @@ struct ShortcutSettings: Equatable, Codable {
         userDefaults.set(data, forKey: Self.userDefaultsKey)
     }
 
+    func shortcut(for target: ShortcutTarget) -> GlobalHotkeyShortcut {
+        switch target {
+        case .clipboard:
+            clipboardShortcut
+        case .selection:
+            selectionShortcut
+        }
+    }
+
     func replacing(
         _ shortcut: GlobalHotkeyShortcut,
         for target: ShortcutTarget

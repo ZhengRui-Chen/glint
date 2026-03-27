@@ -95,6 +95,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         existingSettings: shortcutSettings,
         userDefaults: shortcutRecorderUserDefaults
     )
+    private lazy var shortcutPanelController = ShortcutPanelController(
+        shortcutSettings: shortcutSettings
+    ) { [weak self] action in
+        self?.handleShortcutPanelAction(action) ?? false
+    }
     private var clipboardHotkeyMonitor: GlobalHotkeyMonitoring?
     private var selectionHotkeyMonitor: GlobalHotkeyMonitoring?
     private var statusBarController: StatusBarController?
@@ -238,9 +243,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         MenuBarViewModel(
             permissionStatus: accessibilityPermission.isGranted ? .granted : .required,
             backendStatus: backendStatus,
-            shortcutSettings: shortcutSettings,
-            recordingTarget: recordingTarget,
-            shortcutStatusLabel: shortcutStatusLabel,
             onTranslateSelection: { [weak self] in
                 self?.handleSelectionTranslation()
             },
@@ -259,11 +261,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onRefreshStatus: { [weak self] in
                 self?.refreshBackendStatus()
             },
-            onStartRecording: { [weak self] target in
-                self?.beginShortcutRecording(for: target)
-            },
-            onCancelShortcutRecording: { [weak self] in
-                self?.cancelShortcutRecording()
+            onOpenShortcutPanel: { [weak self] in
+                self?.openShortcutPanel()
             },
             onQuit: {
                 NSApp.terminate(nil)
@@ -463,6 +462,220 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutStatusLabel = "\(targetLabel) shortcut could not be registered. Choose another combination from the menu bar."
     }
 
+    private func openShortcutPanel() {
+        cancelShortcutRecording()
+        shortcutPanelController.update(shortcutSettings: shortcutSettings)
+        shortcutPanelController.show(anchorRect: statusBarController?.statusButtonFrameInScreen)
+    }
+
+    @MainActor
+    func shortcutPanelControllerForTesting() -> ShortcutPanelController {
+        shortcutPanelController
+    }
+
+    @MainActor
+    func shortcutStatusLabelForTesting() -> String? {
+        shortcutStatusLabel
+    }
+
+    @MainActor
+    func clipboardHotkeyMonitorForTesting() -> GlobalHotkeyMonitoring? {
+        clipboardHotkeyMonitor
+    }
+
+    @MainActor
+    func selectionHotkeyMonitorForTesting() -> GlobalHotkeyMonitoring? {
+        selectionHotkeyMonitor
+    }
+
+    private func handleShortcutPanelAction(_ action: ShortcutPanelAction) -> Bool {
+        switch action {
+        case .startRecording:
+            return true
+        case let .saveRecordedShortcut(target, shortcut):
+            let didApply = applyShortcutSettings(shortcut, for: target)
+            if !didApply {
+                shortcutPanelController.update(shortcutSettings: shortcutSettings)
+            }
+            return didApply
+        case .resetToDefaults:
+            let didReset = resetShortcutSettingsToDefaults()
+            if !didReset {
+                shortcutPanelController.update(shortcutSettings: shortcutSettings)
+            }
+            return didReset
+        case .done:
+            return true
+        }
+    }
+
+    private func applyShortcutSettings(
+        _ shortcut: GlobalHotkeyShortcut,
+        for target: ShortcutTarget
+    ) -> Bool {
+        guard case let .success(updatedSettings) = shortcutSettings.replacing(shortcut, for: target) else {
+            return false
+        }
+
+        guard reloadHotkeyMonitor(for: target, shortcut: shortcut) else {
+            return false
+        }
+
+        restoreShortcutSettings(updatedSettings)
+        return true
+    }
+
+    private func resetShortcutSettingsToDefaults() -> Bool {
+        let previousSettings = shortcutSettings
+        let defaultSettings = ShortcutSettings.default
+
+        guard reloadHotkeyMonitor(for: .clipboard, shortcut: defaultSettings.clipboardShortcut) else {
+            return false
+        }
+
+        guard reloadHotkeyMonitor(for: .selection, shortcut: defaultSettings.selectionShortcut) else {
+            guard recoverHotkeyMonitors(afterFailedResetToDefaultsWith: previousSettings) else {
+                return false
+            }
+            return false
+        }
+
+        restoreShortcutSettings(defaultSettings)
+        return true
+    }
+
+    private func reloadHotkeyMonitor(
+        for target: ShortcutTarget,
+        shortcut: GlobalHotkeyShortcut
+    ) -> Bool {
+        switch target {
+        case .clipboard:
+            return clipboardHotkeyMonitor?.reload(shortcut: shortcut) ?? false
+        case .selection:
+            return selectionHotkeyMonitor?.reload(shortcut: shortcut) ?? false
+        }
+    }
+
+    private func restoreShortcutSettings(_ settings: ShortcutSettings) {
+        shortcutSettings = settings
+        shortcutRecorder = ShortcutRecorder(
+            existingSettings: settings,
+            userDefaults: shortcutRecorderUserDefaults
+        )
+        settings.save(to: shortcutRecorderUserDefaults)
+    }
+
+    private func recoverHotkeyMonitors(
+        afterFailedResetToDefaultsWith previousSettings: ShortcutSettings
+    ) -> Bool {
+        _ = reloadHotkeyMonitor(
+            for: .clipboard,
+            shortcut: previousSettings.clipboardShortcut
+        )
+        _ = reloadHotkeyMonitor(
+            for: .selection,
+            shortcut: previousSettings.selectionShortcut
+        )
+
+        if restoreLiveShortcutSettingsIfPossible(expectedSettings: previousSettings) {
+            return true
+        }
+
+        rebuildHotkeyMonitor(
+            for: .clipboard,
+            shortcut: previousSettings.clipboardShortcut
+        )
+        rebuildHotkeyMonitor(
+            for: .selection,
+            shortcut: previousSettings.selectionShortcut
+        )
+        return restoreLiveShortcutSettingsIfPossible(expectedSettings: previousSettings)
+    }
+
+    private func restoreLiveShortcutSettingsIfPossible(
+        expectedSettings: ShortcutSettings
+    ) -> Bool {
+        guard ensureHotkeyMonitorRunning(for: .clipboard),
+              ensureHotkeyMonitorRunning(for: .selection),
+              let effectiveSettings = liveShortcutSettingsSnapshot(),
+              effectiveSettings == expectedSettings else {
+            return false
+        }
+        restoreShortcutSettings(effectiveSettings)
+        return true
+    }
+
+    private func ensureHotkeyMonitorRunning(for target: ShortcutTarget) -> Bool {
+        guard let monitor = hotkeyMonitor(for: target) else {
+            return false
+        }
+        if monitor.isRunning {
+            return true
+        }
+        return monitor.start()
+    }
+
+    private func rebuildHotkeyMonitor(
+        for target: ShortcutTarget,
+        shortcut: GlobalHotkeyShortcut
+    ) {
+        hotkeyMonitor(for: target)?.stop()
+        assignHotkeyMonitor(
+            makeHotkeyMonitor(for: target, shortcut: shortcut),
+            for: target
+        )
+    }
+
+    private func liveShortcutSettingsSnapshot() -> ShortcutSettings? {
+        guard let clipboardHotkeyMonitor,
+              let selectionHotkeyMonitor,
+              clipboardHotkeyMonitor.isRunning,
+              selectionHotkeyMonitor.isRunning else {
+            return nil
+        }
+        return ShortcutSettings(
+            clipboardShortcut: clipboardHotkeyMonitor.configuredShortcut,
+            selectionShortcut: selectionHotkeyMonitor.configuredShortcut
+        )
+    }
+
+    private func hotkeyMonitor(for target: ShortcutTarget) -> GlobalHotkeyMonitoring? {
+        switch target {
+        case .clipboard:
+            clipboardHotkeyMonitor
+        case .selection:
+            selectionHotkeyMonitor
+        }
+    }
+
+    private func assignHotkeyMonitor(
+        _ monitor: GlobalHotkeyMonitoring,
+        for target: ShortcutTarget
+    ) {
+        switch target {
+        case .clipboard:
+            clipboardHotkeyMonitor = monitor
+        case .selection:
+            selectionHotkeyMonitor = monitor
+        }
+    }
+
+    private func makeHotkeyMonitor(
+        for target: ShortcutTarget,
+        shortcut: GlobalHotkeyShortcut
+    ) -> GlobalHotkeyMonitoring {
+        switch target {
+        case .clipboard:
+            hotkeyMonitorFactory(1, shortcut) { [weak self] in
+                self?.translateClipboard()
+            }
+        case .selection:
+            hotkeyMonitorFactory(2, shortcut) { [weak self] in
+                self?.handleSelectionTranslation()
+            }
+        }
+    }
+
     private func persist(
         _ shortcut: GlobalHotkeyShortcut,
         for target: ShortcutTarget
@@ -549,9 +762,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        switch shortcutRecorder.validate(shortcut, for: recordingTarget) {
+        applyRecordedShortcut(shortcut, for: recordingTarget)
+    }
+
+    private func applyRecordedShortcut(
+        _ shortcut: GlobalHotkeyShortcut,
+        for target: ShortcutTarget
+    ) {
+        switch shortcutRecorder.validate(shortcut, for: target) {
         case .success:
-            switch recordingTarget {
+            switch target {
             case .clipboard:
                 guard clipboardHotkeyMonitor?.reload(shortcut: shortcut) ?? false else {
                     shortcutStatusLabel = "Shortcut could not be registered. Try another combination."

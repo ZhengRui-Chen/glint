@@ -20,6 +20,23 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.quitLabel, "Quit Glint")
     }
 
+    @MainActor
+    func test_status_bar_exposes_keyboard_shortcuts_entry_and_hides_inline_recording_items() throws {
+        let controller = StatusBarController(statusBar: NSStatusBar()) {
+            MenuBarViewModel(permissionStatus: .granted)
+        }
+
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        let keyboardShortcutsItem = try XCTUnwrap(
+            menu.items.first { $0.title == "Keyboard Shortcuts…" }
+        )
+
+        XCTAssertTrue(keyboardShortcutsItem.isEnabled)
+        XCTAssertNil(menu.items.first { $0.title == "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)" })
+        XCTAssertNil(menu.items.first { $0.title == "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)" })
+        XCTAssertNil(menu.items.first { $0.title == "Cancel Shortcut Recording" })
+    }
+
     func test_menu_bar_shows_available_backend_status() {
         let viewModel = MenuBarViewModel(
             permissionStatus: .granted,
@@ -68,6 +85,7 @@ final class MenuBarViewModelTests: XCTestCase {
             onStopService: recorder.recordStopService,
             onRestartService: recorder.recordRestartService,
             onRefreshStatus: recorder.recordRefreshStatus,
+            onOpenShortcutPanel: recorder.recordShortcutPanel,
             onQuit: recorder.recordQuit
         )
 
@@ -77,11 +95,21 @@ final class MenuBarViewModelTests: XCTestCase {
         viewModel.stopService()
         viewModel.restartService()
         viewModel.refreshStatus()
+        viewModel.openKeyboardShortcuts()
         viewModel.quit()
 
         XCTAssertEqual(
             recorder.events,
-            [.selection, .clipboard, .startService, .stopService, .restartService, .refreshStatus, .quit]
+            [
+                .selection,
+                .clipboard,
+                .startService,
+                .stopService,
+                .restartService,
+                .refreshStatus,
+                .keyboardShortcuts,
+                .quit
+            ]
         )
     }
 
@@ -165,6 +193,7 @@ private final class MenuActionRecorder {
         case stopService
         case restartService
         case refreshStatus
+        case keyboardShortcuts
         case quit
     }
 
@@ -192,6 +221,10 @@ private final class MenuActionRecorder {
 
     func recordRefreshStatus() {
         events.append(.refreshStatus)
+    }
+
+    func recordShortcutPanel() {
+        events.append(.keyboardShortcuts)
     }
 
     func recordQuit() {

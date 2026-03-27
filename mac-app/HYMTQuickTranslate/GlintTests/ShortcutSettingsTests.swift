@@ -8,8 +8,8 @@ final class ShortcutSettingsTests: XCTestCase {
     }
 
     func test_default_shortcuts_use_distinct_display_names() {
-        XCTAssertEqual(GlobalHotkeyShortcut.default.displayName, "Control + Option + Command + T")
-        XCTAssertEqual(GlobalHotkeyShortcut.selectionDefault.displayName, "Control + Option + Command + S")
+        XCTAssertEqual(GlobalHotkeyShortcut.default.displayName, "⌃⌥⌘T")
+        XCTAssertEqual(GlobalHotkeyShortcut.selectionDefault.displayName, "⌃⌥⌘S")
     }
 
     func test_save_and_load_round_trip() {

@@ -8,9 +8,6 @@ enum AccessibilityPermissionStatus: Equatable {
 struct MenuBarViewModel {
     let permissionStatus: AccessibilityPermissionStatus
     let backendStatus: BackendStatusSnapshot
-    let shortcutSettings: ShortcutSettings
-    let recordingTarget: ShortcutTarget?
-    let shortcutStatusLabel: String?
 
     private let onTranslateSelection: () -> Void
     private let onTranslateClipboard: () -> Void
@@ -18,8 +15,7 @@ struct MenuBarViewModel {
     private let onStopService: () -> Void
     private let onRestartService: () -> Void
     private let onRefreshStatus: () -> Void
-    private let onStartRecording: (ShortcutTarget) -> Void
-    private let onCancelShortcutRecording: () -> Void
+    private let onOpenShortcutPanel: () -> Void
     private let onQuit: () -> Void
 
     init(
@@ -27,32 +23,24 @@ struct MenuBarViewModel {
         backendStatus: BackendStatusSnapshot = .available(
             detail: "Translation backend is reachable"
         ),
-        shortcutSettings: ShortcutSettings = .default,
-        recordingTarget: ShortcutTarget? = nil,
-        shortcutStatusLabel: String? = nil,
         onTranslateSelection: @escaping () -> Void = {},
         onTranslateClipboard: @escaping () -> Void = {},
         onStartService: @escaping () -> Void = {},
         onStopService: @escaping () -> Void = {},
         onRestartService: @escaping () -> Void = {},
         onRefreshStatus: @escaping () -> Void = {},
-        onStartRecording: @escaping (ShortcutTarget) -> Void = { _ in },
-        onCancelShortcutRecording: @escaping () -> Void = {},
+        onOpenShortcutPanel: @escaping () -> Void = {},
         onQuit: @escaping () -> Void = {}
     ) {
         self.permissionStatus = permissionStatus
         self.backendStatus = backendStatus
-        self.shortcutSettings = shortcutSettings
-        self.recordingTarget = recordingTarget
-        self.shortcutStatusLabel = shortcutStatusLabel
         self.onTranslateSelection = onTranslateSelection
         self.onTranslateClipboard = onTranslateClipboard
         self.onStartService = onStartService
         self.onStopService = onStopService
         self.onRestartService = onRestartService
         self.onRefreshStatus = onRefreshStatus
-        self.onStartRecording = onStartRecording
-        self.onCancelShortcutRecording = onCancelShortcutRecording
+        self.onOpenShortcutPanel = onOpenShortcutPanel
         self.onQuit = onQuit
     }
 
@@ -86,6 +74,10 @@ struct MenuBarViewModel {
 
     var refreshStatusLabel: String {
         "Refresh Status"
+    }
+
+    var keyboardShortcutsLabel: String {
+        "Keyboard Shortcuts…"
     }
 
     var canTranslateSelection: Bool {
@@ -122,18 +114,6 @@ struct MenuBarViewModel {
         return "Accessibility Permission: \(statusText)"
     }
 
-    var selectionShortcutLabel: String {
-        shortcutLabel(for: .selection)
-    }
-
-    var clipboardShortcutLabel: String {
-        shortcutLabel(for: .clipboard)
-    }
-
-    var cancelShortcutRecordingLabel: String {
-        "Cancel Shortcut Recording"
-    }
-
     var quitLabel: String {
         "Quit \(AppBranding.displayName)"
     }
@@ -162,40 +142,11 @@ struct MenuBarViewModel {
         onRefreshStatus()
     }
 
-    func startRecordingSelectionShortcut() {
-        onStartRecording(.selection)
-    }
-
-    func startRecordingClipboardShortcut() {
-        onStartRecording(.clipboard)
-    }
-
-    func cancelShortcutRecording() {
-        onCancelShortcutRecording()
+    func openKeyboardShortcuts() {
+        onOpenShortcutPanel()
     }
 
     func quit() {
         onQuit()
-    }
-
-    private func shortcutLabel(for target: ShortcutTarget) -> String {
-        let title = switch target {
-        case .clipboard:
-            "Clipboard"
-        case .selection:
-            "Selection"
-        }
-
-        if recordingTarget == target {
-            return "\(title) Shortcut: Press new shortcut"
-        }
-
-        let shortcut = switch target {
-        case .clipboard:
-            shortcutSettings.clipboardShortcut
-        case .selection:
-            shortcutSettings.selectionShortcut
-        }
-        return "\(title) Shortcut: \(shortcut.displayName)"
     }
 }
