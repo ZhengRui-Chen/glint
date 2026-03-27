@@ -113,6 +113,15 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         clipboardItem.isEnabled = viewModel.canTranslateClipboard
         menu.addItem(clipboardItem)
 
+        let ocrItem = NSMenuItem(
+            title: viewModel.translateOCRLabel,
+            action: #selector(handleTranslateOCR),
+            keyEquivalent: ""
+        )
+        ocrItem.target = self
+        ocrItem.isEnabled = viewModel.canTranslateOCR
+        menu.addItem(ocrItem)
+
         menu.addItem(.separator())
 
         let selectionShortcutItem = NSMenuItem(
@@ -130,6 +139,14 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         )
         clipboardShortcutItem.target = self
         menu.addItem(clipboardShortcutItem)
+
+        let ocrShortcutItem = NSMenuItem(
+            title: viewModel.ocrShortcutLabel,
+            action: #selector(handleRecordOCRShortcut),
+            keyEquivalent: ""
+        )
+        ocrShortcutItem.target = self
+        menu.addItem(ocrShortcutItem)
 
         if let shortcutStatusLabel = viewModel.shortcutStatusLabel {
             let shortcutStatusItem = NSMenuItem(
@@ -198,6 +215,11 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     }
 
     @objc
+    private func handleTranslateOCR() {
+        viewModelProvider().translateOCR()
+    }
+
+    @objc
     private func handleStartService() {
         viewModelProvider().startService()
     }
@@ -225,6 +247,11 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     @objc
     private func handleRecordClipboardShortcut() {
         viewModelProvider().startRecordingClipboardShortcut()
+    }
+
+    @objc
+    private func handleRecordOCRShortcut() {
+        viewModelProvider().startRecordingOCRShortcut()
     }
 
     @objc

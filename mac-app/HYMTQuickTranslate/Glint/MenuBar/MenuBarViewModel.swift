@@ -14,6 +14,7 @@ struct MenuBarViewModel {
 
     private let onTranslateSelection: () -> Void
     private let onTranslateClipboard: () -> Void
+    private let onTranslateOCR: () -> Void
     private let onStartService: () -> Void
     private let onStopService: () -> Void
     private let onRestartService: () -> Void
@@ -32,6 +33,7 @@ struct MenuBarViewModel {
         shortcutStatusLabel: String? = nil,
         onTranslateSelection: @escaping () -> Void = {},
         onTranslateClipboard: @escaping () -> Void = {},
+        onTranslateOCR: @escaping () -> Void = {},
         onStartService: @escaping () -> Void = {},
         onStopService: @escaping () -> Void = {},
         onRestartService: @escaping () -> Void = {},
@@ -47,6 +49,7 @@ struct MenuBarViewModel {
         self.shortcutStatusLabel = shortcutStatusLabel
         self.onTranslateSelection = onTranslateSelection
         self.onTranslateClipboard = onTranslateClipboard
+        self.onTranslateOCR = onTranslateOCR
         self.onStartService = onStartService
         self.onStopService = onStopService
         self.onRestartService = onRestartService
@@ -72,6 +75,10 @@ struct MenuBarViewModel {
         "Translate Clipboard"
     }
 
+    var translateOCRLabel: String {
+        "Translate OCR Area"
+    }
+
     var startServiceLabel: String {
         "Start Service"
     }
@@ -93,6 +100,10 @@ struct MenuBarViewModel {
     }
 
     var canTranslateClipboard: Bool {
+        backendStatus.canTranslate
+    }
+
+    var canTranslateOCR: Bool {
         backendStatus.canTranslate
     }
 
@@ -130,6 +141,10 @@ struct MenuBarViewModel {
         shortcutLabel(for: .clipboard)
     }
 
+    var ocrShortcutLabel: String {
+        shortcutLabel(for: .ocr)
+    }
+
     var cancelShortcutRecordingLabel: String {
         "Cancel Shortcut Recording"
     }
@@ -144,6 +159,10 @@ struct MenuBarViewModel {
 
     func translateClipboard() {
         onTranslateClipboard()
+    }
+
+    func translateOCR() {
+        onTranslateOCR()
     }
 
     func startService() {
@@ -170,6 +189,10 @@ struct MenuBarViewModel {
         onStartRecording(.clipboard)
     }
 
+    func startRecordingOCRShortcut() {
+        onStartRecording(.ocr)
+    }
+
     func cancelShortcutRecording() {
         onCancelShortcutRecording()
     }
@@ -184,6 +207,8 @@ struct MenuBarViewModel {
             "Clipboard"
         case .selection:
             "Selection"
+        case .ocr:
+            "OCR"
         }
 
         if recordingTarget == target {
@@ -195,6 +220,8 @@ struct MenuBarViewModel {
             shortcutSettings.clipboardShortcut
         case .selection:
             shortcutSettings.selectionShortcut
+        case .ocr:
+            shortcutSettings.ocrShortcut
         }
         return "\(title) Shortcut: \(shortcut.displayName)"
     }

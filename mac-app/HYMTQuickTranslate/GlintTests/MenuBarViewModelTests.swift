@@ -13,6 +13,7 @@ final class MenuBarViewModelTests: XCTestCase {
 
         XCTAssertEqual(viewModel.translateSelectionLabel, "Translate Selection")
         XCTAssertEqual(viewModel.translateClipboardLabel, "Translate Clipboard")
+        XCTAssertEqual(viewModel.translateOCRLabel, "Translate OCR Area")
         XCTAssertEqual(viewModel.startServiceLabel, "Start Service")
         XCTAssertEqual(viewModel.stopServiceLabel, "Stop Service")
         XCTAssertEqual(viewModel.restartServiceLabel, "Restart Service")
@@ -38,6 +39,7 @@ final class MenuBarViewModelTests: XCTestCase {
 
         XCTAssertFalse(viewModel.canTranslateSelection)
         XCTAssertFalse(viewModel.canTranslateClipboard)
+        XCTAssertFalse(viewModel.canTranslateOCR)
         XCTAssertTrue(viewModel.canStartService)
         XCTAssertFalse(viewModel.canStopService)
         XCTAssertTrue(viewModel.canRestartService)
@@ -52,6 +54,7 @@ final class MenuBarViewModelTests: XCTestCase {
 
         XCTAssertFalse(viewModel.canTranslateSelection)
         XCTAssertFalse(viewModel.canTranslateClipboard)
+        XCTAssertFalse(viewModel.canTranslateOCR)
         XCTAssertFalse(viewModel.canStartService)
         XCTAssertTrue(viewModel.canStopService)
         XCTAssertFalse(viewModel.canRestartService)
@@ -64,6 +67,7 @@ final class MenuBarViewModelTests: XCTestCase {
             permissionStatus: .granted,
             onTranslateSelection: recorder.recordSelection,
             onTranslateClipboard: recorder.recordClipboard,
+            onTranslateOCR: recorder.recordOCR,
             onStartService: recorder.recordStartService,
             onStopService: recorder.recordStopService,
             onRestartService: recorder.recordRestartService,
@@ -73,6 +77,7 @@ final class MenuBarViewModelTests: XCTestCase {
 
         viewModel.translateSelection()
         viewModel.translateClipboard()
+        viewModel.translateOCR()
         viewModel.startService()
         viewModel.stopService()
         viewModel.restartService()
@@ -81,7 +86,7 @@ final class MenuBarViewModelTests: XCTestCase {
 
         XCTAssertEqual(
             recorder.events,
-            [.selection, .clipboard, .startService, .stopService, .restartService, .refreshStatus, .quit]
+            [.selection, .clipboard, .ocr, .startService, .stopService, .restartService, .refreshStatus, .quit]
         )
     }
 
@@ -95,8 +100,12 @@ final class MenuBarViewModelTests: XCTestCase {
         let selectionItem = try XCTUnwrap(
             menu.items.first { $0.title == "Translate Selection" }
         )
+        let ocrItem = try XCTUnwrap(
+            menu.items.first { $0.title == "Translate OCR Area" }
+        )
 
         XCTAssertTrue(selectionItem.isEnabled)
+        XCTAssertTrue(ocrItem.isEnabled)
     }
 
     @MainActor
@@ -128,6 +137,7 @@ final class MenuBarViewModelTests: XCTestCase {
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
         let selectionItem = try XCTUnwrap(menu.items.first { $0.title == "Translate Selection" })
         let clipboardItem = try XCTUnwrap(menu.items.first { $0.title == "Translate Clipboard" })
+        let ocrItem = try XCTUnwrap(menu.items.first { $0.title == "Translate OCR Area" })
         let startItem = try XCTUnwrap(menu.items.first { $0.title == "Start Service" })
         let stopItem = try XCTUnwrap(menu.items.first { $0.title == "Stop Service" })
         let restartItem = try XCTUnwrap(menu.items.first { $0.title == "Restart Service" })
@@ -135,6 +145,7 @@ final class MenuBarViewModelTests: XCTestCase {
 
         XCTAssertFalse(selectionItem.isEnabled)
         XCTAssertFalse(clipboardItem.isEnabled)
+        XCTAssertFalse(ocrItem.isEnabled)
         XCTAssertTrue(startItem.isEnabled)
         XCTAssertFalse(stopItem.isEnabled)
         XCTAssertTrue(restartItem.isEnabled)
@@ -161,6 +172,7 @@ private final class MenuActionRecorder {
     enum Event: Equatable {
         case selection
         case clipboard
+        case ocr
         case startService
         case stopService
         case restartService
@@ -176,6 +188,10 @@ private final class MenuActionRecorder {
 
     func recordClipboard() {
         events.append(.clipboard)
+    }
+
+    func recordOCR() {
+        events.append(.ocr)
     }
 
     func recordStartService() {

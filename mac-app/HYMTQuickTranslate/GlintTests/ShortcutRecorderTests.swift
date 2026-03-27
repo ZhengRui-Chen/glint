@@ -8,15 +8,19 @@ final class ShortcutRecorderTests: XCTestCase {
     func test_app_delegate_registers_selection_hotkeys_after_task6() {
         let clipboardMonitor = TestHotkeyMonitor()
         let selectionMonitor = TestHotkeyMonitor()
+        let ocrMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinator(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: #function)!,
             hotkeyMonitorFactory: { identifier, shortcut, _ in
-                let monitor = if identifier == 1 {
+                let monitor = switch identifier {
+                case 1:
                     clipboardMonitor
-                } else {
+                case 2:
                     selectionMonitor
+                default:
+                    ocrMonitor
                 }
                 monitor.initialShortcut = shortcut
                 return monitor
@@ -40,8 +44,13 @@ final class ShortcutRecorderTests: XCTestCase {
             selectionMonitor.events,
             [.start(ShortcutSettings.default.selectionShortcut)]
         )
+        XCTAssertEqual(
+            ocrMonitor.events,
+            [.start(ShortcutSettings.default.ocrShortcut)]
+        )
         XCTAssertNotNil(reflectedValue(named: "clipboardHotkeyMonitor", from: appDelegate))
         XCTAssertNotNil(reflectedValue(named: "selectionHotkeyMonitor", from: appDelegate))
+        XCTAssertNotNil(reflectedValue(named: "ocrHotkeyMonitor", from: appDelegate))
     }
 
     func test_recorder_persists_updated_shortcut_settings() throws {
@@ -59,17 +68,17 @@ final class ShortcutRecorderTests: XCTestCase {
             userDefaults: userDefaults
         )
 
-        let result = recorder.save(newShortcut, for: .selection)
+        let result = recorder.save(newShortcut, for: .ocr)
         let updatedSettings = try XCTUnwrap(try? result.get())
 
-        XCTAssertEqual(updatedSettings.selectionShortcut, newShortcut)
+        XCTAssertEqual(updatedSettings.ocrShortcut, newShortcut)
         XCTAssertEqual(ShortcutSettings.load(from: userDefaults), updatedSettings)
     }
 
     func test_recorder_rejects_duplicate_shortcuts() {
         let settings = ShortcutSettings.default
         let recorder = ShortcutRecorder(existingSettings: settings)
-        let result = recorder.validate(settings.clipboardShortcut, for: .selection)
+        let result = recorder.validate(settings.clipboardShortcut, for: .ocr)
 
         XCTAssertEqual(result, .failure(.duplicateShortcut))
     }
@@ -97,15 +106,19 @@ final class ShortcutRecorderTests: XCTestCase {
     func test_recording_stops_active_clipboard_hotkey_and_restarts_it_on_cancel() {
         let clipboardMonitor = TestHotkeyMonitor()
         let selectionMonitor = TestHotkeyMonitor()
+        let ocrMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinator(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: #function)!,
             hotkeyMonitorFactory: { identifier, shortcut, _ in
-                let monitor = if identifier == 1 {
+                let monitor = switch identifier {
+                case 1:
                     clipboardMonitor
-                } else {
+                case 2:
                     selectionMonitor
+                default:
+                    ocrMonitor
                 }
                 monitor.initialShortcut = shortcut
                 return monitor
@@ -140,6 +153,14 @@ final class ShortcutRecorderTests: XCTestCase {
                 .reload(ShortcutSettings.default.selectionShortcut),
             ]
         )
+        XCTAssertEqual(
+            ocrMonitor.events,
+            [
+                .start(ShortcutSettings.default.ocrShortcut),
+                .stop,
+                .reload(ShortcutSettings.default.ocrShortcut),
+            ]
+        )
     }
 
     @MainActor
@@ -155,15 +176,19 @@ final class ShortcutRecorderTests: XCTestCase {
         )
         let clipboardMonitor = TestHotkeyMonitor(reloadResults: [false])
         let selectionMonitor = TestHotkeyMonitor()
+        let ocrMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinator(),
             shortcutRecorderUserDefaults: userDefaults,
             hotkeyMonitorFactory: { identifier, shortcut, _ in
-                let monitor = if identifier == 1 {
+                let monitor = switch identifier {
+                case 1:
                     clipboardMonitor
-                } else {
+                case 2:
                     selectionMonitor
+                default:
+                    ocrMonitor
                 }
                 monitor.initialShortcut = shortcut
                 return monitor
@@ -198,6 +223,13 @@ final class ShortcutRecorderTests: XCTestCase {
                 .stop,
             ]
         )
+        XCTAssertEqual(
+            ocrMonitor.events,
+            [
+                .start(ShortcutSettings.default.ocrShortcut),
+                .stop,
+            ]
+        )
     }
 
     @MainActor
@@ -219,15 +251,19 @@ final class ShortcutRecorderTests: XCTestCase {
 
         let clipboardMonitor = TestHotkeyMonitor(startResults: [false], reloadResults: [true])
         let selectionMonitor = TestHotkeyMonitor()
+        let ocrMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: savedSettings,
             launchCoordinator: ImmediateLaunchCoordinator(),
             shortcutRecorderUserDefaults: userDefaults,
             hotkeyMonitorFactory: { identifier, shortcut, _ in
-                let monitor = if identifier == 1 {
+                let monitor = switch identifier {
+                case 1:
                     clipboardMonitor
-                } else {
+                case 2:
                     selectionMonitor
+                default:
+                    ocrMonitor
                 }
                 monitor.initialShortcut = shortcut
                 return monitor
@@ -281,15 +317,19 @@ final class ShortcutRecorderTests: XCTestCase {
 
         let clipboardMonitor = TestHotkeyMonitor(startResults: [false], reloadResults: [false])
         let selectionMonitor = TestHotkeyMonitor()
+        let ocrMonitor = TestHotkeyMonitor()
         let appDelegate = AppDelegate(
             shortcutSettings: savedSettings,
             launchCoordinator: ImmediateLaunchCoordinator(),
             shortcutRecorderUserDefaults: userDefaults,
             hotkeyMonitorFactory: { identifier, shortcut, _ in
-                let monitor = if identifier == 1 {
+                let monitor = switch identifier {
+                case 1:
                     clipboardMonitor
-                } else {
+                case 2:
                     selectionMonitor
+                default:
+                    ocrMonitor
                 }
                 monitor.initialShortcut = shortcut
                 return monitor
