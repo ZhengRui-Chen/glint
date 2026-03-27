@@ -20,6 +20,9 @@
 		3F1FCDB0BAB6D739F058A51C /* ShortcutRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCD9FBAB6D739F058A51C /* ShortcutRecorder.swift */; };
 		3F1FCDB1BAB6D739F058A51C /* ShortcutPanelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCDA0BAB6D739F058A51C /* ShortcutPanelViewModel.swift */; };
 		3F1FCDB2BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCDA1BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift */; };
+		3F1FCDB3BAB6D739F058A51C /* ShortcutPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCDA2BAB6D739F058A51C /* ShortcutPanelController.swift */; };
+		3F1FCDB4BAB6D739F058A51C /* ShortcutPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCDA3BAB6D739F058A51C /* ShortcutPanelView.swift */; };
+		3F1FCDB5BAB6D739F058A51C /* ShortcutRecorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1FCDA4BAB6D739F058A51C /* ShortcutRecorderButton.swift */; };
 		42F3CD2B101BB299A6DB09BF /* TranslationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */; };
 		430F9AB6B3CB4F7E0F0E6771 /* OverlayDismissalPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5D8C30D0046A6BA1CD2F39 /* OverlayDismissalPolicyTests.swift */; };
 		4B5B55D28F0713F55D1FE1FA /* LocalTranslationClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F7C3AB47B24C6F533DEA7 /* LocalTranslationClientTests.swift */; };
@@ -106,6 +109,9 @@
 		67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderTests.swift; sourceTree = "<group>"; };
 		3F1FCDA0BAB6D739F058A51C /* ShortcutPanelViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutPanelViewModel.swift; path = Hotkey/ShortcutPanelViewModel.swift; sourceTree = "<group>"; };
 		3F1FCDA1BAB6D739F058A51C /* ShortcutPanelViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutPanelViewModelTests.swift; sourceTree = "<group>"; };
+		3F1FCDA2BAB6D739F058A51C /* ShortcutPanelController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutPanelController.swift; path = Hotkey/ShortcutPanelController.swift; sourceTree = "<group>"; };
+		3F1FCDA3BAB6D739F058A51C /* ShortcutPanelView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutPanelView.swift; path = Hotkey/ShortcutPanelView.swift; sourceTree = "<group>"; };
+		3F1FCDA4BAB6D739F058A51C /* ShortcutRecorderButton.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutRecorderButton.swift; path = Hotkey/ShortcutRecorderButton.swift; sourceTree = "<group>"; };
 		6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayDismissalPolicy.swift; path = UI/OverlayDismissalPolicy.swift; sourceTree = "<group>"; };
 		779AD1A28C553316316D509A /* OverlayViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayViewModel.swift; path = UI/OverlayViewModel.swift; sourceTree = "<group>"; };
 		79F18BB4BDA1E2CD5616822E /* Glint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Glint.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -231,6 +237,9 @@
 				20E1734D3B4D33540D2F4F10 /* GlobalHotkeyMonitor.swift */,
 				3F1FCD9FBAB6D739F058A51C /* ShortcutRecorder.swift */,
 				3F1FCDA0BAB6D739F058A51C /* ShortcutPanelViewModel.swift */,
+				3F1FCDA2BAB6D739F058A51C /* ShortcutPanelController.swift */,
+				3F1FCDA3BAB6D739F058A51C /* ShortcutPanelView.swift */,
+				3F1FCDA4BAB6D739F058A51C /* ShortcutRecorderButton.swift */,
 				6F57858715B410132FB6A15B /* OverlayDismissalPolicy.swift */,
 				5844D11C1A8328E64ED9442B /* ShortcutSettings.swift */,
 				D8943E7893671927E12021B2 /* TextInputSource.swift */,
@@ -392,6 +401,9 @@
 				34C1DDB0BD903BB23B8FFB7E /* GlobalHotkeyMonitor.swift in Sources */,
 				3F1FCDB0BAB6D739F058A51C /* ShortcutRecorder.swift in Sources */,
 				3F1FCDB1BAB6D739F058A51C /* ShortcutPanelViewModel.swift in Sources */,
+				3F1FCDB3BAB6D739F058A51C /* ShortcutPanelController.swift in Sources */,
+				3F1FCDB4BAB6D739F058A51C /* ShortcutPanelView.swift in Sources */,
+				3F1FCDB5BAB6D739F058A51C /* ShortcutRecorderButton.swift in Sources */,
 				244E3E51D4F288ED4B93B187 /* OverlayDismissalPolicy.swift in Sources */,
 				3F1FCDAFBAB6D739F058A51C /* ShortcutSettings.swift in Sources */,
 				C1A8152809D1E82876D70A65 /* TextInputSource.swift in Sources */,
