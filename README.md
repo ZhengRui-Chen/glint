@@ -51,7 +51,7 @@ Glint 依赖一个 OpenAI-compatible API，当前会使用：
 
 ### 运行
 
-1. 打开 `mac-app/HYMTQuickTranslate/Glint.xcodeproj`
+1. 打开 `mac-app/Glint.xcodeproj`
 2. 运行 `Glint` scheme
 3. 在菜单栏打开 `API Settings…`
 4. 配置 `Base URL`、`API Key`、`Model`

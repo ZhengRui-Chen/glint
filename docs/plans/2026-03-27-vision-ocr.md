@@ -13,9 +13,9 @@
 ### Task 1: Document OCR surface in tests
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/MenuBarViewModelTests.swift`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/ShortcutSettingsTests.swift`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/ShortcutRecorderTests.swift`
+- Modify: `mac-app/GlintTests/MenuBarViewModelTests.swift`
+- Modify: `mac-app/GlintTests/ShortcutSettingsTests.swift`
+- Modify: `mac-app/GlintTests/ShortcutRecorderTests.swift`
 
 **Step 1: Write the failing tests**
 
@@ -28,7 +28,7 @@ Add tests that assert:
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/ShortcutSettingsTests -only-testing:GlintTests/ShortcutRecorderTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/ShortcutSettingsTests -only-testing:GlintTests/ShortcutRecorderTests`
 
 Expected: FAIL because OCR labels, settings, and monitor wiring do not exist yet.
 
@@ -43,17 +43,17 @@ Run the same `xcodebuild test` command and confirm those suites pass.
 **Step 5: Commit**
 
 ```bash
-git add docs/plans/2026-03-27-vision-ocr-design.md docs/plans/2026-03-27-vision-ocr.md mac-app/HYMTQuickTranslate/Glint mac-app/HYMTQuickTranslate/GlintTests
+git add docs/plans/2026-03-27-vision-ocr-design.md docs/plans/2026-03-27-vision-ocr.md mac-app/Glint mac-app/GlintTests
 git commit -m "feat: add OCR menu and shortcut wiring"
 ```
 
 ### Task 2: Add OCR workflow seams and tests
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/Glint/OCR/VisionOCRService.swift`
-- Create: `mac-app/HYMTQuickTranslate/Glint/OCR/OCRImageInputSource.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/Workflow/TranslateClipboardWorkflow.swift`
-- Create: `mac-app/HYMTQuickTranslate/GlintTests/OCRWorkflowTests.swift`
+- Create: `mac-app/Glint/OCR/VisionOCRService.swift`
+- Create: `mac-app/Glint/OCR/OCRImageInputSource.swift`
+- Modify: `mac-app/Glint/Workflow/TranslateClipboardWorkflow.swift`
+- Create: `mac-app/GlintTests/OCRWorkflowTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -64,7 +64,7 @@ Add focused tests for:
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/OCRWorkflowTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/OCRWorkflowTests`
 
 Expected: FAIL because OCR service and input source do not exist.
 
@@ -79,19 +79,19 @@ Run the same targeted test command and confirm pass.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint/OCR mac-app/HYMTQuickTranslate/Glint/Workflow/TranslateClipboardWorkflow.swift mac-app/HYMTQuickTranslate/GlintTests/OCRWorkflowTests.swift
+git add mac-app/Glint/OCR mac-app/Glint/Workflow/TranslateClipboardWorkflow.swift mac-app/GlintTests/OCRWorkflowTests.swift
 git commit -m "feat: add Vision OCR workflow"
 ```
 
 ### Task 3: Add screen-region selection UI and app wiring
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/Glint/OCR/ScreenRegionSelectionController.swift`
-- Create: `mac-app/HYMTQuickTranslate/Glint/OCR/ScreenRegionSelectionView.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/App/AppDelegate.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/MenuBar/MenuBarViewModel.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/MenuBar/StatusBarController.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint.xcodeproj/project.pbxproj`
+- Create: `mac-app/Glint/OCR/ScreenRegionSelectionController.swift`
+- Create: `mac-app/Glint/OCR/ScreenRegionSelectionView.swift`
+- Modify: `mac-app/Glint/App/AppDelegate.swift`
+- Modify: `mac-app/Glint/MenuBar/MenuBarViewModel.swift`
+- Modify: `mac-app/Glint/MenuBar/StatusBarController.swift`
+- Modify: `mac-app/Glint.xcodeproj/project.pbxproj`
 
 **Step 1: Write the failing test**
 
@@ -99,7 +99,7 @@ Extend existing tests to assert OCR menu items remain visible/enabled during bac
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/AppDelegateBackendMenuTests -only-testing:GlintTests/ShortcutRecorderTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/AppDelegateBackendMenuTests -only-testing:GlintTests/ShortcutRecorderTests`
 
 Expected: FAIL because the UI and app delegate do not yet expose OCR behavior end-to-end.
 
@@ -114,26 +114,26 @@ Run the same targeted test command and confirm pass.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint/App/AppDelegate.swift mac-app/HYMTQuickTranslate/Glint/MenuBar/MenuBarViewModel.swift mac-app/HYMTQuickTranslate/Glint/MenuBar/StatusBarController.swift mac-app/HYMTQuickTranslate/Glint/OCR mac-app/HYMTQuickTranslate/Glint.xcodeproj/project.pbxproj mac-app/HYMTQuickTranslate/GlintTests
+git add mac-app/Glint/App/AppDelegate.swift mac-app/Glint/MenuBar/MenuBarViewModel.swift mac-app/Glint/MenuBar/StatusBarController.swift mac-app/Glint/OCR mac-app/Glint.xcodeproj/project.pbxproj mac-app/GlintTests
 git commit -m "feat: add OCR capture selection UI"
 ```
 
 ### Task 4: Full verification
 
 **Files:**
-- Verify: `mac-app/HYMTQuickTranslate/Glint`
-- Verify: `mac-app/HYMTQuickTranslate/GlintTests`
-- Verify: `mac-app/HYMTQuickTranslate/Glint.xcodeproj/project.pbxproj`
+- Verify: `mac-app/Glint`
+- Verify: `mac-app/GlintTests`
+- Verify: `mac-app/Glint.xcodeproj/project.pbxproj`
 
 **Step 1: Run full test suite**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 
 Expected: PASS with 0 failures.
 
 **Step 2: Run build verification**
 
-Run: `xcodebuild build -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
+Run: `xcodebuild build -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 
 Expected: BUILD SUCCEEDED.
 
@@ -146,6 +146,6 @@ Expected: Only OCR-related files and docs changed.
 **Step 4: Commit**
 
 ```bash
-git add docs/plans/2026-03-27-vision-ocr-design.md docs/plans/2026-03-27-vision-ocr.md mac-app/HYMTQuickTranslate/Glint mac-app/HYMTQuickTranslate/GlintTests mac-app/HYMTQuickTranslate/Glint.xcodeproj/project.pbxproj
+git add docs/plans/2026-03-27-vision-ocr-design.md docs/plans/2026-03-27-vision-ocr.md mac-app/Glint mac-app/GlintTests mac-app/Glint.xcodeproj/project.pbxproj
 git commit -m "feat: add experimental Vision OCR translation flow"
 ```

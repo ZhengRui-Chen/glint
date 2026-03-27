@@ -13,8 +13,8 @@
 ### Task 1: Lock menu behavior with failing tests
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/MenuBarViewModelTests.swift`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/AppDelegateBackendMenuTests.swift`
+- Modify: `mac-app/GlintTests/MenuBarViewModelTests.swift`
+- Modify: `mac-app/GlintTests/AppDelegateBackendMenuTests.swift`
 
 **Step 1: Write failing tests for the new menu contract**
 
@@ -29,7 +29,7 @@ Add assertions that the menu:
 Run:
 
 ```bash
-xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/AppDelegateBackendMenuTests
+xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/AppDelegateBackendMenuTests
 ```
 
 Expected: FAIL because the current menu still exposes inline recorder items.
@@ -41,8 +41,8 @@ Do not commit until the panel wiring and menu rewrite pass together.
 ### Task 2: Introduce panel state model with TDD
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelViewModel.swift`
-- Create: `mac-app/HYMTQuickTranslate/GlintTests/ShortcutPanelViewModelTests.swift`
+- Create: `mac-app/Glint/Hotkey/ShortcutPanelViewModel.swift`
+- Create: `mac-app/GlintTests/ShortcutPanelViewModelTests.swift`
 
 **Step 1: Write failing tests for panel state**
 
@@ -59,7 +59,7 @@ Cover:
 Run:
 
 ```bash
-xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutPanelViewModelTests
+xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutPanelViewModelTests
 ```
 
 Expected: FAIL because the new panel model does not exist yet.
@@ -82,17 +82,17 @@ Run the same command again and confirm PASS.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelViewModel.swift mac-app/HYMTQuickTranslate/GlintTests/ShortcutPanelViewModelTests.swift
+git add mac-app/Glint/Hotkey/ShortcutPanelViewModel.swift mac-app/GlintTests/ShortcutPanelViewModelTests.swift
 git commit -m "feat: add shortcut panel state model"
 ```
 
 ### Task 3: Build the shortcut panel UI shell
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelController.swift`
-- Create: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelView.swift`
-- Create: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutRecorderButton.swift`
-- Test: `mac-app/HYMTQuickTranslate/GlintTests/ShortcutPanelViewModelTests.swift`
+- Create: `mac-app/Glint/Hotkey/ShortcutPanelController.swift`
+- Create: `mac-app/Glint/Hotkey/ShortcutPanelView.swift`
+- Create: `mac-app/Glint/Hotkey/ShortcutRecorderButton.swift`
+- Test: `mac-app/GlintTests/ShortcutPanelViewModelTests.swift`
 
 **Step 1: Write one failing behavior test for panel actions if needed**
 
@@ -123,7 +123,7 @@ Apply restrained transitions consistent with the existing overlay:
 Run:
 
 ```bash
-xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutPanelViewModelTests
+xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutPanelViewModelTests
 ```
 
 Expected: PASS.
@@ -131,18 +131,18 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelController.swift mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelView.swift mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutRecorderButton.swift mac-app/HYMTQuickTranslate/GlintTests/ShortcutPanelViewModelTests.swift
+git add mac-app/Glint/Hotkey/ShortcutPanelController.swift mac-app/Glint/Hotkey/ShortcutPanelView.swift mac-app/Glint/Hotkey/ShortcutRecorderButton.swift mac-app/GlintTests/ShortcutPanelViewModelTests.swift
 git commit -m "feat: add shortcut panel ui"
 ```
 
 ### Task 4: Rewire AppDelegate and menu entry
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/Glint/App/AppDelegate.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/MenuBar/MenuBarViewModel.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/MenuBar/StatusBarController.swift`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/MenuBarViewModelTests.swift`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/AppDelegateBackendMenuTests.swift`
+- Modify: `mac-app/Glint/App/AppDelegate.swift`
+- Modify: `mac-app/Glint/MenuBar/MenuBarViewModel.swift`
+- Modify: `mac-app/Glint/MenuBar/StatusBarController.swift`
+- Modify: `mac-app/GlintTests/MenuBarViewModelTests.swift`
+- Modify: `mac-app/GlintTests/AppDelegateBackendMenuTests.swift`
 
 **Step 1: Replace inline recorder menu items**
 
@@ -169,7 +169,7 @@ flow.
 Run:
 
 ```bash
-xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/AppDelegateBackendMenuTests
+xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/AppDelegateBackendMenuTests
 ```
 
 Expected: PASS.
@@ -177,17 +177,17 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint/App/AppDelegate.swift mac-app/HYMTQuickTranslate/Glint/MenuBar/MenuBarViewModel.swift mac-app/HYMTQuickTranslate/Glint/MenuBar/StatusBarController.swift mac-app/HYMTQuickTranslate/GlintTests/MenuBarViewModelTests.swift mac-app/HYMTQuickTranslate/GlintTests/AppDelegateBackendMenuTests.swift
+git add mac-app/Glint/App/AppDelegate.swift mac-app/Glint/MenuBar/MenuBarViewModel.swift mac-app/Glint/MenuBar/StatusBarController.swift mac-app/GlintTests/MenuBarViewModelTests.swift mac-app/GlintTests/AppDelegateBackendMenuTests.swift
 git commit -m "feat: replace inline shortcut menu with panel"
 ```
 
 ### Task 5: Finish shortcut application and reset behavior
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutRecorder.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/Config/ShortcutSettings.swift`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/ShortcutRecorderTests.swift`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/ShortcutPanelViewModelTests.swift`
+- Modify: `mac-app/Glint/Hotkey/ShortcutRecorder.swift`
+- Modify: `mac-app/Glint/Config/ShortcutSettings.swift`
+- Modify: `mac-app/GlintTests/ShortcutRecorderTests.swift`
+- Modify: `mac-app/GlintTests/ShortcutPanelViewModelTests.swift`
 
 **Step 1: Add failing tests for reset and panel-driven apply**
 
@@ -202,7 +202,7 @@ Cover:
 Run:
 
 ```bash
-xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutRecorderTests -only-testing:GlintTests/ShortcutPanelViewModelTests
+xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/ShortcutRecorderTests -only-testing:GlintTests/ShortcutPanelViewModelTests
 ```
 
 Expected: FAIL until the new reset/apply flow is implemented.
@@ -223,26 +223,26 @@ Confirm PASS.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutRecorder.swift mac-app/HYMTQuickTranslate/Glint/Config/ShortcutSettings.swift mac-app/HYMTQuickTranslate/GlintTests/ShortcutRecorderTests.swift mac-app/HYMTQuickTranslate/GlintTests/ShortcutPanelViewModelTests.swift
+git add mac-app/Glint/Hotkey/ShortcutRecorder.swift mac-app/Glint/Config/ShortcutSettings.swift mac-app/GlintTests/ShortcutRecorderTests.swift mac-app/GlintTests/ShortcutPanelViewModelTests.swift
 git commit -m "feat: support shortcut panel apply and reset"
 ```
 
 ### Task 6: Full verification and polish
 
 **Files:**
-- Verify: `mac-app/HYMTQuickTranslate/Glint/App/AppDelegate.swift`
-- Verify: `mac-app/HYMTQuickTranslate/Glint/MenuBar/MenuBarViewModel.swift`
-- Verify: `mac-app/HYMTQuickTranslate/Glint/MenuBar/StatusBarController.swift`
-- Verify: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelController.swift`
-- Verify: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelView.swift`
-- Verify: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutRecorderButton.swift`
+- Verify: `mac-app/Glint/App/AppDelegate.swift`
+- Verify: `mac-app/Glint/MenuBar/MenuBarViewModel.swift`
+- Verify: `mac-app/Glint/MenuBar/StatusBarController.swift`
+- Verify: `mac-app/Glint/Hotkey/ShortcutPanelController.swift`
+- Verify: `mac-app/Glint/Hotkey/ShortcutPanelView.swift`
+- Verify: `mac-app/Glint/Hotkey/ShortcutRecorderButton.swift`
 
 **Step 1: Run the full macOS test suite**
 
 Run:
 
 ```bash
-xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'
+xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'
 ```
 
 Expected: all tests pass.
@@ -271,6 +271,6 @@ Verify manually that:
 **Step 4: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint mac-app/HYMTQuickTranslate/GlintTests
+git add mac-app/Glint mac-app/GlintTests
 git commit -m "feat: polish shortcut panel flow"
 ```

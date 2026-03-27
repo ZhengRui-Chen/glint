@@ -52,7 +52,7 @@ If your backend does not expose it, you can still type the model name manually.
 
 ### Run
 
-1. Open `mac-app/HYMTQuickTranslate/Glint.xcodeproj`
+1. Open `mac-app/Glint.xcodeproj`
 2. Run the `Glint` scheme
 3. Open `API Settings…` from the menu bar
 4. Configure `Base URL`, `API Key`, and `Model`

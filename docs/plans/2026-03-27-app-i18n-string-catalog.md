@@ -13,9 +13,9 @@
 ### Task 1: Add localization coverage tests
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/MenuBarViewModelTests.swift`
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/TextInputSourceWorkflowTests.swift`
-- Create: `mac-app/HYMTQuickTranslate/GlintTests/LocalizationTests.swift`
+- Modify: `mac-app/GlintTests/MenuBarViewModelTests.swift`
+- Modify: `mac-app/GlintTests/TextInputSourceWorkflowTests.swift`
+- Create: `mac-app/GlintTests/LocalizationTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -26,7 +26,7 @@ Add assertions that:
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/LocalizationTests -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/TextInputSourceWorkflowTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/LocalizationTests -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/TextInputSourceWorkflowTests`
 
 Expected: FAIL because localized accessors and catalog resources do not exist yet.
 
@@ -41,18 +41,18 @@ Run the same `xcodebuild test` command and confirm those tests pass.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/GlintTests/MenuBarViewModelTests.swift \
-  mac-app/HYMTQuickTranslate/GlintTests/TextInputSourceWorkflowTests.swift \
-  mac-app/HYMTQuickTranslate/GlintTests/LocalizationTests.swift
+git add mac-app/GlintTests/MenuBarViewModelTests.swift \
+  mac-app/GlintTests/TextInputSourceWorkflowTests.swift \
+  mac-app/GlintTests/LocalizationTests.swift
 git commit -m "test: add localization coverage"
 ```
 
 ### Task 2: Add the String Catalog and localization helper
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/Glint/Localization/L10n.swift`
-- Create: `mac-app/HYMTQuickTranslate/Glint/Localization/Localizable.xcstrings`
-- Modify: `mac-app/HYMTQuickTranslate/Glint.xcodeproj/project.pbxproj`
+- Create: `mac-app/Glint/Localization/L10n.swift`
+- Create: `mac-app/Glint/Localization/Localizable.xcstrings`
+- Modify: `mac-app/Glint.xcodeproj/project.pbxproj`
 
 **Step 1: Write the failing test**
 
@@ -78,24 +78,24 @@ Run the targeted `xcodebuild test` command again.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint/Localization/L10n.swift \
-  mac-app/HYMTQuickTranslate/Glint/Localization/Localizable.xcstrings \
-  mac-app/HYMTQuickTranslate/Glint.xcodeproj/project.pbxproj
+git add mac-app/Glint/Localization/L10n.swift \
+  mac-app/Glint/Localization/Localizable.xcstrings \
+  mac-app/Glint.xcodeproj/project.pbxproj
 git commit -m "feat: add string catalog infrastructure"
 ```
 
 ### Task 3: Migrate menu, backend, workflow, and panel strings
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/Glint/MenuBar/MenuBarViewModel.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/Backend/BackendStatusSnapshot.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/Workflow/TranslateClipboardWorkflow.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/OCR/OCRImageInputSource.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/App/AppDelegate.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelView.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/OCR/ScreenRegionSelectionView.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/UI/OverlayContentView.swift`
-- Modify: `mac-app/HYMTQuickTranslate/Glint/App/GlintApp.swift`
+- Modify: `mac-app/Glint/MenuBar/MenuBarViewModel.swift`
+- Modify: `mac-app/Glint/Backend/BackendStatusSnapshot.swift`
+- Modify: `mac-app/Glint/Workflow/TranslateClipboardWorkflow.swift`
+- Modify: `mac-app/Glint/OCR/OCRImageInputSource.swift`
+- Modify: `mac-app/Glint/App/AppDelegate.swift`
+- Modify: `mac-app/Glint/Hotkey/ShortcutPanelView.swift`
+- Modify: `mac-app/Glint/OCR/ScreenRegionSelectionView.swift`
+- Modify: `mac-app/Glint/UI/OverlayContentView.swift`
+- Modify: `mac-app/Glint/App/GlintApp.swift`
 
 **Step 1: Write the failing test**
 
@@ -104,7 +104,7 @@ Extend existing menu and workflow tests so they fail against any remaining hard-
 **Step 2: Run test to verify it fails**
 
 Run:
-`xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/AppDelegateBackendMenuTests -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/TextInputSourceWorkflowTests`
+`xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/AppDelegateBackendMenuTests -only-testing:GlintTests/MenuBarViewModelTests -only-testing:GlintTests/TextInputSourceWorkflowTests`
 
 Expected: FAIL until the migrated code reads from localized resources.
 
@@ -121,22 +121,22 @@ Run the targeted `xcodebuild test` command again.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/Glint/MenuBar/MenuBarViewModel.swift \
-  mac-app/HYMTQuickTranslate/Glint/Backend/BackendStatusSnapshot.swift \
-  mac-app/HYMTQuickTranslate/Glint/Workflow/TranslateClipboardWorkflow.swift \
-  mac-app/HYMTQuickTranslate/Glint/OCR/OCRImageInputSource.swift \
-  mac-app/HYMTQuickTranslate/Glint/App/AppDelegate.swift \
-  mac-app/HYMTQuickTranslate/Glint/Hotkey/ShortcutPanelView.swift \
-  mac-app/HYMTQuickTranslate/Glint/OCR/ScreenRegionSelectionView.swift \
-  mac-app/HYMTQuickTranslate/Glint/UI/OverlayContentView.swift \
-  mac-app/HYMTQuickTranslate/Glint/App/GlintApp.swift
+git add mac-app/Glint/MenuBar/MenuBarViewModel.swift \
+  mac-app/Glint/Backend/BackendStatusSnapshot.swift \
+  mac-app/Glint/Workflow/TranslateClipboardWorkflow.swift \
+  mac-app/Glint/OCR/OCRImageInputSource.swift \
+  mac-app/Glint/App/AppDelegate.swift \
+  mac-app/Glint/Hotkey/ShortcutPanelView.swift \
+  mac-app/Glint/OCR/ScreenRegionSelectionView.swift \
+  mac-app/Glint/UI/OverlayContentView.swift \
+  mac-app/Glint/App/GlintApp.swift
 git commit -m "feat: localize app ui strings"
 ```
 
 ### Task 4: Full verification
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/GlintTests/AppDelegateBackendMenuTests.swift`
+- Modify: `mac-app/GlintTests/AppDelegateBackendMenuTests.swift`
 - Modify: any remaining tests touched by localization surface changes
 
 **Step 1: Write the failing test**
@@ -146,7 +146,7 @@ Adjust any remaining brittle assertions that directly hard-code strings now sour
 **Step 2: Run test to verify it fails**
 
 Run the full suite:
-`xcodebuild test -project mac-app/HYMTQuickTranslate/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
+`xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 
 Expected: Any failing assertions should point to missed localized access paths.
 
@@ -161,6 +161,6 @@ Run the full suite again and confirm success.
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate/GlintTests
+git add mac-app/GlintTests
 git commit -m "test: align suite with localized strings"
 ```

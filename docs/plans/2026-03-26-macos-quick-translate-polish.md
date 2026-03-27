@@ -13,16 +13,16 @@
 ### Task 1: Fix first-launch startup reliability
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/App/AppDelegate.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/Hotkey/GlobalHotkeyMonitor.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/App/AppLaunchCoordinator.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/AppLaunchCoordinatorTests.swift`
+- Modify: `mac-app/Glint/App/AppDelegate.swift`
+- Modify: `mac-app/Glint/Hotkey/GlobalHotkeyMonitor.swift`
+- Create: `mac-app/Glint/App/AppLaunchCoordinator.swift`
+- Create: `mac-app/GlintTests/AppLaunchCoordinatorTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class AppLaunchCoordinatorTests: XCTestCase {
     func test_launch_coordinator_defers_hotkey_registration_until_app_is_ready() {
@@ -34,7 +34,7 @@ final class AppLaunchCoordinatorTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/AppLaunchCoordinatorTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/AppLaunchCoordinatorTests`
 Expected: FAIL because the coordinator type does not exist yet.
 
 **Step 3: Write minimal implementation**
@@ -55,28 +55,28 @@ Implement:
 
 **Step 4: Run tests to verify they pass**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/AppLaunchCoordinatorTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/AppLaunchCoordinatorTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "fix: stabilize first launch startup"
 ```
 
 ### Task 2: Add content-aware sizing policy for the overlay
 
 **Files:**
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlaySizingPolicy.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlayPanelController.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/OverlaySizingPolicyTests.swift`
+- Create: `mac-app/Glint/UI/OverlaySizingPolicy.swift`
+- Modify: `mac-app/Glint/UI/OverlayPanelController.swift`
+- Create: `mac-app/GlintTests/OverlaySizingPolicyTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class OverlaySizingPolicyTests: XCTestCase {
     func test_sizing_policy_uses_compact_height_for_short_result() {
@@ -89,7 +89,7 @@ final class OverlaySizingPolicyTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/OverlaySizingPolicyTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/OverlaySizingPolicyTests`
 Expected: FAIL because the sizing policy does not exist.
 
 **Step 3: Write minimal implementation**
@@ -113,29 +113,29 @@ Implement:
 
 **Step 4: Run tests to verify they pass**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/OverlaySizingPolicyTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/OverlaySizingPolicyTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "feat: add overlay sizing policy"
 ```
 
 ### Task 3: Improve click-away dismissal and add lightweight motion
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlayDismissalPolicy.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlayPanelController.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlayContentView.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslateTests/OverlayPresentationBehaviorTests.swift`
+- Modify: `mac-app/Glint/UI/OverlayDismissalPolicy.swift`
+- Modify: `mac-app/Glint/UI/OverlayPanelController.swift`
+- Modify: `mac-app/Glint/UI/OverlayContentView.swift`
+- Create: `mac-app/GlintTests/OverlayPresentationBehaviorTests.swift`
 
 **Step 1: Write the failing test**
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class OverlayPresentationBehaviorTests: XCTestCase {
     func test_dismissal_policy_allows_click_away_after_grace_period() {
@@ -147,7 +147,7 @@ final class OverlayPresentationBehaviorTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/OverlayPresentationBehaviorTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/OverlayPresentationBehaviorTests`
 Expected: FAIL because the new presentation-behavior test file does not exist in the target yet.
 
 **Step 3: Write minimal implementation**
@@ -165,22 +165,22 @@ Implement:
 
 **Step 4: Run tests to verify they pass**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS' -only-testing:HYMTQuickTranslateTests/OverlayDismissalPolicyTests -only-testing:HYMTQuickTranslateTests/OverlayPresentationBehaviorTests`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS' -only-testing:GlintTests/OverlayDismissalPolicyTests -only-testing:GlintTests/OverlayPresentationBehaviorTests`
 Expected: PASS
 
 **Step 5: Commit**
 
 ```bash
-git add mac-app/HYMTQuickTranslate
+git add mac-app
 git commit -m "feat: refine overlay dismissal and motion"
 ```
 
 ### Task 4: Add macOS 26 Liquid Glass styling with fallback
 
 **Files:**
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlayContentView.swift`
-- Modify: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/SelectableTextView.swift`
-- Create: `mac-app/HYMTQuickTranslate/HYMTQuickTranslate/UI/OverlayVisualStyle.swift`
+- Modify: `mac-app/Glint/UI/OverlayContentView.swift`
+- Modify: `mac-app/Glint/UI/SelectableTextView.swift`
+- Create: `mac-app/Glint/UI/OverlayVisualStyle.swift`
 - Modify: `README.md`
 
 **Step 1: Write the failing test or verification harness**
@@ -189,7 +189,7 @@ If direct unit testing is awkward, add a small style-selection seam:
 
 ```swift
 import XCTest
-@testable import HYMTQuickTranslate
+@testable import Glint
 
 final class OverlayVisualStyleTests: XCTestCase {
     func test_visual_style_uses_fallback_on_older_systems() {
@@ -201,7 +201,7 @@ final class OverlayVisualStyleTests: XCTestCase {
 
 **Step 2: Run test to verify it fails**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS'`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 Expected: FAIL because the visual-style seam does not exist yet.
 
 **Step 3: Write minimal implementation**
@@ -225,10 +225,10 @@ Implement:
 
 **Step 4: Run final verification**
 
-Run: `xcodebuild test -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS'`
+Run: `xcodebuild test -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 Expected: PASS
 
-Run: `xcodebuild build -project mac-app/HYMTQuickTranslate/HYMTQuickTranslate.xcodeproj -scheme HYMTQuickTranslate -destination 'platform=macOS'`
+Run: `xcodebuild build -project mac-app/Glint.xcodeproj -scheme Glint -destination 'platform=macOS'`
 Expected: BUILD SUCCEEDED
 
 Run: `uv run python -m pytest -q`
@@ -247,6 +247,6 @@ Manual verification:
 **Step 5: Commit**
 
 ```bash
-git add README.md mac-app/HYMTQuickTranslate
+git add README.md mac-app
 git commit -m "feat: polish overlay experience"
 ```
