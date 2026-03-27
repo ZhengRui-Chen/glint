@@ -4,9 +4,6 @@ struct BackendPanelView: View {
     @ObservedObject var viewModel: BackendPanelViewModel
 
     let onCheckBackend: () -> Void
-    let onStartService: () -> Void
-    let onStopService: () -> Void
-    let onRestartService: () -> Void
     let onResetToDefaults: () -> Void
     let onDone: () -> Void
 
@@ -16,10 +13,7 @@ struct BackendPanelView: View {
         VStack(alignment: .leading, spacing: 18) {
             header
 
-            VStack(alignment: .leading, spacing: 14) {
-                modePicker
-                configurationFields
-            }
+            configurationFields
 
             statusBlock
 
@@ -43,7 +37,6 @@ struct BackendPanelView: View {
             )
         )
         .clipShape(RoundedRectangle(cornerRadius: OverlayVisualStyle.cornerRadius, style: .continuous))
-        .animation(.easeOut(duration: 0.18), value: viewModel.draftSettings.mode)
         .animation(.easeOut(duration: 0.18), value: viewModel.statusHeadline)
     }
 
@@ -55,24 +48,6 @@ struct BackendPanelView: View {
             Text(L10n.backendSettingsSubtitle)
             .font(.system(size: 14, weight: .regular, design: .rounded))
             .foregroundStyle(visualStyle.secondaryTextColor)
-        }
-    }
-
-    @ViewBuilder
-    private var modePicker: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(L10n.backendModeLabel)
-                .font(.system(size: 13, weight: .medium, design: .rounded))
-                .foregroundStyle(visualStyle.secondaryTextColor)
-
-            Picker("", selection: modeBinding) {
-                Text(L10n.backendModeManagedLocal)
-                    .tag(BackendMode.managedLocal)
-                Text(L10n.backendModeExternalAPI)
-                    .tag(BackendMode.externalAPI)
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
         }
     }
 
@@ -129,16 +104,7 @@ struct BackendPanelView: View {
     private var actionArea: some View {
         HStack(spacing: 8) {
             Button(L10n.checkBackend, action: onCheckBackend)
-            .buttonStyle(.bordered)
-
-            if viewModel.showsManagedControlActions {
-                Button(L10n.startService, action: onStartService)
-                    .buttonStyle(.bordered)
-                Button(L10n.stopService, action: onStopService)
-                    .buttonStyle(.bordered)
-                Button(L10n.restartService, action: onRestartService)
-                    .buttonStyle(.bordered)
-            }
+                .buttonStyle(.bordered)
         }
     }
 
@@ -153,13 +119,6 @@ struct BackendPanelView: View {
                 .foregroundStyle(visualStyle.secondaryTextColor)
             content()
         }
-    }
-
-    private var modeBinding: Binding<BackendMode> {
-        Binding(
-            get: { viewModel.draftSettings.mode },
-            set: { viewModel.updateMode($0) }
-        )
     }
 
     private var baseURLBinding: Binding<String> {

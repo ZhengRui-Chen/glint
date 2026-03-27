@@ -17,9 +17,6 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.translateSelectionLabel, L10n.translateSelection)
         XCTAssertEqual(viewModel.translateClipboardLabel, L10n.translateClipboard)
         XCTAssertEqual(viewModel.translateOCRLabel, L10n.translateOCRArea)
-        XCTAssertEqual(viewModel.startServiceLabel, L10n.startService)
-        XCTAssertEqual(viewModel.stopServiceLabel, L10n.stopService)
-        XCTAssertEqual(viewModel.restartServiceLabel, L10n.restartService)
         XCTAssertEqual(viewModel.refreshStatusLabel, L10n.refreshStatus)
         XCTAssertEqual(viewModel.quitLabel, L10n.quitApp(appName: AppBranding.displayName))
     }
@@ -64,9 +61,6 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.canTranslateSelection)
         XCTAssertFalse(viewModel.canTranslateClipboard)
         XCTAssertFalse(viewModel.canTranslateOCR)
-        XCTAssertTrue(viewModel.canStartService)
-        XCTAssertFalse(viewModel.canStopService)
-        XCTAssertTrue(viewModel.canRestartService)
         XCTAssertTrue(viewModel.canRefreshStatus)
     }
 
@@ -79,9 +73,6 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.canTranslateSelection)
         XCTAssertFalse(viewModel.canTranslateClipboard)
         XCTAssertFalse(viewModel.canTranslateOCR)
-        XCTAssertFalse(viewModel.canStartService)
-        XCTAssertTrue(viewModel.canStopService)
-        XCTAssertFalse(viewModel.canRestartService)
         XCTAssertFalse(viewModel.canRefreshStatus)
     }
 
@@ -92,10 +83,8 @@ final class MenuBarViewModelTests: XCTestCase {
             onTranslateSelection: recorder.recordSelection,
             onTranslateClipboard: recorder.recordClipboard,
             onTranslateOCR: recorder.recordOCR,
-            onStartService: recorder.recordStartService,
-            onStopService: recorder.recordStopService,
-            onRestartService: recorder.recordRestartService,
             onRefreshStatus: recorder.recordRefreshStatus,
+            onOpenBackendPanel: recorder.recordBackendPanel,
             onOpenShortcutPanel: recorder.recordShortcutPanel,
             onQuit: recorder.recordQuit
         )
@@ -103,10 +92,8 @@ final class MenuBarViewModelTests: XCTestCase {
         viewModel.translateSelection()
         viewModel.translateClipboard()
         viewModel.translateOCR()
-        viewModel.startService()
-        viewModel.stopService()
-        viewModel.restartService()
         viewModel.refreshStatus()
+        viewModel.openBackendPanel()
         viewModel.openKeyboardShortcuts()
         viewModel.quit()
 
@@ -116,10 +103,8 @@ final class MenuBarViewModelTests: XCTestCase {
                 .selection,
                 .clipboard,
                 .ocr,
-                .startService,
-                .stopService,
-                .restartService,
                 .refreshStatus,
+                .backendPanel,
                 .keyboardShortcuts,
                 .quit
             ]
@@ -207,10 +192,8 @@ private final class MenuActionRecorder {
         case selection
         case clipboard
         case ocr
-        case startService
-        case stopService
-        case restartService
         case refreshStatus
+        case backendPanel
         case keyboardShortcuts
         case quit
     }
@@ -229,20 +212,12 @@ private final class MenuActionRecorder {
         events.append(.ocr)
     }
 
-    func recordStartService() {
-        events.append(.startService)
-    }
-
-    func recordStopService() {
-        events.append(.stopService)
-    }
-
-    func recordRestartService() {
-        events.append(.restartService)
-    }
-
     func recordRefreshStatus() {
         events.append(.refreshStatus)
+    }
+
+    func recordBackendPanel() {
+        events.append(.backendPanel)
     }
 
     func recordShortcutPanel() {

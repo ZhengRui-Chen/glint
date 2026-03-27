@@ -5,7 +5,6 @@ final class AppDelegateBackendRuntimeTests: XCTestCase {
     @MainActor
     func test_backend_settings_drive_initial_runtime_config() {
         let settings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.example.com")!,
             model: "deepseek-ai/DeepSeek-V3",
             apiKey: "runtime-key"
@@ -32,7 +31,6 @@ final class AppDelegateBackendRuntimeTests: XCTestCase {
             backendSettings: .default
         )
         let updatedSettings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.siliconflow.cn")!,
             model: "deepseek-ai/DeepSeek-V3",
             apiKey: "updated-key"
@@ -46,13 +44,12 @@ final class AppDelegateBackendRuntimeTests: XCTestCase {
     }
 
     @MainActor
-    func test_external_mode_disables_managed_backend_control_actions() {
+    func test_runtime_never_exposes_managed_backend_control_actions() {
         let appDelegate = AppDelegate(
             launchCoordinator: ImmediateLaunchCoordinatorForBackendRuntimeTests(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
             hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
             backendSettings: BackendSettings(
-                mode: .externalAPI,
                 baseURL: URL(string: "https://api.example.com")!,
                 model: "deepseek-ai/DeepSeek-V3",
                 apiKey: "runtime-key"

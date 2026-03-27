@@ -5,7 +5,6 @@ import XCTest
 final class BackendPanelViewModelTests: XCTestCase {
     func test_draft_state_mirrors_saved_settings_on_open() {
         let settings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.example.com")!,
             model: "deepseek-ai/DeepSeek-V3",
             apiKey: "runtime-key"
@@ -36,7 +35,6 @@ final class BackendPanelViewModelTests: XCTestCase {
 
     func test_reset_only_updates_draft_state_until_save() {
         let savedSettings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.example.com")!,
             model: "deepseek-ai/DeepSeek-V3",
             apiKey: "runtime-key"
@@ -49,57 +47,16 @@ final class BackendPanelViewModelTests: XCTestCase {
         viewModel.resetDraftToDefaults()
 
         XCTAssertEqual(viewModel.savedSettings, savedSettings)
-        XCTAssertEqual(viewModel.draftSettings, .default)
+        XCTAssertEqual(viewModel.draftSettings, BackendSettings.default)
         XCTAssertTrue(viewModel.hasChanges)
     }
 
-    func test_managed_local_mode_shows_managed_control_actions() {
+    func test_backend_panel_never_shows_managed_control_actions() {
         let viewModel = BackendPanelViewModel(
             savedSettings: .default,
             statusSnapshot: .notChecked()
         )
 
-        XCTAssertTrue(viewModel.showsManagedControlActions)
-    }
-
-    func test_external_api_mode_hides_managed_control_actions() {
-        let viewModel = BackendPanelViewModel(
-            savedSettings: BackendSettings(
-                mode: .externalAPI,
-                baseURL: URL(string: "https://api.example.com")!,
-                model: "deepseek-ai/DeepSeek-V3",
-                apiKey: "runtime-key"
-            ),
-            statusSnapshot: .notChecked()
-        )
-
         XCTAssertFalse(viewModel.showsManagedControlActions)
-    }
-
-    func test_switching_draft_to_external_mode_hides_managed_control_actions() {
-        let viewModel = BackendPanelViewModel(
-            savedSettings: .default,
-            statusSnapshot: .notChecked()
-        )
-
-        viewModel.updateMode(.externalAPI)
-
-        XCTAssertFalse(viewModel.showsManagedControlActions)
-    }
-
-    func test_switching_draft_to_managed_local_mode_shows_managed_control_actions() {
-        let viewModel = BackendPanelViewModel(
-            savedSettings: BackendSettings(
-                mode: .externalAPI,
-                baseURL: URL(string: "https://api.example.com")!,
-                model: "deepseek-ai/DeepSeek-V3",
-                apiKey: "runtime-key"
-            ),
-            statusSnapshot: .notChecked()
-        )
-
-        viewModel.updateMode(.managedLocal)
-
-        XCTAssertTrue(viewModel.showsManagedControlActions)
     }
 }

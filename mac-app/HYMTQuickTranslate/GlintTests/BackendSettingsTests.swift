@@ -2,6 +2,8 @@ import XCTest
 @testable import Glint
 
 final class BackendSettingsTests: XCTestCase {
+    private static let userDefaultsKey = "backendSettings"
+
     func test_load_falls_back_to_default_settings_when_no_value_saved() {
         let userDefaults = makeUserDefaults()
 
@@ -11,7 +13,6 @@ final class BackendSettingsTests: XCTestCase {
     func test_save_and_reload_round_trips_fields() {
         let userDefaults = makeUserDefaults()
         let settings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.example.com")!,
             model: "deepseek-ai/DeepSeek-V3",
             apiKey: "test-key"
@@ -22,31 +23,29 @@ final class BackendSettingsTests: XCTestCase {
         XCTAssertEqual(BackendSettings.load(from: userDefaults), settings)
     }
 
-    func test_mode_round_trips_for_each_backend_mode() {
+    func test_load_preserves_api_fields_from_legacy_mode_based_payload() throws {
         let userDefaults = makeUserDefaults()
-        let localSettings = BackendSettings(
-            mode: .managedLocal,
-            baseURL: URL(string: "http://127.0.0.1:8001")!,
-            model: "HY-MT1.5-1.8B-4bit",
-            apiKey: "local-hy-key"
-        )
-        let remoteSettings = BackendSettings(
-            mode: .externalAPI,
+        let legacySettings = LegacyBackendSettingsV1(
+            mode: "externalAPI",
             baseURL: URL(string: "https://api.siliconflow.cn")!,
             model: "deepseek-ai/DeepSeek-V3",
             apiKey: "remote-key"
         )
+        let legacyData = try JSONEncoder().encode(legacySettings)
+        userDefaults.set(legacyData, forKey: Self.userDefaultsKey)
 
-        localSettings.save(to: userDefaults)
-        XCTAssertEqual(BackendSettings.load(from: userDefaults).mode, .managedLocal)
-
-        remoteSettings.save(to: userDefaults)
-        XCTAssertEqual(BackendSettings.load(from: userDefaults).mode, .externalAPI)
+        XCTAssertEqual(
+            BackendSettings.load(from: userDefaults),
+            BackendSettings(
+                baseURL: legacySettings.baseURL,
+                model: legacySettings.model,
+                apiKey: legacySettings.apiKey
+            )
+        )
     }
 
     func test_reset_to_defaults_returns_default_settings() {
         let settings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.example.com")!,
             model: "custom-model",
             apiKey: "custom-key"
@@ -61,4 +60,11 @@ final class BackendSettingsTests: XCTestCase {
         XCTAssertNotNil(userDefaults, file: file, line: line)
         return userDefaults ?? .standard
     }
+}
+
+private struct LegacyBackendSettingsV1: Codable {
+    let mode: String
+    let baseURL: URL
+    let model: String
+    let apiKey: String
 }

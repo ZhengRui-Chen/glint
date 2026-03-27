@@ -29,7 +29,7 @@ final class BackendPanelViewModel: ObservableObject {
     }
 
     var showsManagedControlActions: Bool {
-        draftSettings.mode == .managedLocal
+        false
     }
 
     var statusHeadline: String {
@@ -57,17 +57,6 @@ final class BackendPanelViewModel: ObservableObject {
         applyDraftSettings(settings)
     }
 
-    func updateMode(_ mode: BackendMode) {
-        replaceDraftSettings(
-            BackendSettings(
-                mode: mode,
-                baseURL: draftSettings.baseURL,
-                model: draftSettings.model,
-                apiKey: draftSettings.apiKey
-            )
-        )
-    }
-
     func updateBaseURL(_ baseURLText: String) {
         self.baseURLText = baseURLText
         guard let url = URL(string: baseURLText) else {
@@ -76,7 +65,6 @@ final class BackendPanelViewModel: ObservableObject {
 
         replaceDraftSettings(
             BackendSettings(
-                mode: draftSettings.mode,
                 baseURL: url,
                 model: draftSettings.model,
                 apiKey: draftSettings.apiKey
@@ -87,7 +75,6 @@ final class BackendPanelViewModel: ObservableObject {
     func updateModel(_ model: String) {
         replaceDraftSettings(
             BackendSettings(
-                mode: draftSettings.mode,
                 baseURL: draftSettings.baseURL,
                 model: model,
                 apiKey: draftSettings.apiKey
@@ -98,7 +85,6 @@ final class BackendPanelViewModel: ObservableObject {
     func updateAPIKey(_ apiKey: String) {
         replaceDraftSettings(
             BackendSettings(
-                mode: draftSettings.mode,
                 baseURL: draftSettings.baseURL,
                 model: draftSettings.model,
                 apiKey: apiKey

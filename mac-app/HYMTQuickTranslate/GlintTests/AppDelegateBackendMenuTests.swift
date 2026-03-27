@@ -42,7 +42,6 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         initialSettings.save(to: defaults)
 
         let updatedSettings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.siliconflow.cn")!,
             model: "deepseek-ai/DeepSeek-V3",
             apiKey: "runtime-key"
@@ -86,7 +85,6 @@ final class AppDelegateBackendMenuTests: XCTestCase {
     func test_check_backend_uses_saved_settings_without_persisting_draft_edits() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let savedSettings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.example.com")!,
             model: "saved-model",
             apiKey: "saved-key"
@@ -94,7 +92,6 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         savedSettings.save(to: defaults)
 
         let draftSettings = BackendSettings(
-            mode: .externalAPI,
             baseURL: URL(string: "https://api.changed.example.com")!,
             model: "draft-model",
             apiKey: "draft-key"
@@ -135,13 +132,11 @@ final class AppDelegateBackendMenuTests: XCTestCase {
     }
 
     @MainActor
-    func test_managed_local_panel_actions_invoke_backend_control_service() async throws {
-        let controlService = RecordingBackendControlService()
+    func test_backend_panel_never_exposes_managed_local_controls() async throws {
         let appDelegate = makeAppDelegate(
-            apiResults: [.reachable, .reachable, .reachable],
-            processResults: [true, true, true],
-            backendSettings: .default,
-            backendControlService: controlService
+            apiResults: [.reachable],
+            processResults: [true],
+            backendSettings: .default
         )
 
         appDelegate.applicationDidFinishLaunching(
@@ -158,13 +153,8 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         let backendPanel = appDelegate.backendPanelControllerForTesting()
 
         try triggerMenuItem(titled: backendMenuLabel, in: menu)
-        XCTAssertTrue(backendPanel.showsManagedControlActionsForTesting)
-
-        backendPanel.requestStartService()
-        backendPanel.requestStopService()
-        backendPanel.requestRestartService()
-
-        await waitForRecordedControlActions(expected: [.start, .stop, .restart], service: controlService)
+        XCTAssertFalse(backendPanel.showsManagedControlActionsForTesting)
+        XCTAssertFalse(appDelegate.supportsManagedBackendControlActionsForTesting)
     }
 
     @MainActor

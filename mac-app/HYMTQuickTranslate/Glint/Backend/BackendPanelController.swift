@@ -5,9 +5,6 @@ import SwiftUI
 enum BackendPanelAction: Equatable {
     case save(settings: BackendSettings)
     case checkBackend
-    case startService
-    case stopService
-    case restartService
     case close
 }
 
@@ -49,9 +46,6 @@ final class BackendPanelController: NSObject, NSWindowDelegate {
             rootView: BackendPanelView(
                 viewModel: viewModel,
                 onCheckBackend: {},
-                onStartService: {},
-                onStopService: {},
-                onRestartService: {},
                 onResetToDefaults: {},
                 onDone: {}
             )
@@ -99,27 +93,6 @@ final class BackendPanelController: NSObject, NSWindowDelegate {
 
     func requestCheckBackend() {
         _ = emit(.checkBackend)
-    }
-
-    func requestStartService() {
-        guard viewModel.showsManagedControlActions else {
-            return
-        }
-        _ = emit(.startService)
-    }
-
-    func requestStopService() {
-        guard viewModel.showsManagedControlActions else {
-            return
-        }
-        _ = emit(.stopService)
-    }
-
-    func requestRestartService() {
-        guard viewModel.showsManagedControlActions else {
-            return
-        }
-        _ = emit(.restartService)
     }
 
     func requestResetToDefaults() {
@@ -197,7 +170,6 @@ final class BackendPanelController: NSObject, NSWindowDelegate {
     }
 
     func applyDraftSettingsForTesting(_ settings: BackendSettings) {
-        viewModel.updateMode(settings.mode)
         viewModel.updateBaseURL(settings.baseURL.absoluteString)
         viewModel.updateModel(settings.model)
         viewModel.updateAPIKey(settings.apiKey)
@@ -212,15 +184,6 @@ final class BackendPanelController: NSObject, NSWindowDelegate {
             viewModel: viewModel,
             onCheckBackend: { [weak self] in
                 self?.requestCheckBackend()
-            },
-            onStartService: { [weak self] in
-                self?.requestStartService()
-            },
-            onStopService: { [weak self] in
-                self?.requestStopService()
-            },
-            onRestartService: { [weak self] in
-                self?.requestRestartService()
             },
             onResetToDefaults: { [weak self] in
                 self?.requestResetToDefaults()

@@ -85,7 +85,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var backendSettings: BackendSettings
     private var backendRuntime: BackendRuntime
     private var backendStatusMonitor: BackendStatusMonitor
-    private var backendControlService: (any BackendControlServicing)?
     private var shortcutSettings: ShortcutSettings
     private lazy var shortcutRecorder = ShortcutRecorder(
         existingSettings: shortcutSettings,
@@ -109,8 +108,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var recordingTarget: ShortcutTarget?
     private var shortcutStatusLabel: String?
     private var backendStatus = BackendStatusSnapshot.notChecked()
-    private var backendActionContext: BackendActionContext?
-    private var isBackendControlActionInFlight = false
     private var backendRefreshGeneration = 0
     private var backendRefreshTimer: (any BackendRefreshControlling)?
     private var localShortcutRecordingMonitor: Any?
@@ -126,7 +123,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         backendRuntimeBuilder = DefaultBackendRuntimeBuilder()
         backendRuntime = backendRuntimeBuilder.makeRuntime(settings: backendSettings)
         backendStatusMonitor = backendRuntime.statusMonitor
-        backendControlService = backendRuntime.controlService
         backendRefreshScheduler = TimerBackendRefreshScheduler()
         super.init()
     }
@@ -156,7 +152,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.backendRuntimeBuilder = resolvedRuntimeBuilder
         self.backendRuntime = resolvedRuntimeBuilder.makeRuntime(settings: self.backendSettings)
         self.backendStatusMonitor = self.backendRuntime.statusMonitor
-        self.backendControlService = self.backendRuntime.controlService
         self.backendRefreshScheduler = backendRefreshScheduler
         super.init()
     }
@@ -315,15 +310,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onTranslateOCR: { [weak self] in
                 self?.handleOCRTranslation()
             },
-            onStartService: { [weak self] in
-                self?.startBackendService()
-            },
-            onStopService: { [weak self] in
-                self?.stopBackendService()
-            },
-            onRestartService: { [weak self] in
-                self?.restartBackendService()
-            },
             onRefreshStatus: { [weak self] in
                 self?.refreshBackendStatus()
             },
@@ -339,100 +325,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
     }
 
-    private func startBackendService() {
-        invalidateInFlightBackendRefreshes()
-        isBackendControlActionInFlight = true
-        backendActionContext = BackendActionContext(action: .start, requestedAt: Date())
-        updateBackendStatus(.starting(detail: L10n.backendStartingPleaseWait))
-        Task { @MainActor [weak self] in
-            guard let self else {
-                return
-            }
-
-            do {
-                guard let backendControlService else {
-                    isBackendControlActionInFlight = false
-                    updateBackendStatus(
-                        .error(detail: L10n.failedToStartService),
-                        clearActionContext: true
-                    )
-                    return
-                }
-                try await backendControlService.start()
-                isBackendControlActionInFlight = false
-                refreshBackendStatus()
-            } catch {
-                isBackendControlActionInFlight = false
-                updateBackendStatus(
-                    .error(detail: L10n.failedToStartService),
-                    clearActionContext: true
-                )
-            }
-        }
-    }
-
-    private func stopBackendService() {
-        invalidateInFlightBackendRefreshes()
-        isBackendControlActionInFlight = true
-        backendActionContext = nil
-        updateBackendStatus(.unavailable(detail: L10n.backendCurrentlyUnavailable))
-        Task { @MainActor [weak self] in
-            guard let self else {
-                return
-            }
-
-            do {
-                guard let backendControlService else {
-                    isBackendControlActionInFlight = false
-                    updateBackendStatus(.error(detail: L10n.failedToStopService))
-                    return
-                }
-                try await backendControlService.stop()
-                isBackendControlActionInFlight = false
-                refreshBackendStatus()
-            } catch {
-                isBackendControlActionInFlight = false
-                updateBackendStatus(.error(detail: L10n.failedToStopService))
-            }
-        }
-    }
-
-    private func restartBackendService() {
-        invalidateInFlightBackendRefreshes()
-        isBackendControlActionInFlight = true
-        backendActionContext = BackendActionContext(action: .restart, requestedAt: Date())
-        updateBackendStatus(.starting(detail: L10n.backendStartingPleaseWait))
-        Task { @MainActor [weak self] in
-            guard let self else {
-                return
-            }
-
-            do {
-                guard let backendControlService else {
-                    isBackendControlActionInFlight = false
-                    updateBackendStatus(
-                        .error(detail: L10n.failedToRestartService),
-                        clearActionContext: true
-                    )
-                    return
-                }
-                try await backendControlService.restart()
-                isBackendControlActionInFlight = false
-                refreshBackendStatus()
-            } catch {
-                isBackendControlActionInFlight = false
-                updateBackendStatus(
-                    .error(detail: L10n.failedToRestartService),
-                    clearActionContext: true
-                )
-            }
-        }
-    }
-
     private func refreshBackendStatus() {
-        guard !isBackendControlActionInFlight else {
-            return
-        }
         let refreshGeneration = nextBackendRefreshGeneration()
         updateBackendStatus(.checking())
         Task { @MainActor [weak self] in
@@ -440,19 +333,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 return
             }
 
-            let snapshot = await backendStatusMonitor.refresh(actionContext: backendActionContext)
+            let snapshot = await backendStatusMonitor.refresh()
             guard shouldApplyBackendRefreshResult(for: refreshGeneration) else {
                 return
             }
-            updateBackendStatus(
-                snapshot,
-                clearActionContext: {
-                    if case .starting = snapshot {
-                        return false
-                    }
-                    return true
-                }()
-            )
+            updateBackendStatus(snapshot)
         }
     }
 
@@ -475,9 +360,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ) {
         backendStatus = snapshot
         backendPanelController.updateStatusSnapshot(snapshot)
-        if clearActionContext {
-            backendActionContext = nil
-        }
         statusBarController?.refreshMenu()
     }
 
@@ -495,9 +377,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         backendSettings = settings
         backendRuntime = backendRuntimeBuilder.makeRuntime(settings: settings)
         backendStatusMonitor = backendRuntime.statusMonitor
-        backendControlService = backendRuntime.controlService
         invalidateInFlightBackendRefreshes()
-        updateBackendStatus(.notChecked(), clearActionContext: true)
+        updateBackendStatus(.notChecked())
         guard didChangeSettings else {
             return
         }
@@ -660,7 +541,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @MainActor
     var supportsManagedBackendControlActionsForTesting: Bool {
-        backendRuntime.supportsManagedControlActions
+        false
     }
 
     private func handleBackendPanelAction(_ action: BackendPanelAction) -> Bool {
@@ -671,24 +552,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return true
         case .checkBackend:
             refreshBackendStatus()
-            return true
-        case .startService:
-            guard backendRuntime.supportsManagedControlActions else {
-                return false
-            }
-            startBackendService()
-            return true
-        case .stopService:
-            guard backendRuntime.supportsManagedControlActions else {
-                return false
-            }
-            stopBackendService()
-            return true
-        case .restartService:
-            guard backendRuntime.supportsManagedControlActions else {
-                return false
-            }
-            restartBackendService()
             return true
         case .close:
             return true
