@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ShortcutPanelView: View {
-    @ObservedObject var state: ShortcutPanelState
+    @ObservedObject var state: ShortcutPanelViewState
 
     let onStartSelectionRecording: () -> Void
     let onStartClipboardRecording: () -> Void

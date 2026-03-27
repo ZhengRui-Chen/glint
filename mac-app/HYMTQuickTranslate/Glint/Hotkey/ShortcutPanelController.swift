@@ -1,5 +1,4 @@
 import AppKit
-import Combine
 import QuartzCore
 import SwiftUI
 
@@ -9,13 +8,19 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
     private static let panelHeight: CGFloat = 284
     private static let presentationOffset: CGFloat = 12
 
-    private let state: ShortcutPanelState
+    let onAction: ((ShortcutPanelAction) -> Void)?
+
+    private let state: ShortcutPanelViewState
     private let panel: ShortcutPanelWindow
     private let hostingView: NSHostingView<ShortcutPanelView>
     private var isClosing = false
 
-    init(shortcutSettings: ShortcutSettings = .default) {
-        self.state = ShortcutPanelState(shortcutSettings: shortcutSettings)
+    init(
+        shortcutSettings: ShortcutSettings = .default,
+        onAction: ((ShortcutPanelAction) -> Void)? = nil
+    ) {
+        self.state = ShortcutPanelViewState(shortcutSettings: shortcutSettings)
+        self.onAction = onAction
         self.panel = ShortcutPanelWindow(
             contentRect: NSRect(
                 x: 0,
@@ -61,6 +66,31 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         panel.contentView = hostingView
         panel.contentView?.wantsLayer = true
         panel.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
+    }
+
+    func requestStartRecording(for target: ShortcutTarget) {
+        state.startRecording(for: target)
+        emit(.startRecording(target))
+    }
+
+    func requestApplyRecordedShortcut(_ shortcut: GlobalHotkeyShortcut) {
+        guard let target = state.recordingTarget else {
+            return
+        }
+
+        if state.applyRecordedShortcut(shortcut) {
+            emit(.saveRecordedShortcut(target: target, shortcut: shortcut))
+        }
+    }
+
+    func requestResetToDefaults() {
+        state.resetToDefaults()
+        emit(.resetToDefaults)
+    }
+
+    func requestDone() {
+        emit(.done)
+        closePanel()
     }
 
     func show() {
@@ -122,26 +152,22 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         ShortcutPanelView(
             state: state,
             onStartSelectionRecording: { [weak self] in
-                self?.startRecording(.selection)
+                self?.requestStartRecording(for: .selection)
             },
             onStartClipboardRecording: { [weak self] in
-                self?.startRecording(.clipboard)
+                self?.requestStartRecording(for: .clipboard)
             },
             onResetToDefaults: { [weak self] in
-                self?.resetToDefaults()
+                self?.requestResetToDefaults()
             },
             onDone: { [weak self] in
-                self?.closePanel()
+                self?.requestDone()
             }
         )
     }
 
-    private func startRecording(_ target: ShortcutTarget) {
-        state.startRecording(for: target)
-    }
-
-    private func resetToDefaults() {
-        state.resetToDefaults()
+    private func emit(_ action: ShortcutPanelAction) {
+        onAction?(action)
     }
 
     private func orderPanelFront() {
@@ -151,63 +177,71 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
 }
 
 @MainActor
-final class ShortcutPanelState: ObservableObject {
-    nonisolated(unsafe) let objectWillChange = ObservableObjectPublisher()
+final class ShortcutPanelViewState: ObservableObject {
+    @Published private(set) var selectionShortcutLabel: String
+    @Published private(set) var clipboardShortcutLabel: String
+    @Published private(set) var recordingTarget: ShortcutTarget?
+    @Published private(set) var statusMessage: String?
 
     private var viewModel: ShortcutPanelViewModel
 
     init(shortcutSettings: ShortcutSettings) {
         self.viewModel = ShortcutPanelViewModel(shortcutSettings: shortcutSettings)
-    }
-
-    var selectionShortcutLabel: String {
-        viewModel.selectionShortcutLabel
-    }
-
-    var clipboardShortcutLabel: String {
-        viewModel.clipboardShortcutLabel
-    }
-
-    var recordingTarget: ShortcutTarget? {
-        viewModel.recordingTarget
-    }
-
-    var statusMessage: String? {
-        viewModel.statusMessage
+        self.selectionShortcutLabel = viewModel.selectionShortcutLabel
+        self.clipboardShortcutLabel = viewModel.clipboardShortcutLabel
+        self.recordingTarget = viewModel.recordingTarget
+        self.statusMessage = viewModel.statusMessage
     }
 
     var isRecordingSelectionShortcut: Bool {
-        viewModel.isRecordingSelectionShortcut
+        recordingTarget == .selection
     }
 
     var isRecordingClipboardShortcut: Bool {
-        viewModel.isRecordingClipboardShortcut
+        recordingTarget == .clipboard
     }
 
     func update(shortcutSettings: ShortcutSettings) {
         viewModel = ShortcutPanelViewModel(shortcutSettings: shortcutSettings)
-        objectWillChange.send()
+        syncFromViewModel()
     }
 
     func startRecording(for target: ShortcutTarget) {
         viewModel.startRecording(for: target)
-        objectWillChange.send()
+        syncFromViewModel()
     }
 
     func cancelRecording() {
         viewModel.cancelRecording()
-        objectWillChange.send()
+        syncFromViewModel()
     }
 
-    func applyRecordedShortcut(_ shortcut: GlobalHotkeyShortcut) {
+    @discardableResult
+    func applyRecordedShortcut(_ shortcut: GlobalHotkeyShortcut) -> Bool {
+        let priorTarget = viewModel.recordingTarget
         viewModel.applyRecordedShortcut(shortcut)
-        objectWillChange.send()
+        syncFromViewModel()
+        return priorTarget != nil && recordingTarget == nil && statusMessage == "Shortcut saved"
     }
 
     func resetToDefaults() {
         viewModel.resetToDefaults()
-        objectWillChange.send()
+        syncFromViewModel()
     }
+
+    private func syncFromViewModel() {
+        selectionShortcutLabel = viewModel.selectionShortcutLabel
+        clipboardShortcutLabel = viewModel.clipboardShortcutLabel
+        recordingTarget = viewModel.recordingTarget
+        statusMessage = viewModel.statusMessage
+    }
+}
+
+enum ShortcutPanelAction: Equatable {
+    case startRecording(ShortcutTarget)
+    case saveRecordedShortcut(target: ShortcutTarget, shortcut: GlobalHotkeyShortcut)
+    case resetToDefaults
+    case done
 }
 
 private struct ShortcutPanelTransition {
