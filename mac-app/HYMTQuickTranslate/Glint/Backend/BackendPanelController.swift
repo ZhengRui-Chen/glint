@@ -102,14 +102,23 @@ final class BackendPanelController: NSObject, NSWindowDelegate {
     }
 
     func requestStartService() {
+        guard viewModel.showsManagedControlActions else {
+            return
+        }
         _ = emit(.startService)
     }
 
     func requestStopService() {
+        guard viewModel.showsManagedControlActions else {
+            return
+        }
         _ = emit(.stopService)
     }
 
     func requestRestartService() {
+        guard viewModel.showsManagedControlActions else {
+            return
+        }
         _ = emit(.restartService)
     }
 
@@ -122,6 +131,7 @@ final class BackendPanelController: NSObject, NSWindowDelegate {
             guard emit(.save(settings: viewModel.draftSettings)) else {
                 return
             }
+            viewModel.applySavedSettings(viewModel.draftSettings)
         }
         _ = emit(.close)
         closePanel()
@@ -180,6 +190,17 @@ final class BackendPanelController: NSObject, NSWindowDelegate {
 
     var isPanelVisibleForTesting: Bool {
         panel.isVisible
+    }
+
+    var showsManagedControlActionsForTesting: Bool {
+        viewModel.showsManagedControlActions
+    }
+
+    func applyDraftSettingsForTesting(_ settings: BackendSettings) {
+        viewModel.updateMode(settings.mode)
+        viewModel.updateBaseURL(settings.baseURL.absoluteString)
+        viewModel.updateModel(settings.model)
+        viewModel.updateAPIKey(settings.apiKey)
     }
 
     func handleCancelForTesting() {

@@ -50,6 +50,55 @@
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "後端正在啟動，請稍候" } }
       }
     },
+    "Backend status has not been checked yet" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Backend status has not been checked yet" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "后端状态尚未检查" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "後端狀態尚未檢查" } }
+      }
+    },
+    "Backend Settings" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Backend Settings" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "后端设置" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "後端設定" } }
+      }
+    },
+    "Backend..." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Backend..." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "后端..." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "後端..." } }
+      }
+    },
+    "Base URL" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Base URL" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "基础 URL" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "基礎 URL" } }
+      }
+    },
+    "deepseek-ai/DeepSeek-V3" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "deepseek-ai/DeepSeek-V3" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "deepseek-ai/DeepSeek-V3" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "deepseek-ai/DeepSeek-V3" } }
+      }
+    },
+    "Check Backend" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Check Backend" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "检测后端" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "檢測後端" } }
+      }
+    },
+    "Choose how Glint connects to the translation backend." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose how Glint connects to the translation backend." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择 Glint 如何连接翻译后端。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "選擇 Glint 如何連接翻譯後端。" } }
+      }
+    },
     "Browser automation permission is not granted." : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Browser automation permission is not granted." } },
@@ -141,6 +190,20 @@
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "完成" } }
       }
     },
+    "http://127.0.0.1:8001" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "http://127.0.0.1:8001" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "http://127.0.0.1:8001" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "http://127.0.0.1:8001" } }
+      }
+    },
+    "External API" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "External API" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "外部 API" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "外部 API" } }
+      }
+    },
     "Drag to capture an area. Press Esc to cancel." : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Drag to capture an area. Press Esc to cancel." } },
@@ -202,6 +265,27 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Local translation service is unavailable." } },
         "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "本地翻译服务不可用。" } },
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "本地翻譯服務不可用。" } }
+      }
+    },
+    "Managed Local" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Managed Local" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "托管本地" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "託管本地" } }
+      }
+    },
+    "Mode" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mode" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "模式" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "模式" } }
+      }
+    },
+    "Model" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Model" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "模型" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "模型" } }
       }
     },
     "Local translation service returned an invalid response." : {
@@ -349,6 +433,20 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Service Status: Error" } },
         "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务状态：错误" } },
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "服務狀態：錯誤" } }
+      }
+    },
+    "sk-..." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "sk-..." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "sk-..." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "sk-..." } }
+      }
+    },
+    "Service Status: Not Checked" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Service Status: Not Checked" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务状态：未检测" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "服務狀態：未檢測" } }
       }
     },
     "Service Status: Starting" : {
@@ -503,6 +601,13 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Unable to verify backend status" } },
         "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法验证后端状态" } },
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "無法驗證後端狀態" } }
+      }
+    },
+    "API Key" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "API Key" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API Key" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "API Key" } }
       }
     },
     "Use at least one modifier key." : {

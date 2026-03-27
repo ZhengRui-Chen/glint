@@ -75,4 +75,31 @@ final class BackendPanelViewModelTests: XCTestCase {
 
         XCTAssertFalse(viewModel.showsManagedControlActions)
     }
+
+    func test_switching_draft_to_external_mode_hides_managed_control_actions() {
+        let viewModel = BackendPanelViewModel(
+            savedSettings: .default,
+            statusSnapshot: .notChecked()
+        )
+
+        viewModel.updateMode(.externalAPI)
+
+        XCTAssertFalse(viewModel.showsManagedControlActions)
+    }
+
+    func test_switching_draft_to_managed_local_mode_shows_managed_control_actions() {
+        let viewModel = BackendPanelViewModel(
+            savedSettings: BackendSettings(
+                mode: .externalAPI,
+                baseURL: URL(string: "https://api.example.com")!,
+                model: "deepseek-ai/DeepSeek-V3",
+                apiKey: "runtime-key"
+            ),
+            statusSnapshot: .notChecked()
+        )
+
+        viewModel.updateMode(.managedLocal)
+
+        XCTAssertTrue(viewModel.showsManagedControlActions)
+    }
 }

@@ -44,13 +44,17 @@ final class BackendPanelViewModel: ObservableObject {
         savedSettings: BackendSettings,
         statusSnapshot: BackendStatusSnapshot
     ) {
-        self.savedSettings = savedSettings
         self.statusSnapshot = statusSnapshot
-        applyDraftSettings(savedSettings)
+        applySavedSettings(savedSettings)
     }
 
     func updateStatusSnapshot(_ statusSnapshot: BackendStatusSnapshot) {
         self.statusSnapshot = statusSnapshot
+    }
+
+    func applySavedSettings(_ settings: BackendSettings) {
+        savedSettings = settings
+        applyDraftSettings(settings)
     }
 
     func updateMode(_ mode: BackendMode) {
@@ -104,6 +108,10 @@ final class BackendPanelViewModel: ObservableObject {
 
     func resetDraftToDefaults() {
         applyDraftSettings(.default)
+    }
+
+    func applyDraftSettingsForTesting(_ settings: BackendSettings) {
+        applyDraftSettings(settings)
     }
 
     private func replaceDraftSettings(_ settings: BackendSettings) {

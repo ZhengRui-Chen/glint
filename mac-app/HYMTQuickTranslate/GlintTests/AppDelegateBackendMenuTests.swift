@@ -4,6 +4,170 @@ import XCTest
 
 final class AppDelegateBackendMenuTests: XCTestCase {
     @MainActor
+    func test_done_without_changes_closes_backend_panel_without_refreshing_backend() async throws {
+        let apiChecker = SequencedBackendAPIHealthChecker(results: [.reachable])
+        let appDelegate = makeAppDelegate(
+            apiResults: [.reachable],
+            processResults: [true],
+            apiChecker: apiChecker
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        let backendPanel = appDelegate.backendPanelControllerForTesting()
+
+        try triggerMenuItem(titled: backendMenuLabel, in: menu)
+        XCTAssertTrue(backendPanel.isPanelVisibleForTesting)
+
+        backendPanel.requestDone()
+
+        await waitForPanelToClose(backendPanel)
+        let callCount = await apiChecker.recordedCallCount()
+        XCTAssertEqual(callCount, 0)
+    }
+
+    @MainActor
+    func test_done_with_changes_saves_rebuilds_runtime_refreshes_and_closes_backend_panel() async throws {
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let initialSettings = BackendSettings.default
+        initialSettings.save(to: defaults)
+
+        let updatedSettings = BackendSettings(
+            mode: .externalAPI,
+            baseURL: URL(string: "https://api.siliconflow.cn")!,
+            model: "deepseek-ai/DeepSeek-V3",
+            apiKey: "runtime-key"
+        )
+        let apiChecker = SequencedBackendAPIHealthChecker(results: [.reachable])
+        let appDelegate = makeAppDelegate(
+            apiResults: [.reachable],
+            processResults: [true],
+            backendSettings: initialSettings,
+            backendSettingsUserDefaults: defaults,
+            apiChecker: apiChecker
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        let backendPanel = appDelegate.backendPanelControllerForTesting()
+
+        try triggerMenuItem(titled: backendMenuLabel, in: menu)
+        backendPanel.applyDraftSettingsForTesting(updatedSettings)
+        backendPanel.requestDone()
+
+        await waitForPanelToClose(backendPanel)
+        await waitForBackendCalls(expected: 1, checker: apiChecker)
+
+        XCTAssertEqual(appDelegate.activeBackendConfigForTesting().baseURL, updatedSettings.baseURL)
+        XCTAssertEqual(appDelegate.activeBackendConfigForTesting().model, updatedSettings.model)
+        XCTAssertEqual(appDelegate.activeBackendConfigForTesting().apiKey, updatedSettings.apiKey)
+        XCTAssertEqual(BackendSettings.load(from: defaults), updatedSettings)
+    }
+
+    @MainActor
+    func test_check_backend_uses_saved_settings_without_persisting_draft_edits() async throws {
+        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let savedSettings = BackendSettings(
+            mode: .externalAPI,
+            baseURL: URL(string: "https://api.example.com")!,
+            model: "saved-model",
+            apiKey: "saved-key"
+        )
+        savedSettings.save(to: defaults)
+
+        let draftSettings = BackendSettings(
+            mode: .externalAPI,
+            baseURL: URL(string: "https://api.changed.example.com")!,
+            model: "draft-model",
+            apiKey: "draft-key"
+        )
+        let apiChecker = SequencedBackendAPIHealthChecker(results: [.reachable])
+        let appDelegate = makeAppDelegate(
+            apiResults: [.reachable],
+            processResults: [true],
+            backendSettings: savedSettings,
+            backendSettingsUserDefaults: defaults,
+            apiChecker: apiChecker
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        let backendPanel = appDelegate.backendPanelControllerForTesting()
+
+        try triggerMenuItem(titled: backendMenuLabel, in: menu)
+        backendPanel.applyDraftSettingsForTesting(draftSettings)
+        backendPanel.requestCheckBackend()
+
+        await waitForBackendCalls(expected: 1, checker: apiChecker)
+
+        XCTAssertEqual(appDelegate.activeBackendConfigForTesting().baseURL, savedSettings.baseURL)
+        XCTAssertEqual(appDelegate.activeBackendConfigForTesting().model, savedSettings.model)
+        XCTAssertEqual(appDelegate.activeBackendConfigForTesting().apiKey, savedSettings.apiKey)
+        XCTAssertEqual(BackendSettings.load(from: defaults), savedSettings)
+        XCTAssertTrue(backendPanel.isPanelVisibleForTesting)
+    }
+
+    @MainActor
+    func test_managed_local_panel_actions_invoke_backend_control_service() async throws {
+        let controlService = RecordingBackendControlService()
+        let appDelegate = makeAppDelegate(
+            apiResults: [.reachable, .reachable, .reachable],
+            processResults: [true, true, true],
+            backendSettings: .default,
+            backendControlService: controlService
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        let backendPanel = appDelegate.backendPanelControllerForTesting()
+
+        try triggerMenuItem(titled: backendMenuLabel, in: menu)
+        XCTAssertTrue(backendPanel.showsManagedControlActionsForTesting)
+
+        backendPanel.requestStartService()
+        backendPanel.requestStopService()
+        backendPanel.requestRestartService()
+
+        await waitForRecordedControlActions(expected: [.start, .stop, .restart], service: controlService)
+    }
+
+    @MainActor
     func test_launch_does_not_schedule_background_refresh_or_probe_backend() async throws {
         let apiChecker = SequencedBackendAPIHealthChecker(results: [.reachable])
         let processChecker = SequencedBackendProcessChecker(results: [false, false])
@@ -144,6 +308,7 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         XCTAssertTrue(backendPanel.isPanelVisibleForTesting)
         backendPanel.closePanel()
     }
+
 }
 
 private actor SequencedBackendAPIHealthChecker: BackendAPIHealthChecking {
@@ -220,30 +385,57 @@ private struct TestBackendRefreshTimer: BackendRefreshControlling {
     func invalidate() {}
 }
 
-private let backendMenuLabel = String(
-    localized: "Backend...",
-    comment: "Menu entry that opens the backend panel"
-)
+private actor RecordingBackendControlService: BackendControlServicing {
+    enum Call: Equatable {
+        case start
+        case stop
+        case restart
+    }
+
+    private var calls: [Call] = []
+
+    func start() async throws {
+        calls.append(.start)
+    }
+
+    func stop() async throws {
+        calls.append(.stop)
+    }
+
+    func restart() async throws {
+        calls.append(.restart)
+    }
+
+    func recordedCalls() -> [Call] {
+        calls
+    }
+}
+
+private let backendMenuLabel = L10n.backendPanelMenuItem
 
 @MainActor
 private func makeAppDelegate(
     apiResults: [BackendAPIReachability],
     processResults: [Bool],
-    backendSettings: BackendSettings = .default
+    backendSettings: BackendSettings = .default,
+    backendSettingsUserDefaults: UserDefaults = .standard,
+    apiChecker: SequencedBackendAPIHealthChecker? = nil,
+    backendControlService: (any BackendControlServicing)? = nil
 ) -> AppDelegate {
     let monitor = BackendStatusMonitor(
-        apiChecker: SequencedBackendAPIHealthChecker(results: apiResults),
+        apiChecker: apiChecker ?? SequencedBackendAPIHealthChecker(results: apiResults),
         processChecker: SequencedBackendProcessChecker(results: processResults),
         now: { Date(timeIntervalSince1970: 100) }
     )
     return AppDelegate(
         shortcutSettings: .default,
         launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
+        backendSettingsUserDefaults: backendSettingsUserDefaults,
         shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
         hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
         backendSettings: backendSettings,
         backendStatusMonitor: monitor,
-        backendControlService: nil
+        backendControlService: backendControlService
     )
 }
 
@@ -265,6 +457,57 @@ private func waitForMenuItem(
 
     XCTFail("Timed out waiting for menu item \(title)", file: file, line: line)
     return NSMenuItem()
+}
+
+@MainActor
+private func waitForPanelToClose(
+    _ backendPanel: BackendPanelController,
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async {
+    let deadline = Date().addingTimeInterval(1)
+    while Date() < deadline {
+        if !backendPanel.isPanelVisibleForTesting {
+            return
+        }
+        try? await Task.sleep(nanoseconds: 20_000_000)
+    }
+
+    XCTFail("Timed out waiting for backend panel to close", file: file, line: line)
+}
+
+private func waitForBackendCalls(
+    expected: Int,
+    checker: SequencedBackendAPIHealthChecker,
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async {
+    let deadline = Date().addingTimeInterval(1)
+    while Date() < deadline {
+        if await checker.recordedCallCount() == expected {
+            return
+        }
+        try? await Task.sleep(nanoseconds: 20_000_000)
+    }
+
+    XCTFail("Timed out waiting for backend refresh call count \(expected)", file: file, line: line)
+}
+
+private func waitForRecordedControlActions(
+    expected: [RecordingBackendControlService.Call],
+    service: RecordingBackendControlService,
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async {
+    let deadline = Date().addingTimeInterval(1)
+    while Date() < deadline {
+        if await service.recordedCalls() == expected {
+            return
+        }
+        try? await Task.sleep(nanoseconds: 20_000_000)
+    }
+
+    XCTFail("Timed out waiting for backend control actions \(expected)", file: file, line: line)
 }
 
 @MainActor

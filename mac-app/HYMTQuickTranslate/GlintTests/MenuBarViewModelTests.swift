@@ -145,7 +145,7 @@ final class MenuBarViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_status_bar_shows_backend_status_items() throws {
+    func test_status_bar_shows_backend_panel_entry_instead_of_inline_status_items() throws {
         let controller = StatusBarController(statusBar: NSStatusBar()) {
             MenuBarViewModel(
                 permissionStatus: .granted,
@@ -154,15 +154,15 @@ final class MenuBarViewModelTests: XCTestCase {
         }
 
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        let headlineItem = try XCTUnwrap(menu.items.first { $0.title == L10n.serviceStatusAvailable })
-        let detailItem = try XCTUnwrap(menu.items.first { $0.title == L10n.backendReachable })
+        let backendItem = try XCTUnwrap(menu.items.first { $0.title == L10n.backendPanelMenuItem })
 
-        XCTAssertFalse(headlineItem.isEnabled)
-        XCTAssertFalse(detailItem.isEnabled)
+        XCTAssertTrue(backendItem.isEnabled)
+        XCTAssertNil(menu.items.first { $0.title == L10n.serviceStatusAvailable })
+        XCTAssertNil(menu.items.first { $0.title == L10n.backendReachable })
     }
 
     @MainActor
-    func test_status_bar_disables_translation_items_when_backend_is_unavailable() throws {
+    func test_status_bar_disables_translation_items_when_backend_is_unavailable_without_inline_backend_controls() throws {
         let controller = StatusBarController(statusBar: NSStatusBar()) {
             MenuBarViewModel(
                 permissionStatus: .granted,
@@ -174,18 +174,16 @@ final class MenuBarViewModelTests: XCTestCase {
         let selectionItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateSelection })
         let clipboardItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateClipboard })
         let ocrItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateOCRArea })
-        let startItem = try XCTUnwrap(menu.items.first { $0.title == L10n.startService })
-        let stopItem = try XCTUnwrap(menu.items.first { $0.title == L10n.stopService })
-        let restartItem = try XCTUnwrap(menu.items.first { $0.title == L10n.restartService })
-        let refreshItem = try XCTUnwrap(menu.items.first { $0.title == L10n.refreshStatus })
+        let backendItem = try XCTUnwrap(menu.items.first { $0.title == L10n.backendPanelMenuItem })
 
         XCTAssertFalse(selectionItem.isEnabled)
         XCTAssertFalse(clipboardItem.isEnabled)
         XCTAssertFalse(ocrItem.isEnabled)
-        XCTAssertTrue(startItem.isEnabled)
-        XCTAssertFalse(stopItem.isEnabled)
-        XCTAssertTrue(restartItem.isEnabled)
-        XCTAssertTrue(refreshItem.isEnabled)
+        XCTAssertTrue(backendItem.isEnabled)
+        XCTAssertNil(menu.items.first { $0.title == L10n.startService })
+        XCTAssertNil(menu.items.first { $0.title == L10n.stopService })
+        XCTAssertNil(menu.items.first { $0.title == L10n.restartService })
+        XCTAssertNil(menu.items.first { $0.title == L10n.refreshStatus })
     }
 
     @MainActor

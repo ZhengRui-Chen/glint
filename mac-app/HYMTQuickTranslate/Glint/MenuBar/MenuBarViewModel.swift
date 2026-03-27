@@ -91,7 +91,7 @@ struct MenuBarViewModel {
     }
 
     var backendPanelLabel: String {
-        String(localized: "Backend...", comment: "Menu entry that opens the backend panel")
+        L10n.backendPanelMenuItem
     }
 
     var canTranslateSelection: Bool {

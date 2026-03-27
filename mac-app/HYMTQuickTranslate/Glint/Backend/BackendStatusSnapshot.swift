@@ -1,12 +1,7 @@
 import Foundation
 
 enum BackendStatusSnapshot: Equatable {
-    case notChecked(
-        detail: String = String(
-            localized: "Backend status has not been checked yet",
-            comment: "Backend status detail before the first explicit status check"
-        )
-    )
+    case notChecked(detail: String = L10n.backendStatusNotCheckedYet)
     case checking(detail: String = L10n.checkingBackendAvailability)
     case available(detail: String)
     case starting(detail: String)
@@ -16,10 +11,7 @@ enum BackendStatusSnapshot: Equatable {
     var headline: String {
         switch self {
         case .notChecked:
-            String(
-                localized: "Service Status: Not Checked",
-                comment: "Backend status headline before the first explicit status check"
-            )
+            L10n.serviceStatusNotChecked
         case .checking:
             L10n.serviceStatusChecking
         case .available:

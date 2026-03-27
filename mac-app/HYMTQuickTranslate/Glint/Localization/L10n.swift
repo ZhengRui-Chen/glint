@@ -9,6 +9,21 @@ enum L10n {
     static var stopService: String { String(localized: "Stop Service", comment: "Action that stops the backend service") }
     static var restartService: String { String(localized: "Restart Service", comment: "Action that restarts the backend service") }
     static var refreshStatus: String { String(localized: "Refresh Status", comment: "Action that refreshes backend status") }
+    static var backendPanelMenuItem: String { String(localized: "Backend...", comment: "Menu entry that opens the backend panel") }
+    static var backendSettingsTitle: String { String(localized: "Backend Settings", comment: "Title for the backend settings panel") }
+    static var backendSettingsSubtitle: String { String(localized: "Choose how Glint connects to the translation backend.", comment: "Subtitle for the backend settings panel") }
+    static var backendModeLabel: String { String(localized: "Mode", comment: "Backend mode field label") }
+    static var backendModeManagedLocal: String { String(localized: "Managed Local", comment: "Managed local backend mode label") }
+    static var backendModeExternalAPI: String { String(localized: "External API", comment: "External API backend mode label") }
+    static var backendBaseURL: String { String(localized: "Base URL", comment: "Backend base URL field label") }
+    static var backendModel: String { String(localized: "Model", comment: "Backend model field label") }
+    static var backendAPIKey: String { String(localized: "API Key", comment: "Backend API key field label") }
+    static var backendBaseURLPlaceholder: String { String(localized: "http://127.0.0.1:8001", comment: "Placeholder for the backend base URL field") }
+    static var backendModelPlaceholder: String { String(localized: "deepseek-ai/DeepSeek-V3", comment: "Placeholder for the backend model field") }
+    static var backendAPIKeyPlaceholder: String { String(localized: "sk-...", comment: "Placeholder for the backend API key field") }
+    static var checkBackend: String { String(localized: "Check Backend", comment: "Action that checks backend reachability") }
+    static var serviceStatusNotChecked: String { String(localized: "Service Status: Not Checked", comment: "Backend status headline before the first explicit status check") }
+    static var backendStatusNotCheckedYet: String { String(localized: "Backend status has not been checked yet", comment: "Backend status detail before the first explicit status check") }
     static var keyboardShortcuts: String { String(localized: "Keyboard Shortcuts…", comment: "Menu entry that opens the keyboard shortcuts panel") }
     static var keyboardShortcutsTitle: String { String(localized: "Keyboard Shortcuts", comment: "Title for the keyboard shortcuts panel") }
 

@@ -50,14 +50,9 @@ struct BackendPanelView: View {
     @ViewBuilder
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(String(localized: "Backend Settings", comment: "Title for the backend settings panel"))
+            Text(L10n.backendSettingsTitle)
                 .font(.system(size: 23, weight: .semibold, design: .rounded))
-            Text(
-                String(
-                    localized: "Choose how Glint connects to the translation backend.",
-                    comment: "Subtitle for the backend settings panel"
-                )
-            )
+            Text(L10n.backendSettingsSubtitle)
             .font(.system(size: 14, weight: .regular, design: .rounded))
             .foregroundStyle(visualStyle.secondaryTextColor)
         }
@@ -66,14 +61,14 @@ struct BackendPanelView: View {
     @ViewBuilder
     private var modePicker: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(String(localized: "Mode", comment: "Backend mode field label"))
+            Text(L10n.backendModeLabel)
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(visualStyle.secondaryTextColor)
 
             Picker("", selection: modeBinding) {
-                Text(String(localized: "Managed Local", comment: "Managed local backend mode label"))
+                Text(L10n.backendModeManagedLocal)
                     .tag(BackendMode.managedLocal)
-                Text(String(localized: "External API", comment: "External API backend mode label"))
+                Text(L10n.backendModeExternalAPI)
                     .tag(BackendMode.externalAPI)
             }
             .pickerStyle(.segmented)
@@ -84,35 +79,29 @@ struct BackendPanelView: View {
     @ViewBuilder
     private var configurationFields: some View {
         VStack(spacing: 12) {
-            field(
-                title: String(localized: "Base URL", comment: "Backend base URL field label")
-            ) {
+            field(title: L10n.backendBaseURL) {
                 TextField(
                     "",
                     text: baseURLBinding,
-                    prompt: Text("http://127.0.0.1:8001")
+                    prompt: Text(L10n.backendBaseURLPlaceholder)
                 )
                 .textFieldStyle(.roundedBorder)
             }
 
-            field(
-                title: String(localized: "Model", comment: "Backend model field label")
-            ) {
+            field(title: L10n.backendModel) {
                 TextField(
                     "",
                     text: modelBinding,
-                    prompt: Text("deepseek-ai/DeepSeek-V3")
+                    prompt: Text(L10n.backendModelPlaceholder)
                 )
                 .textFieldStyle(.roundedBorder)
             }
 
-            field(
-                title: String(localized: "API Key", comment: "Backend API key field label")
-            ) {
+            field(title: L10n.backendAPIKey) {
                 SecureField(
                     "",
                     text: apiKeyBinding,
-                    prompt: Text("sk-...")
+                    prompt: Text(L10n.backendAPIKeyPlaceholder)
                 )
                 .textFieldStyle(.roundedBorder)
             }
@@ -139,10 +128,7 @@ struct BackendPanelView: View {
     @ViewBuilder
     private var actionArea: some View {
         HStack(spacing: 8) {
-            Button(
-                String(localized: "Check Backend", comment: "Action that checks backend reachability"),
-                action: onCheckBackend
-            )
+            Button(L10n.checkBackend, action: onCheckBackend)
             .buttonStyle(.bordered)
 
             if viewModel.showsManagedControlActions {

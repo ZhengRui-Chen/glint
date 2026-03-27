@@ -77,6 +77,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let overlayPlacementResolver = OverlayPlacementResolver()
     private let screenRegionSelectionController = ScreenRegionSelectionController()
     private let launchCoordinator: any AppLaunchCoordinating
+    private let backendSettingsUserDefaults: UserDefaults
     private let shortcutRecorderUserDefaults: UserDefaults
     private let hotkeyMonitorFactory: HotkeyMonitorFactory
     private let backendRuntimeBuilder: any BackendRuntimeBuilding
@@ -118,9 +119,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     override init() {
         shortcutSettings = .load()
         launchCoordinator = AppLaunchCoordinator()
+        backendSettingsUserDefaults = .standard
         shortcutRecorderUserDefaults = .standard
         hotkeyMonitorFactory = Self.defaultHotkeyMonitorFactory
-        backendSettings = .load()
+        backendSettings = .load(from: backendSettingsUserDefaults)
         backendRuntimeBuilder = DefaultBackendRuntimeBuilder()
         backendRuntime = backendRuntimeBuilder.makeRuntime(settings: backendSettings)
         backendStatusMonitor = backendRuntime.statusMonitor
@@ -132,9 +134,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     init(
         shortcutSettings: ShortcutSettings = .load(),
         launchCoordinator: any AppLaunchCoordinating = AppLaunchCoordinator(),
+        backendSettingsUserDefaults: UserDefaults = .standard,
         shortcutRecorderUserDefaults: UserDefaults = .standard,
         hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory,
-        backendSettings: BackendSettings = .load(),
+        backendSettings: BackendSettings? = nil,
         backendRuntimeBuilder: (any BackendRuntimeBuilding)? = nil,
         backendStatusMonitor: BackendStatusMonitor? = nil,
         backendControlService: (any BackendControlServicing)? = nil,
@@ -142,15 +145,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ) {
         self.shortcutSettings = shortcutSettings
         self.launchCoordinator = launchCoordinator
+        self.backendSettingsUserDefaults = backendSettingsUserDefaults
         self.shortcutRecorderUserDefaults = shortcutRecorderUserDefaults
         self.hotkeyMonitorFactory = hotkeyMonitorFactory
-        self.backendSettings = backendSettings
+        self.backendSettings = backendSettings ?? BackendSettings.load(from: backendSettingsUserDefaults)
         let resolvedRuntimeBuilder = backendRuntimeBuilder ?? DefaultBackendRuntimeBuilder(
             backendStatusMonitorOverride: backendStatusMonitor,
             backendControlServiceOverride: backendControlService
         )
         self.backendRuntimeBuilder = resolvedRuntimeBuilder
-        self.backendRuntime = resolvedRuntimeBuilder.makeRuntime(settings: backendSettings)
+        self.backendRuntime = resolvedRuntimeBuilder.makeRuntime(settings: self.backendSettings)
         self.backendStatusMonitor = self.backendRuntime.statusMonitor
         self.backendControlService = self.backendRuntime.controlService
         self.backendRefreshScheduler = backendRefreshScheduler
@@ -661,8 +665,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func handleBackendPanelAction(_ action: BackendPanelAction) -> Bool {
         switch action {
-        case .save, .checkBackend, .startService, .stopService, .restartService, .close:
-            true
+        case let .save(settings):
+            settings.save(to: backendSettingsUserDefaults)
+            applyBackendSettings(settings)
+            return true
+        case .checkBackend:
+            refreshBackendStatus()
+            return true
+        case .startService:
+            guard backendRuntime.supportsManagedControlActions else {
+                return false
+            }
+            startBackendService()
+            return true
+        case .stopService:
+            guard backendRuntime.supportsManagedControlActions else {
+                return false
+            }
+            stopBackendService()
+            return true
+        case .restartService:
+            guard backendRuntime.supportsManagedControlActions else {
+                return false
+            }
+            restartBackendService()
+            return true
+        case .close:
+            return true
         }
     }
 
