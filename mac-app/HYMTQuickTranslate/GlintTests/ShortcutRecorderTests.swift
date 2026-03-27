@@ -310,7 +310,7 @@ final class ShortcutRecorderTests: XCTestCase {
             state.clipboardShortcutLabel,
             candidateShortcut.displayName
         )
-        XCTAssertEqual(state.statusMessage, "Shortcut saved")
+        XCTAssertEqual(state.statusMessage, L10n.shortcutSaved)
     }
 
     @MainActor
@@ -376,7 +376,7 @@ final class ShortcutRecorderTests: XCTestCase {
         )
         XCTAssertEqual(
             state.statusMessage,
-            "Shortcut could not be registered. Try another combination."
+            L10n.shortcutCouldNotBeRegisteredTryAnother
         )
         XCTAssertEqual(
             selectionMonitor.events,
@@ -488,7 +488,7 @@ final class ShortcutRecorderTests: XCTestCase {
             state.ocrShortcutLabel,
             ShortcutSettings.default.ocrShortcut.displayName
         )
-        XCTAssertEqual(state.statusMessage, "Defaults restored")
+        XCTAssertEqual(state.statusMessage, L10n.defaultsRestored)
     }
 
     @MainActor
@@ -607,7 +607,7 @@ final class ShortcutRecorderTests: XCTestCase {
             state.ocrShortcutLabel,
             savedSettings.ocrShortcut.displayName
         )
-        XCTAssertEqual(state.statusMessage, "Defaults could not be restored.")
+        XCTAssertEqual(state.statusMessage, L10n.defaultsCouldNotBeRestored)
     }
 
     @MainActor
@@ -673,7 +673,7 @@ final class ShortcutRecorderTests: XCTestCase {
         )
         XCTAssertEqual(
             appDelegate.shortcutStatusLabelForTesting(),
-            "Clipboard shortcut was reset to the default because the saved combination could not be registered."
+            L10n.shortcutResetToDefault(target: L10n.shortcutTargetClipboard)
         )
     }
 
@@ -733,7 +733,7 @@ final class ShortcutRecorderTests: XCTestCase {
         XCTAssertEqual(ShortcutSettings.load(from: userDefaults), .default)
         XCTAssertEqual(
             appDelegate.shortcutStatusLabelForTesting(),
-            "Clipboard shortcut could not be registered. Choose another combination from the menu bar."
+            L10n.shortcutCouldNotBeRegisteredFromMenu(target: L10n.shortcutTargetClipboard)
         )
     }
 

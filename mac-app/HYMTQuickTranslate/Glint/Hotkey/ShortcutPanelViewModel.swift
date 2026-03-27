@@ -36,7 +36,7 @@ final class ShortcutPanelViewModel {
         recordingTarget = target
         previewShortcut = nil
         previewModifiers = 0
-        statusMessage = "Press a shortcut. Esc cancels."
+        statusMessage = L10n.pressShortcutEscCancels
     }
 
     func cancelRecording() {
@@ -67,7 +67,7 @@ final class ShortcutPanelViewModel {
         recordingTarget = nil
         previewShortcut = nil
         previewModifiers = 0
-        statusMessage = "Defaults restored"
+        statusMessage = L10n.defaultsRestored
     }
 
     private func shortcutLabel(for target: ShortcutTarget) -> String {

@@ -9,7 +9,7 @@ struct GlintApp: App {
             VStack(alignment: .leading, spacing: 8) {
                 Text(AppBranding.displayName)
                     .font(.headline)
-                Text("Use the global shortcut to translate the clipboard.")
+                Text(L10n.settingsClipboardHint)
                     .foregroundStyle(.secondary)
             }
             .padding(16)

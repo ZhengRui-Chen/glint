@@ -54,9 +54,9 @@ struct ScreenRegionSelectionView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("OCR Selection")
+                    Text(L10n.ocrSelectionTitle)
                         .font(.headline)
-                    Text("Drag to capture an area. Press Esc to cancel.")
+                    Text(L10n.ocrSelectionHint)
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.82))
                 }

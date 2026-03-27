@@ -9,7 +9,7 @@ final class TextInputSourceWorkflowTests: XCTestCase {
             policy: .init(softLimit: 2000, hardLimit: 8000)
         )
         let state = await workflow.run()
-        XCTAssertEqual(state, .error("No text was provided."))
+        XCTAssertEqual(state, .error(L10n.noTextProvided))
     }
 
     func test_workflow_returns_generic_error_when_non_clipboard_text_exceeds_hard_limit() async {
@@ -22,7 +22,7 @@ final class TextInputSourceWorkflowTests: XCTestCase {
 
         let state = await workflow.run()
 
-        XCTAssertEqual(state, .error("Text exceeds the maximum length."))
+        XCTAssertEqual(state, .error(L10n.textExceedsMaximumLength))
     }
 
     func test_prepare_returns_translation_request_for_allowed_text() async {

@@ -35,7 +35,7 @@ final class ShortcutPanelViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.isRecordingClipboardShortcut)
         XCTAssertEqual(
             viewModel.statusMessage,
-            "Press a shortcut. Esc cancels."
+            L10n.pressShortcutEscCancels
         )
     }
 
@@ -131,6 +131,6 @@ final class ShortcutPanelViewModelTests: XCTestCase {
             viewModel.ocrShortcutLabel,
             GlobalHotkeyShortcut.ocrDefault.displayName
         )
-        XCTAssertEqual(viewModel.statusMessage, "Defaults restored")
+        XCTAssertEqual(viewModel.statusMessage, L10n.defaultsRestored)
     }
 }

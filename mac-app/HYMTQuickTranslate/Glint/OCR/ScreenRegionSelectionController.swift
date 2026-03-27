@@ -91,7 +91,7 @@ final class ScreenRegionSelectionController: NSObject, NSWindowDelegate {
         ).integral
 
         guard let image = captureImage(for: captureRect) else {
-            dismiss(with: .captureFailed("Unable to capture the selected area."))
+            dismiss(with: .captureFailed(L10n.unableToCaptureSelectedArea))
             return
         }
 

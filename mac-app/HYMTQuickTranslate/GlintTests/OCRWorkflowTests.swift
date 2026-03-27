@@ -96,7 +96,7 @@ final class OCRWorkflowTests: XCTestCase {
         XCTAssertEqual(
             prepared,
             .final(
-                .error("No text was recognized in the selected area.")
+                .error(L10n.noTextRecognizedInSelectedArea)
             )
         )
     }

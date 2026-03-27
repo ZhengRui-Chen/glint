@@ -87,7 +87,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         case .saved:
             guard emit(.saveRecordedShortcut(target: target, shortcut: shortcut)) else {
                 state.rejectRecording(
-                    "Shortcut could not be registered. Try another combination."
+                    L10n.shortcutCouldNotBeRegisteredTryAnother
                 )
                 return
             }
@@ -99,7 +99,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
 
     func requestResetToDefaults() {
         guard emit(.resetToDefaults) else {
-            state.rejectRecording("Defaults could not be restored.")
+            state.rejectRecording(L10n.defaultsCouldNotBeRestored)
             return
         }
         state.resetToDefaults()
@@ -258,7 +258,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
             return true
         case .keyDown:
             guard let shortcut = ShortcutRecorder.shortcut(from: event) else {
-                state.rejectRecording("Use at least one modifier key.")
+                state.rejectRecording(L10n.useAtLeastOneModifierKey)
                 return true
             }
             requestApplyRecordedShortcut(shortcut)
@@ -332,7 +332,7 @@ final class ShortcutPanelViewState: ObservableObject {
         viewModel.startRecording(for: target)
         recordingTarget = target
         syncLabelsFromViewModel()
-        statusMessage = "Press a shortcut. Esc cancels."
+        statusMessage = L10n.pressShortcutEscCancels
     }
 
     func cancelRecording() {
@@ -361,7 +361,7 @@ final class ShortcutPanelViewState: ObservableObject {
             return .saved(target: target)
         case .failure(.duplicateShortcut):
             recordingTarget = target
-            statusMessage = "This shortcut is already used by Glint"
+            statusMessage = L10n.shortcutAlreadyUsedByGlint
             return .failed(.duplicateShortcut)
         }
     }
@@ -378,7 +378,7 @@ final class ShortcutPanelViewState: ObservableObject {
         viewModel = ShortcutPanelViewModel(shortcutSettings: updatedSettings)
         syncLabelsFromViewModel()
         recordingTarget = nil
-        statusMessage = "Shortcut saved"
+        statusMessage = L10n.shortcutSaved
     }
 
     func rejectRecording(_ message: String) {
@@ -390,7 +390,7 @@ final class ShortcutPanelViewState: ObservableObject {
         viewModel.resetToDefaults()
         syncLabelsFromViewModel()
         recordingTarget = nil
-        statusMessage = "Defaults restored"
+        statusMessage = L10n.defaultsRestored
     }
 
     var testingSnapshot: ShortcutPanelTestingSnapshot {

@@ -16,7 +16,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
         let snapshot = await monitor.refresh()
 
-        XCTAssertEqual(snapshot, .available(detail: "Translation backend is reachable"))
+        XCTAssertEqual(snapshot, .available(detail: L10n.backendReachable))
     }
 
     func test_monitor_reports_starting_when_recent_start_has_running_process_but_api_is_not_ready() async {
@@ -34,7 +34,7 @@ final class BackendStatusMonitorTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(snapshot, .starting(detail: "Backend is starting, please wait"))
+        XCTAssertEqual(snapshot, .starting(detail: L10n.backendStartingPleaseWait))
     }
 
     func test_monitor_reports_unavailable_when_process_and_api_are_both_unavailable() async {
@@ -46,7 +46,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
         let snapshot = await monitor.refresh()
 
-        XCTAssertEqual(snapshot, .unavailable(detail: "Backend is currently unavailable"))
+        XCTAssertEqual(snapshot, .unavailable(detail: L10n.backendCurrentlyUnavailable))
     }
 
     func test_monitor_reports_error_when_process_check_fails() async {
@@ -58,7 +58,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
         let snapshot = await monitor.refresh()
 
-        XCTAssertEqual(snapshot, .error(detail: "Unable to verify backend status"))
+        XCTAssertEqual(snapshot, .error(detail: L10n.unableVerifyBackendStatus))
     }
 
     func test_monitor_reports_error_when_api_probe_fails() async {
@@ -70,7 +70,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
         let snapshot = await monitor.refresh()
 
-        XCTAssertEqual(snapshot, .error(detail: "Unable to verify backend status"))
+        XCTAssertEqual(snapshot, .error(detail: L10n.unableVerifyBackendStatus))
     }
 
     func test_api_health_checker_throws_when_request_transport_fails() async {

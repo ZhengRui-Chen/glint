@@ -28,45 +28,45 @@ struct OverlayContentView: View {
     private var content: some View {
         switch viewModel.state {
         case .loading:
-            ProgressView("Translating...")
+            ProgressView(L10n.translating)
                 .progressViewStyle(.circular)
         case let .confirmLongText(text):
-            Text("This clipboard text is longer than the quick-translate limit.")
+            Text(L10n.clipboardLongTextConfirmation)
                 .font(.headline)
-            Text("Preview:")
+            Text(L10n.preview)
                 .font(.subheadline)
                 .foregroundStyle(visualStyle.secondaryTextColor)
             SelectableTextView(text: text, visualStyle: visualStyle)
                 .frame(maxHeight: 160)
             HStack {
-                secondaryButton("Cancel") {
+                secondaryButton(L10n.cancel) {
                     viewModel.close()
                 }
-                primaryButton("Translate") {
+                primaryButton(L10n.translate) {
                     viewModel.confirmLongText()
                 }
                 .keyboardShortcut(.defaultAction)
             }
         case let .result(text):
-            Text("Translation")
+            Text(L10n.translation)
                 .font(.headline)
             SelectableTextView(text: text, visualStyle: visualStyle)
                 .frame(maxHeight: 200)
             HStack {
                 Spacer()
-                primaryButton("Close") {
+                primaryButton(L10n.close) {
                     viewModel.close()
                 }
                 .keyboardShortcut(.defaultAction)
             }
         case let .error(message):
-            Text("Translation failed")
+            Text(L10n.translationFailed)
                 .font(.headline)
             SelectableTextView(text: message, visualStyle: visualStyle)
                 .frame(minHeight: 72, maxHeight: 220)
             HStack {
                 Spacer()
-                primaryButton("Close") {
+                primaryButton(L10n.close) {
                     viewModel.close()
                 }
                 .keyboardShortcut(.defaultAction)

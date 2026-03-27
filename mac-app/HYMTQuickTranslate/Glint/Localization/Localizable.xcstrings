@@ -1,0 +1,524 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ shortcut could not be registered. Choose another combination from the menu bar." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ shortcut could not be registered. Choose another combination from the menu bar." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%@ 快捷键无法注册。请从菜单栏里换一个组合键。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "%@ 快捷鍵無法註冊。請從選單列裡換一個組合鍵。" } }
+      }
+    },
+    "%@ shortcut was reset to the default because the saved combination could not be registered." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ shortcut was reset to the default because the saved combination could not be registered." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "由于已保存的组合键无法注册，%@ 快捷键已重置为默认值。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "由於已儲存的組合鍵無法註冊，%@ 快捷鍵已重設為預設值。" } }
+      }
+    },
+    "Accessibility Permission: %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Accessibility Permission: %@" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "辅助功能权限：%@" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "輔助使用權限：%@" } }
+      }
+    },
+    "Accessibility permission is not granted." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Accessibility permission is not granted." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "尚未授予辅助功能权限。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "尚未授予輔助使用權限。" } }
+      }
+    },
+    "Accessibility permission is required for selection translation." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Accessibility permission is required for selection translation." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "进行划词翻译需要辅助功能权限。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "進行劃詞翻譯需要輔助使用權限。" } }
+      }
+    },
+    "Backend is currently unavailable" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Backend is currently unavailable" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "后端当前不可用" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "後端目前不可用" } }
+      }
+    },
+    "Backend is starting, please wait" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Backend is starting, please wait" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "后端正在启动，请稍候" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "後端正在啟動，請稍候" } }
+      }
+    },
+    "Browser automation permission is not granted." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Browser automation permission is not granted." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "尚未授予浏览器自动化权限。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "尚未授予瀏覽器自動化權限。" } }
+      }
+    },
+    "Browser automation permission is not granted. Allow Glint to control the browser and try again." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Browser automation permission is not granted. Allow Glint to control the browser and try again." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "尚未授予浏览器自动化权限。请允许 Glint 控制浏览器后再试。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "尚未授予瀏覽器自動化權限。請允許 Glint 控制瀏覽器後再試。" } }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "取消" } }
+      }
+    },
+    "Checking backend availability" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Checking backend availability" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在检查后端可用性" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "正在檢查後端可用性" } }
+      }
+    },
+    "Choose a shortcut to edit." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose a shortcut to edit." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择一个要编辑的快捷键。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "選擇一個要編輯的快捷鍵。" } }
+      }
+    },
+    "Click to change" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Click to change" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "点击修改" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "點擊修改" } }
+      }
+    },
+    "Clipboard" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Clipboard" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "剪贴板" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "剪貼簿" } }
+      }
+    },
+    "Clipboard does not contain text." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Clipboard does not contain text." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "剪贴板中没有文本。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "剪貼簿中沒有文字。" } }
+      }
+    },
+    "Clipboard text exceeds the maximum length." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Clipboard text exceeds the maximum length." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "剪贴板文本超出了最大长度。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "剪貼簿文字超出了最大長度。" } }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "关闭" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "關閉" } }
+      }
+    },
+    "Defaults could not be restored." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Defaults could not be restored." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法恢复默认设置。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "無法恢復預設設定。" } }
+      }
+    },
+    "Defaults restored" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Defaults restored" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已恢复默认设置" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "已恢復預設設定" } }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Done" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "完成" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "完成" } }
+      }
+    },
+    "Drag to capture an area. Press Esc to cancel." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Drag to capture an area. Press Esc to cancel." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "拖动以框选区域，按 Esc 取消。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "拖曳以框選區域，按 Esc 取消。" } }
+      }
+    },
+    "Failed to restart the service" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to restart the service" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重启服务失败" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "重新啟動服務失敗" } }
+      }
+    },
+    "Failed to start the service" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to start the service" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "启动服务失败" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "啟動服務失敗" } }
+      }
+    },
+    "Failed to stop the service" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to stop the service" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "停止服务失败" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "停止服務失敗" } }
+      }
+    },
+    "Frontmost app does not expose selected text through Accessibility APIs." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Frontmost app does not expose selected text through Accessibility APIs." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "当前前台应用未通过辅助功能 API 暴露选中文本。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "目前前景應用程式未透過輔助使用 API 提供選取文字。" } }
+      }
+    },
+    "Granted" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Granted" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已授予" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "已授予" } }
+      }
+    },
+    "Keyboard Shortcuts" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Keyboard Shortcuts" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "键盘快捷键" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "鍵盤快捷鍵" } }
+      }
+    },
+    "Keyboard Shortcuts…" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Keyboard Shortcuts…" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "键盘快捷键…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "鍵盤快捷鍵…" } }
+      }
+    },
+    "Local translation service is unavailable." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Local translation service is unavailable." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "本地翻译服务不可用。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "本地翻譯服務不可用。" } }
+      }
+    },
+    "Local translation service returned an invalid response." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Local translation service returned an invalid response." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "本地翻译服务返回了无效响应。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "本地翻譯服務回傳了無效回應。" } }
+      }
+    },
+    "No selected text was found." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No selected text was found." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "未找到选中的文本。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "未找到選取的文字。" } }
+      }
+    },
+    "No text was provided." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No text was provided." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有提供文本。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "沒有提供文字。" } }
+      }
+    },
+    "No text was recognized in the selected area." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No text was recognized in the selected area." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "所选区域中没有识别到文本。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "所選區域中沒有辨識到文字。" } }
+      }
+    },
+    "OCR" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OCR" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "OCR" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "OCR" } }
+      }
+    },
+    "OCR Selection" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OCR Selection" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "OCR 区域选择" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "OCR 區域選取" } }
+      }
+    },
+    "OCR is unavailable on this system." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OCR is unavailable on this system." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "此系统不支持 OCR。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "此系統不支援 OCR。" } }
+      }
+    },
+    "Press a shortcut. Esc cancels." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Press a shortcut. Esc cancels." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "按下快捷键，按 Esc 取消。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "按下快捷鍵，按 Esc 取消。" } }
+      }
+    },
+    "Press keys" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Press keys" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "按下按键" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "按下按鍵" } }
+      }
+    },
+    "Preview:" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preview:" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "预览：" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "預覽：" } }
+      }
+    },
+    "Quit %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Quit %@" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "退出 %@" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "結束 %@" } }
+      }
+    },
+    "Recognized text exceeds the maximum length." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Recognized text exceeds the maximum length." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "识别出的文本超出了最大长度。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "辨識出的文字超出了最大長度。" } }
+      }
+    },
+    "Recording %@ Shortcut. Press the new key combination." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Recording %@ Shortcut. Press the new key combination." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在录制 %@ 快捷键。请按下新的按键组合。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "正在錄製 %@ 快捷鍵。請按下新的按鍵組合。" } }
+      }
+    },
+    "Refresh Status" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Refresh Status" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "刷新状态" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "重新整理狀態" } }
+      }
+    },
+    "Required" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Required" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "需要" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "需要" } }
+      }
+    },
+    "Reset to Defaults" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reset to Defaults" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "恢复默认" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "恢復預設" } }
+      }
+    },
+    "Restart Service" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restart Service" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重启服务" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "重新啟動服務" } }
+      }
+    },
+    "Selection" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Selection" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "划词" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "劃詞" } }
+      }
+    },
+    "Service Status: Available" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Service Status: Available" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务状态：可用" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "服務狀態：可用" } }
+      }
+    },
+    "Service Status: Checking..." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Service Status: Checking..." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务状态：检查中…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "服務狀態：檢查中…" } }
+      }
+    },
+    "Service Status: Error" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Service Status: Error" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务状态：错误" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "服務狀態：錯誤" } }
+      }
+    },
+    "Service Status: Starting" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Service Status: Starting" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务状态：启动中" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "服務狀態：啟動中" } }
+      }
+    },
+    "Service Status: Unavailable" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Service Status: Unavailable" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务状态：不可用" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "服務狀態：不可用" } }
+      }
+    },
+    "Set shortcuts for selection, clipboard, and OCR translation." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Set shortcuts for selection, clipboard, and OCR translation." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "为划词、剪贴板和 OCR 翻译设置快捷键。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "為劃詞、剪貼簿與 OCR 翻譯設定快捷鍵。" } }
+      }
+    },
+    "Shortcut already in use. Try another combination." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shortcut already in use. Try another combination." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "快捷键已被占用，请换一个组合键。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "快捷鍵已被佔用，請換一個組合鍵。" } }
+      }
+    },
+    "Shortcut could not be registered. Try another combination." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shortcut could not be registered. Try another combination." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "快捷键无法注册，请换一个组合键。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "快捷鍵無法註冊，請換一個組合鍵。" } }
+      }
+    },
+    "Shortcut saved" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shortcut saved" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "快捷键已保存" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "快捷鍵已儲存" } }
+      }
+    },
+    "Start Service" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start Service" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "启动服务" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "啟動服務" } }
+      }
+    },
+    "Stop Service" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Stop Service" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "停止服务" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "停止服務" } }
+      }
+    },
+    "Text exceeds the maximum length." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Text exceeds the maximum length." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "文本超出了最大长度。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "文字超出了最大長度。" } }
+      }
+    },
+    "This clipboard text is longer than the quick-translate limit." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This clipboard text is longer than the quick-translate limit." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "这段剪贴板文本超过了快速翻译长度限制。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "這段剪貼簿文字超過了快速翻譯長度限制。" } }
+      }
+    },
+    "This shortcut is already used by Glint" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This shortcut is already used by Glint" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "这个快捷键已被 Glint 使用" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "這個快捷鍵已被 Glint 使用" } }
+      }
+    },
+    "Translate" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translate" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯" } }
+      }
+    },
+    "Translate Clipboard" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translate Clipboard" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译剪贴板" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯剪貼簿" } }
+      }
+    },
+    "Translate OCR Area" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translate OCR Area" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译 OCR 区域" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯 OCR 區域" } }
+      }
+    },
+    "Translate Selection" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translate Selection" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译划词" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯劃詞" } }
+      }
+    },
+    "Translating..." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translating..." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译中…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯中…" } }
+      }
+    },
+    "Translation" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translation" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译结果" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯結果" } }
+      }
+    },
+    "Translation backend is reachable" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translation backend is reachable" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译后端可用" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯後端可用" } }
+      }
+    },
+    "Translation failed" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translation failed" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译失败" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯失敗" } }
+      }
+    },
+    "Translation request timed out." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translation request timed out." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译请求超时。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯請求逾時。" } }
+      }
+    },
+    "Unable to capture the selected area." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unable to capture the selected area." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法捕获所选区域。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "無法擷取所選區域。" } }
+      }
+    },
+    "Unable to verify backend status" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unable to verify backend status" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法验证后端状态" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "無法驗證後端狀態" } }
+      }
+    },
+    "Use at least one modifier key." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Use at least one modifier key." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请至少使用一个修饰键。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "請至少使用一個修飾鍵。" } }
+      }
+    },
+    "Use the global shortcut to translate the clipboard." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Use the global shortcut to translate the clipboard." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "使用全局快捷键来翻译剪贴板内容。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "使用全域快捷鍵來翻譯剪貼簿內容。" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

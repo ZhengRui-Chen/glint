@@ -22,7 +22,7 @@ struct MenuBarViewModel {
     init(
         permissionStatus: AccessibilityPermissionStatus,
         backendStatus: BackendStatusSnapshot = .available(
-            detail: "Translation backend is reachable"
+            detail: L10n.backendReachable
         ),
         onTranslateSelection: @escaping () -> Void = {},
         onTranslateClipboard: @escaping () -> Void = {},
@@ -56,35 +56,35 @@ struct MenuBarViewModel {
     }
 
     var translateSelectionLabel: String {
-        "Translate Selection"
+        L10n.translateSelection
     }
 
     var translateClipboardLabel: String {
-        "Translate Clipboard"
+        L10n.translateClipboard
     }
 
     var translateOCRLabel: String {
-        "Translate OCR Area"
+        L10n.translateOCRArea
     }
 
     var startServiceLabel: String {
-        "Start Service"
+        L10n.startService
     }
 
     var stopServiceLabel: String {
-        "Stop Service"
+        L10n.stopService
     }
 
     var restartServiceLabel: String {
-        "Restart Service"
+        L10n.restartService
     }
 
     var refreshStatusLabel: String {
-        "Refresh Status"
+        L10n.refreshStatus
     }
 
     var keyboardShortcutsLabel: String {
-        "Keyboard Shortcuts…"
+        L10n.keyboardShortcuts
     }
 
     var canTranslateSelection: Bool {
@@ -118,15 +118,15 @@ struct MenuBarViewModel {
     var permissionLabel: String {
         let statusText = switch permissionStatus {
         case .granted:
-            "Granted"
+            L10n.accessibilityPermissionGranted
         case .required:
-            "Required"
+            L10n.accessibilityPermissionRequired
         }
-        return "Accessibility Permission: \(statusText)"
+        return L10n.accessibilityPermission(status: statusText)
     }
 
     var quitLabel: String {
-        "Quit \(AppBranding.displayName)"
+        L10n.quitApp(appName: AppBranding.displayName)
     }
 
     func translateSelection() {

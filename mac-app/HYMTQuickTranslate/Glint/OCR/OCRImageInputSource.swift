@@ -100,7 +100,7 @@ struct TranslateOCRWorkflow: Sendable {
             case .needsConfirmation:
                 return .confirm(recognition)
             case .rejected:
-                return .final(.error("Recognized text exceeds the maximum length."))
+                return .final(.error(L10n.recognizedTextExceedsMaximumLength))
             }
         case let .failure(failure):
             return .final(.error(message(for: failure)))
@@ -119,9 +119,9 @@ struct TranslateOCRWorkflow: Sendable {
             client: client,
             policy: policy,
             detectDirection: detectDirection,
-            noTextMessage: "No text was recognized in the selected area.",
-            ocrUnavailableMessage: "OCR is unavailable on this system.",
-            rejectedTextMessage: "Recognized text exceeds the maximum length."
+            noTextMessage: L10n.noTextRecognizedInSelectedArea,
+            ocrUnavailableMessage: L10n.ocrUnavailableOnSystem,
+            rejectedTextMessage: L10n.recognizedTextExceedsMaximumLength
         )
     }
 
@@ -129,11 +129,11 @@ struct TranslateOCRWorkflow: Sendable {
         let baseMessage: String
         switch failure.error {
         case .noText:
-            baseMessage = "No text was recognized in the selected area."
+            baseMessage = L10n.noTextRecognizedInSelectedArea
         case .ocrUnavailable:
-            baseMessage = "OCR is unavailable on this system."
+            baseMessage = L10n.ocrUnavailableOnSystem
         case .permissionRequired, .automationPermissionRequired, .unsupportedHostApp:
-            baseMessage = "OCR is unavailable on this system."
+            baseMessage = L10n.ocrUnavailableOnSystem
         }
 
         guard let diagnostics = failure.diagnostics,

@@ -23,11 +23,11 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        _ = await waitForMenuItem(titled: "Service Status: Unavailable", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusUnavailable, in: menu)
 
-        try triggerMenuItem(titled: "Start Service", in: menu)
+        try triggerMenuItem(titled: L10n.startService, in: menu)
 
-        _ = await waitForMenuItem(titled: "Service Status: Starting", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusStarting, in: menu)
         let actions = await waitForRecordedActions(from: controlService)
         XCTAssertEqual(actions, [.start])
     }
@@ -52,12 +52,12 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
 
-        try triggerMenuItem(titled: "Stop Service", in: menu)
+        try triggerMenuItem(titled: L10n.stopService, in: menu)
 
-        let selectionItem = await waitForMenuItem(titled: "Translate Selection", in: menu)
-        let clipboardItem = await waitForMenuItem(titled: "Translate Clipboard", in: menu)
+        let selectionItem = await waitForMenuItem(titled: L10n.translateSelection, in: menu)
+        let clipboardItem = await waitForMenuItem(titled: L10n.translateClipboard, in: menu)
         XCTAssertFalse(selectionItem.isEnabled)
         XCTAssertFalse(clipboardItem.isEnabled)
         let actions = await waitForRecordedActions(from: controlService)
@@ -84,14 +84,14 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
 
-        try triggerMenuItem(titled: "Restart Service", in: menu)
+        try triggerMenuItem(titled: L10n.restartService, in: menu)
 
-        let startItem = await waitForMenuItem(titled: "Start Service", in: menu)
-        let stopItem = await waitForMenuItem(titled: "Stop Service", in: menu)
-        let restartItem = await waitForMenuItem(titled: "Restart Service", in: menu)
-        let refreshItem = await waitForMenuItem(titled: "Refresh Status", in: menu)
+        let startItem = await waitForMenuItem(titled: L10n.startService, in: menu)
+        let stopItem = await waitForMenuItem(titled: L10n.stopService, in: menu)
+        let restartItem = await waitForMenuItem(titled: L10n.restartService, in: menu)
+        let refreshItem = await waitForMenuItem(titled: L10n.refreshStatus, in: menu)
         XCTAssertFalse(startItem.isEnabled)
         XCTAssertTrue(stopItem.isEnabled)
         XCTAssertFalse(restartItem.isEnabled)
@@ -129,11 +129,11 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        _ = await waitForMenuItem(titled: "Service Status: Unavailable", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusUnavailable, in: menu)
 
         controller.menuNeedsUpdate(menu)
 
-        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
         let callCount = await apiChecker.recordedCallCount()
         XCTAssertEqual(callCount, 2)
     }
@@ -169,11 +169,11 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        _ = await waitForMenuItem(titled: "Service Status: Unavailable", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusUnavailable, in: menu)
 
         try scheduler.fire()
 
-        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
         let callCount = await apiChecker.recordedCallCount()
         XCTAssertEqual(callCount, 2)
     }
@@ -209,23 +209,29 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
 
         try scheduler.fire()
-        _ = await waitForMenuItem(titled: "Service Status: Available", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusAvailable, in: menu)
 
-        let keyboardShortcutsItem = await waitForMenuItem(titled: "Keyboard Shortcuts…", in: menu)
-        let selectionItem = await waitForMenuItem(titled: "Translate Selection", in: menu)
-        let clipboardItem = await waitForMenuItem(titled: "Translate Clipboard", in: menu)
-        let ocrItem = await waitForMenuItem(titled: "Translate OCR Area", in: menu)
+        let keyboardShortcutsItem = await waitForMenuItem(titled: L10n.keyboardShortcuts, in: menu)
+        let selectionItem = await waitForMenuItem(titled: L10n.translateSelection, in: menu)
+        let clipboardItem = await waitForMenuItem(titled: L10n.translateClipboard, in: menu)
+        let ocrItem = await waitForMenuItem(titled: L10n.translateOCRArea, in: menu)
 
         XCTAssertTrue(selectionItem.isEnabled)
         XCTAssertTrue(clipboardItem.isEnabled)
         XCTAssertTrue(ocrItem.isEnabled)
         XCTAssertTrue(keyboardShortcutsItem.isEnabled)
-        XCTAssertNil(menu.items.first { $0.title == "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)" })
-        XCTAssertNil(menu.items.first { $0.title == "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)" })
-        XCTAssertNil(menu.items.first { $0.title == "OCR Shortcut: \(GlobalHotkeyShortcut.ocrDefault.displayName)" })
+        XCTAssertNil(menu.items.first {
+            $0.title == "\(L10n.shortcutTargetSelection) Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)"
+        })
+        XCTAssertNil(menu.items.first {
+            $0.title == "\(L10n.shortcutTargetClipboard) Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+        })
+        XCTAssertNil(menu.items.first {
+            $0.title == "\(L10n.shortcutTargetOCR) Shortcut: \(GlobalHotkeyShortcut.ocrDefault.displayName)"
+        })
         XCTAssertNil(menu.items.first { $0.title == "Cancel Shortcut Recording" })
     }
 
@@ -264,12 +270,12 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         let secondRequest = await apiChecker.waitForRequest(number: 2)
 
         await apiChecker.resolve(request: secondRequest, with: .unreachable)
-        _ = await waitForMenuItem(titled: "Service Status: Unavailable", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusUnavailable, in: menu)
 
         await apiChecker.resolve(request: firstRequest, with: .reachable)
 
         try? await Task.sleep(nanoseconds: 50_000_000)
-        XCTAssertEqual(menu.items.first?.title, "Service Status: Unavailable")
+        XCTAssertEqual(menu.items.first?.title, L10n.serviceStatusUnavailable)
     }
 
     @MainActor
@@ -304,13 +310,13 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
         let firstRequest = await apiChecker.waitForRequest(number: 1)
 
-        try triggerMenuItem(titled: "Start Service", in: menu)
-        _ = await waitForMenuItem(titled: "Service Status: Starting", in: menu)
+        try triggerMenuItem(titled: L10n.startService, in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusStarting, in: menu)
 
         await apiChecker.resolve(request: firstRequest, with: .reachable)
 
         try? await Task.sleep(nanoseconds: 50_000_000)
-        XCTAssertEqual(menu.items.first?.title, "Service Status: Starting")
+        XCTAssertEqual(menu.items.first?.title, L10n.serviceStatusStarting)
     }
 
     @MainActor
@@ -333,15 +339,15 @@ final class AppDelegateBackendMenuTests: XCTestCase {
 
         let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
         let menu = try XCTUnwrap(reflectedMenu(from: controller))
-        _ = await waitForMenuItem(titled: "Service Status: Unavailable", in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusUnavailable, in: menu)
 
-        try triggerMenuItem(titled: "Start Service", in: menu)
-        _ = await waitForMenuItem(titled: "Service Status: Starting", in: menu)
+        try triggerMenuItem(titled: L10n.startService, in: menu)
+        _ = await waitForMenuItem(titled: L10n.serviceStatusStarting, in: menu)
 
         controller.menuNeedsUpdate(menu)
 
         try? await Task.sleep(nanoseconds: 50_000_000)
-        XCTAssertEqual(menu.items.first?.title, "Service Status: Starting")
+        XCTAssertEqual(menu.items.first?.title, L10n.serviceStatusStarting)
     }
 }
 
