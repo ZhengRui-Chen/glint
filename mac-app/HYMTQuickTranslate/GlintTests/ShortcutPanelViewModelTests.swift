@@ -9,11 +9,11 @@ final class ShortcutPanelViewModelTests: XCTestCase {
 
         XCTAssertEqual(
             viewModel.selectionShortcutLabel,
-            "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)"
+            GlobalHotkeyShortcut.selectionDefault.displayName
         )
         XCTAssertEqual(
             viewModel.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+            GlobalHotkeyShortcut.default.displayName
         )
         XCTAssertNil(viewModel.recordingTarget)
         XCTAssertFalse(viewModel.isRecordingSelectionShortcut)
@@ -31,7 +31,7 @@ final class ShortcutPanelViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.isRecordingClipboardShortcut)
         XCTAssertEqual(
             viewModel.statusMessage,
-            "Press a new shortcut, or Esc to cancel"
+            "Press a shortcut. Esc cancels."
         )
     }
 
@@ -60,11 +60,11 @@ final class ShortcutPanelViewModelTests: XCTestCase {
 
         XCTAssertEqual(
             viewModel.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(customSettings.clipboardShortcut.displayName)"
+            customSettings.clipboardShortcut.displayName
         )
         XCTAssertEqual(
             viewModel.selectionShortcutLabel,
-            "Selection Shortcut: \(customSettings.selectionShortcut.displayName)"
+            customSettings.selectionShortcut.displayName
         )
     }
 
@@ -87,11 +87,11 @@ final class ShortcutPanelViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.recordingTarget)
         XCTAssertEqual(
             viewModel.selectionShortcutLabel,
-            "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)"
+            GlobalHotkeyShortcut.selectionDefault.displayName
         )
         XCTAssertEqual(
             viewModel.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+            GlobalHotkeyShortcut.default.displayName
         )
         XCTAssertEqual(viewModel.statusMessage, "Defaults restored")
     }

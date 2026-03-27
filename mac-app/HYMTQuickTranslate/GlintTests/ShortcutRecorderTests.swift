@@ -266,7 +266,7 @@ final class ShortcutRecorderTests: XCTestCase {
         XCTAssertNil(state.recordingTarget)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(candidateShortcut.displayName)"
+            candidateShortcut.displayName
         )
         XCTAssertEqual(state.statusMessage, "Shortcut saved")
     }
@@ -326,7 +326,7 @@ final class ShortcutRecorderTests: XCTestCase {
         XCTAssertEqual(state.recordingTarget, .clipboard)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(ShortcutSettings.default.clipboardShortcut.displayName)"
+            ShortcutSettings.default.clipboardShortcut.displayName
         )
         XCTAssertEqual(
             state.statusMessage,
@@ -413,11 +413,11 @@ final class ShortcutRecorderTests: XCTestCase {
         XCTAssertNil(state.recordingTarget)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(ShortcutSettings.default.clipboardShortcut.displayName)"
+            ShortcutSettings.default.clipboardShortcut.displayName
         )
         XCTAssertEqual(
             state.selectionShortcutLabel,
-            "Selection Shortcut: \(ShortcutSettings.default.selectionShortcut.displayName)"
+            ShortcutSettings.default.selectionShortcut.displayName
         )
         XCTAssertEqual(state.statusMessage, "Defaults restored")
     }
@@ -508,11 +508,11 @@ final class ShortcutRecorderTests: XCTestCase {
         XCTAssertNil(state.recordingTarget)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(savedSettings.clipboardShortcut.displayName)"
+            savedSettings.clipboardShortcut.displayName
         )
         XCTAssertEqual(
             state.selectionShortcutLabel,
-            "Selection Shortcut: \(savedSettings.selectionShortcut.displayName)"
+            savedSettings.selectionShortcut.displayName
         )
         XCTAssertEqual(state.statusMessage, "Defaults could not be restored.")
     }

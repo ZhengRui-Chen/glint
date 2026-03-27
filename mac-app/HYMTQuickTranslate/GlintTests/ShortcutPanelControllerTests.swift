@@ -37,11 +37,11 @@ final class ShortcutPanelControllerTests: XCTestCase {
 
         XCTAssertEqual(
             state.selectionShortcutLabel,
-            "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)"
+            GlobalHotkeyShortcut.selectionDefault.displayName
         )
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+            GlobalHotkeyShortcut.default.displayName
         )
         XCTAssertNil(state.recordingTarget)
 
@@ -50,7 +50,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         XCTAssertTrue(state.isRecordingClipboardShortcut)
         XCTAssertEqual(
             state.statusMessage,
-            "Press a new shortcut, or Esc to cancel"
+            "Press a shortcut. Esc cancels."
         )
 
         XCTAssertEqual(
@@ -60,21 +60,21 @@ final class ShortcutPanelControllerTests: XCTestCase {
         XCTAssertEqual(state.recordingTarget, .clipboard)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+            GlobalHotkeyShortcut.default.displayName
         )
 
         state.commitRecordedShortcut(updatedShortcut, for: .clipboard)
         XCTAssertNil(state.recordingTarget)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(updatedShortcut.displayName)"
+            updatedShortcut.displayName
         )
         XCTAssertEqual(state.statusMessage, "Shortcut saved")
 
         state.resetToDefaults()
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+            GlobalHotkeyShortcut.default.displayName
         )
         XCTAssertEqual(state.statusMessage, "Defaults restored")
     }
@@ -97,7 +97,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         XCTAssertTrue(state.isRecordingSelectionShortcut)
         XCTAssertEqual(
             state.statusMessage,
-            "Press a new shortcut, or Esc to cancel"
+            "Press a shortcut. Esc cancels."
         )
         XCTAssertEqual(
             state.selectionShortcutLabel,
@@ -106,7 +106,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
                     keyCode: UInt32(kVK_ANSI_A),
                     modifiers: UInt32(controlKey | optionKey | cmdKey)
                 )
-                return "Selection Shortcut: \(refreshedShortcut.displayName)"
+                return refreshedShortcut.displayName
             }()
         )
     }
@@ -158,8 +158,39 @@ final class ShortcutPanelControllerTests: XCTestCase {
         )
         XCTAssertEqual(
             state.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
+            GlobalHotkeyShortcut.default.displayName
         )
+    }
+
+    func test_escape_cancels_recording_without_closing_panel() {
+        let controller = ShortcutPanelController(shortcutSettings: .default)
+
+        controller.show()
+        controller.requestStartRecording(for: .selection)
+        controller.handleCancelForTesting()
+
+        let state = controller.testingSnapshot
+        XCTAssertTrue(controller.isPanelVisibleForTesting)
+        XCTAssertNil(state.recordingTarget)
+        XCTAssertNil(state.statusMessage)
+
+        controller.closePanel()
+    }
+
+    func test_escape_closes_panel_when_not_recording() {
+        let controller = ShortcutPanelController(shortcutSettings: .default)
+
+        controller.show()
+        controller.handleCancelForTesting()
+
+        let didClose = expectation(description: "panel closes after escape")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            if controller.isPanelVisibleForTesting == false {
+                didClose.fulfill()
+            }
+        }
+
+        wait(for: [didClose], timeout: 1)
     }
 
     func test_controller_clears_recording_state_when_done_or_closed() throws {

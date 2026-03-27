@@ -5,8 +5,8 @@ import SwiftUI
 
 @MainActor
 final class ShortcutPanelController: NSObject, NSWindowDelegate {
-    private static let panelWidth: CGFloat = 460
-    private static let panelHeight: CGFloat = 284
+    private static let panelWidth: CGFloat = 440
+    private static let panelHeight: CGFloat = 256
     private static let presentationOffset: CGFloat = 12
 
     let onAction: ((ShortcutPanelAction) -> Bool)?
@@ -58,7 +58,7 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
         panel.standardWindowButton(.zoomButton)?.isHidden = true
         panel.onCancel = { [weak self] in
-            self?.closePanel()
+            self?.handleCancelOperation()
         }
 
         hostingView.rootView = makeRootView()
@@ -166,6 +166,14 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         state.testingSnapshot
     }
 
+    func handleCancelForTesting() {
+        handleCancelOperation()
+    }
+
+    var isPanelVisibleForTesting: Bool {
+        panel.isVisible
+    }
+
     private func makeRootView() -> ShortcutPanelView {
         ShortcutPanelView(
             state: state,
@@ -192,6 +200,14 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
     private func orderPanelFront() {
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
+    }
+
+    private func handleCancelOperation() {
+        if state.recordingTarget != nil {
+            state.cancelRecording()
+            return
+        }
+        closePanel()
     }
 }
 
@@ -242,7 +258,7 @@ final class ShortcutPanelViewState: ObservableObject {
     func startRecording(for target: ShortcutTarget) {
         viewModel.startRecording(for: target)
         recordingTarget = target
-        statusMessage = "Press a new shortcut, or Esc to cancel"
+        statusMessage = "Press a shortcut. Esc cancels."
     }
 
     func cancelRecording() {

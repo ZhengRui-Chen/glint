@@ -41,7 +41,7 @@ struct ShortcutPanelView: View {
             }
         }
         .padding(16)
-        .frame(width: 460)
+        .frame(width: 440)
         .background(
             OverlayBackgroundView(
                 visualStyle: visualStyle,
@@ -72,9 +72,6 @@ struct ShortcutPanelView: View {
                 .foregroundStyle(statusForegroundColor)
                 .id(statusText)
                 .transition(.opacity.combined(with: .move(edge: .top)))
-            Text("Press Esc to cancel recording.")
-                .font(.system(size: 12, weight: .regular, design: .rounded))
-                .foregroundStyle(visualStyle.secondaryTextColor.opacity(0.9))
         }
         .padding(.top, 2)
     }
@@ -101,7 +98,7 @@ struct ShortcutPanelView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 14, weight: .medium, design: .rounded))
-                Text(isRecording ? "Recording now" : "Click to change")
+                Text(isRecording ? "Press keys" : "Click to change")
                     .font(.system(size: 12, weight: .regular, design: .rounded))
                     .foregroundStyle(visualStyle.secondaryTextColor)
             }

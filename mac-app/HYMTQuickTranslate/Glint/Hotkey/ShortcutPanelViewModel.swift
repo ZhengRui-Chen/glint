@@ -28,7 +28,7 @@ final class ShortcutPanelViewModel {
 
     func startRecording(for target: ShortcutTarget) {
         recordingTarget = target
-        statusMessage = "Press a new shortcut, or Esc to cancel"
+        statusMessage = "Press a shortcut. Esc cancels."
     }
 
     func cancelRecording() {
@@ -43,13 +43,6 @@ final class ShortcutPanelViewModel {
     }
 
     private func shortcutLabel(for target: ShortcutTarget) -> String {
-        let title = switch target {
-        case .clipboard:
-            "Clipboard"
-        case .selection:
-            "Selection"
-        }
-
         let shortcut = switch target {
         case .clipboard:
             shortcutSettings.clipboardShortcut
@@ -57,6 +50,6 @@ final class ShortcutPanelViewModel {
             shortcutSettings.selectionShortcut
         }
 
-        return "\(title) Shortcut: \(shortcut.displayName)"
+        return shortcut.displayName
     }
 }
