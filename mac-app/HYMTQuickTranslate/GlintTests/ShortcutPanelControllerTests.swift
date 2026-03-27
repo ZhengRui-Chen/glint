@@ -13,7 +13,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         )
 
         XCTAssertEqual(frame.origin.x, 1048, accuracy: 0.5)
-        XCTAssertEqual(frame.origin.y, 686, accuracy: 0.5)
+        XCTAssertEqual(frame.origin.y, 692, accuracy: 0.5)
     }
 
     func test_controller_emits_actions_in_order() {

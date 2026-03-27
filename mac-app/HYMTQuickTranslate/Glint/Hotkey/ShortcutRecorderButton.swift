@@ -11,12 +11,12 @@ struct ShortcutRecorderButton: View {
         Button(action: action) {
             HStack(spacing: 10) {
                 Text(shortcut)
-                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
                 Image(systemName: isRecording ? "record.circle.fill" : "keyboard")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .symbolRenderingMode(.hierarchical)
             }
             .foregroundStyle(foregroundColor)

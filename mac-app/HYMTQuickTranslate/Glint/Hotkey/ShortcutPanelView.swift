@@ -57,9 +57,9 @@ struct ShortcutPanelView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Keyboard Shortcuts")
-                .font(.system(size: 21, weight: .semibold, design: .rounded))
+                .font(.system(size: 23, weight: .semibold, design: .rounded))
             Text("Set shortcuts for selection and clipboard translation.")
-                .font(.system(size: 13, weight: .regular, design: .rounded))
+                .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(visualStyle.secondaryTextColor)
         }
     }
@@ -68,7 +68,7 @@ struct ShortcutPanelView: View {
     private var statusBlock: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(statusText)
-                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .font(.system(size: 14, weight: .medium, design: .rounded))
                 .foregroundStyle(statusForegroundColor)
                 .id(statusText)
                 .transition(.opacity.combined(with: .move(edge: .top)))
@@ -97,9 +97,9 @@ struct ShortcutPanelView: View {
         HStack(alignment: .center, spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
                 Text(isRecording ? "Press keys" : "Click to change")
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundStyle(visualStyle.secondaryTextColor)
             }
 

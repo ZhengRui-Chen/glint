@@ -8,8 +8,6 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
     private static let panelWidth: CGFloat = 440
     private static let panelHeight: CGFloat = 256
     private static let presentationOffset: CGFloat = 12
-    fileprivate static let horizontalAnchorInset: CGFloat = 4
-    fileprivate static let topInset: CGFloat = 8
 
     let onAction: ((ShortcutPanelAction) -> Bool)?
 
@@ -414,7 +412,7 @@ enum ShortcutPanelAction: Equatable {
 
 struct ShortcutPanelPlacement {
     private static let horizontalAnchorInset: CGFloat = 4
-    private static let topInset: CGFloat = 8
+    private static let topInset: CGFloat = 2
 
     static func frame(
         panelSize: CGSize,
