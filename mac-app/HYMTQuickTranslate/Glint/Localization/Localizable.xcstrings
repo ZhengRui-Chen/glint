@@ -1,6 +1,125 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "API Key" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "API Key" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API 密钥" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "API 金鑰" } }
+      }
+    },
+    "API Settings" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "API Settings" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API 设置" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "API 設定" } }
+      }
+    },
+    "API Settings…" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "API Settings…" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API 设置…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "API 設定…" } }
+      }
+    },
+    "API Status: Available" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "API Status: Available" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API 状态：可用" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "API 狀態：可用" } }
+      }
+    },
+    "API Status: Checking..." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "API Status: Checking..." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API 状态：检查中…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "API 狀態：檢查中…" } }
+      }
+    },
+    "API Status: Error" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "API Status: Error" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API 状态：错误" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "API 狀態：錯誤" } }
+      }
+    },
+    "API Status: Unavailable" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "API Status: Unavailable" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API 状态：不可用" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "API 狀態：不可用" } }
+      }
+    },
+    "Base URL" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Base URL" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "基础 URL" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "基礎 URL" } }
+      }
+    },
+    "Checking API availability" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Checking API availability" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在检查 API 可用性" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "正在檢查 API 可用性" } }
+      }
+    },
+    "Configure the OpenAI-compatible endpoint Glint should use for translation." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Configure the OpenAI-compatible endpoint Glint should use for translation." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "配置 Glint 用于翻译的 OpenAI-compatible endpoint。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "配置 Glint 用於翻譯的 OpenAI-compatible endpoint。" } }
+      }
+    },
+    "Could not load models from the API. You can still enter a model manually." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Could not load models from the API. You can still enter a model manually." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法从 API 拉取模型列表，你仍然可以手动输入模型名。" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "無法從 API 載入模型列表，你仍然可以手動輸入模型名稱。" } }
+      }
+    },
+    "Model" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Model" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "模型" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "模型" } }
+      }
+    },
+    "Refresh Models" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Refresh Models" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "刷新模型列表" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "重新整理模型列表" } }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "保存" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "儲存" } }
+      }
+    },
+    "Translation API is currently unavailable" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translation API is currently unavailable" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译 API 当前不可用" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯 API 目前不可用" } }
+      }
+    },
+    "Translation API is reachable" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Translation API is reachable" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译 API 可达" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻譯 API 可達" } }
+      }
+    },
+    "Unable to verify API status" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unable to verify API status" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法验证 API 状态" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "無法驗證 API 狀態" } }
+      }
+    },
     "%@ shortcut could not be registered. Choose another combination from the menu bar." : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ shortcut could not be registered. Choose another combination from the menu bar." } },
@@ -316,13 +435,6 @@
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "恢復預設" } }
       }
     },
-    "Restart Service" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restart Service" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重启服务" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "重新啟動服務" } }
-      }
-    },
     "Selection" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Selection" } },
@@ -391,20 +503,6 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Shortcut saved" } },
         "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "快捷键已保存" } },
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "快捷鍵已儲存" } }
-      }
-    },
-    "Start Service" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start Service" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "启动服务" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "啟動服務" } }
-      }
-    },
-    "Stop Service" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Stop Service" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "停止服务" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "停止服務" } }
       }
     },
     "Text exceeds the maximum length." : {

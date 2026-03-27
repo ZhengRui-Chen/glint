@@ -17,9 +17,7 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.translateSelectionLabel, L10n.translateSelection)
         XCTAssertEqual(viewModel.translateClipboardLabel, L10n.translateClipboard)
         XCTAssertEqual(viewModel.translateOCRLabel, L10n.translateOCRArea)
-        XCTAssertEqual(viewModel.startServiceLabel, L10n.startService)
-        XCTAssertEqual(viewModel.stopServiceLabel, L10n.stopService)
-        XCTAssertEqual(viewModel.restartServiceLabel, L10n.restartService)
+        XCTAssertEqual(viewModel.apiSettingsLabel, L10n.apiSettings)
         XCTAssertEqual(viewModel.refreshStatusLabel, L10n.refreshStatus)
         XCTAssertEqual(viewModel.quitLabel, L10n.quitApp(appName: AppBranding.displayName))
     }
@@ -64,25 +62,7 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.canTranslateSelection)
         XCTAssertFalse(viewModel.canTranslateClipboard)
         XCTAssertFalse(viewModel.canTranslateOCR)
-        XCTAssertTrue(viewModel.canStartService)
-        XCTAssertFalse(viewModel.canStopService)
-        XCTAssertTrue(viewModel.canRestartService)
         XCTAssertTrue(viewModel.canRefreshStatus)
-    }
-
-    func test_menu_bar_disables_conflicting_actions_while_backend_is_starting() {
-        let viewModel = MenuBarViewModel(
-            permissionStatus: .granted,
-            backendStatus: .starting(detail: L10n.backendStartingPleaseWait)
-        )
-
-        XCTAssertFalse(viewModel.canTranslateSelection)
-        XCTAssertFalse(viewModel.canTranslateClipboard)
-        XCTAssertFalse(viewModel.canTranslateOCR)
-        XCTAssertFalse(viewModel.canStartService)
-        XCTAssertTrue(viewModel.canStopService)
-        XCTAssertFalse(viewModel.canRestartService)
-        XCTAssertFalse(viewModel.canRefreshStatus)
     }
 
     func test_menu_bar_invokes_callbacks_for_actions() {
@@ -92,9 +72,7 @@ final class MenuBarViewModelTests: XCTestCase {
             onTranslateSelection: recorder.recordSelection,
             onTranslateClipboard: recorder.recordClipboard,
             onTranslateOCR: recorder.recordOCR,
-            onStartService: recorder.recordStartService,
-            onStopService: recorder.recordStopService,
-            onRestartService: recorder.recordRestartService,
+            onOpenAPISettings: recorder.recordAPISettings,
             onRefreshStatus: recorder.recordRefreshStatus,
             onOpenShortcutPanel: recorder.recordShortcutPanel,
             onQuit: recorder.recordQuit
@@ -103,9 +81,7 @@ final class MenuBarViewModelTests: XCTestCase {
         viewModel.translateSelection()
         viewModel.translateClipboard()
         viewModel.translateOCR()
-        viewModel.startService()
-        viewModel.stopService()
-        viewModel.restartService()
+        viewModel.openAPISettings()
         viewModel.refreshStatus()
         viewModel.openKeyboardShortcuts()
         viewModel.quit()
@@ -116,9 +92,7 @@ final class MenuBarViewModelTests: XCTestCase {
                 .selection,
                 .clipboard,
                 .ocr,
-                .startService,
-                .stopService,
-                .restartService,
+                .apiSettings,
                 .refreshStatus,
                 .keyboardShortcuts,
                 .quit
@@ -174,17 +148,13 @@ final class MenuBarViewModelTests: XCTestCase {
         let selectionItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateSelection })
         let clipboardItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateClipboard })
         let ocrItem = try XCTUnwrap(menu.items.first { $0.title == L10n.translateOCRArea })
-        let startItem = try XCTUnwrap(menu.items.first { $0.title == L10n.startService })
-        let stopItem = try XCTUnwrap(menu.items.first { $0.title == L10n.stopService })
-        let restartItem = try XCTUnwrap(menu.items.first { $0.title == L10n.restartService })
+        let apiSettingsItem = try XCTUnwrap(menu.items.first { $0.title == L10n.apiSettings })
         let refreshItem = try XCTUnwrap(menu.items.first { $0.title == L10n.refreshStatus })
 
         XCTAssertFalse(selectionItem.isEnabled)
         XCTAssertFalse(clipboardItem.isEnabled)
         XCTAssertFalse(ocrItem.isEnabled)
-        XCTAssertTrue(startItem.isEnabled)
-        XCTAssertFalse(stopItem.isEnabled)
-        XCTAssertTrue(restartItem.isEnabled)
+        XCTAssertTrue(apiSettingsItem.isEnabled)
         XCTAssertTrue(refreshItem.isEnabled)
     }
 
@@ -209,9 +179,7 @@ private final class MenuActionRecorder {
         case selection
         case clipboard
         case ocr
-        case startService
-        case stopService
-        case restartService
+        case apiSettings
         case refreshStatus
         case keyboardShortcuts
         case quit
@@ -231,16 +199,8 @@ private final class MenuActionRecorder {
         events.append(.ocr)
     }
 
-    func recordStartService() {
-        events.append(.startService)
-    }
-
-    func recordStopService() {
-        events.append(.stopService)
-    }
-
-    func recordRestartService() {
-        events.append(.restartService)
+    func recordAPISettings() {
+        events.append(.apiSettings)
     }
 
     func recordRefreshStatus() {

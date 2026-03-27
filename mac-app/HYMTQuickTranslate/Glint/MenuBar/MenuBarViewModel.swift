@@ -12,9 +12,7 @@ struct MenuBarViewModel {
     private let onTranslateSelection: () -> Void
     private let onTranslateClipboard: () -> Void
     private let onTranslateOCR: () -> Void
-    private let onStartService: () -> Void
-    private let onStopService: () -> Void
-    private let onRestartService: () -> Void
+    private let onOpenAPISettings: () -> Void
     private let onRefreshStatus: () -> Void
     private let onOpenShortcutPanel: () -> Void
     private let onQuit: () -> Void
@@ -27,9 +25,7 @@ struct MenuBarViewModel {
         onTranslateSelection: @escaping () -> Void = {},
         onTranslateClipboard: @escaping () -> Void = {},
         onTranslateOCR: @escaping () -> Void = {},
-        onStartService: @escaping () -> Void = {},
-        onStopService: @escaping () -> Void = {},
-        onRestartService: @escaping () -> Void = {},
+        onOpenAPISettings: @escaping () -> Void = {},
         onRefreshStatus: @escaping () -> Void = {},
         onOpenShortcutPanel: @escaping () -> Void = {},
         onQuit: @escaping () -> Void = {}
@@ -39,9 +35,7 @@ struct MenuBarViewModel {
         self.onTranslateSelection = onTranslateSelection
         self.onTranslateClipboard = onTranslateClipboard
         self.onTranslateOCR = onTranslateOCR
-        self.onStartService = onStartService
-        self.onStopService = onStopService
-        self.onRestartService = onRestartService
+        self.onOpenAPISettings = onOpenAPISettings
         self.onRefreshStatus = onRefreshStatus
         self.onOpenShortcutPanel = onOpenShortcutPanel
         self.onQuit = onQuit
@@ -67,16 +61,8 @@ struct MenuBarViewModel {
         L10n.translateOCRArea
     }
 
-    var startServiceLabel: String {
-        L10n.startService
-    }
-
-    var stopServiceLabel: String {
-        L10n.stopService
-    }
-
-    var restartServiceLabel: String {
-        L10n.restartService
+    var apiSettingsLabel: String {
+        L10n.apiSettings
     }
 
     var refreshStatusLabel: String {
@@ -97,18 +83,6 @@ struct MenuBarViewModel {
 
     var canTranslateOCR: Bool {
         backendStatus.canTranslate
-    }
-
-    var canStartService: Bool {
-        backendStatus.canStartService
-    }
-
-    var canStopService: Bool {
-        backendStatus.canStopService
-    }
-
-    var canRestartService: Bool {
-        backendStatus.canRestartService
     }
 
     var canRefreshStatus: Bool {
@@ -141,16 +115,8 @@ struct MenuBarViewModel {
         onTranslateOCR()
     }
 
-    func startService() {
-        onStartService()
-    }
-
-    func stopService() {
-        onStopService()
-    }
-
-    func restartService() {
-        onRestartService()
+    func openAPISettings() {
+        onOpenAPISettings()
     }
 
     func refreshStatus() {

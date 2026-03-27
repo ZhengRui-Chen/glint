@@ -5,9 +5,14 @@ enum L10n {
     static var translateClipboard: String { String(localized: "Translate Clipboard", comment: "Action that translates clipboard text") }
     static var translateOCRArea: String { String(localized: "Translate OCR Area", comment: "Action that translates text from an OCR region") }
 
-    static var startService: String { String(localized: "Start Service", comment: "Action that starts the backend service") }
-    static var stopService: String { String(localized: "Stop Service", comment: "Action that stops the backend service") }
-    static var restartService: String { String(localized: "Restart Service", comment: "Action that restarts the backend service") }
+    static var apiSettings: String { String(localized: "API Settings…", comment: "Menu entry that opens the API settings panel") }
+    static var apiSettingsTitle: String { String(localized: "API Settings", comment: "Title for the API settings panel") }
+    static var apiSettingsSubtitle: String { String(localized: "Configure the OpenAI-compatible endpoint Glint should use for translation.", comment: "Subtitle shown in the API settings panel") }
+    static var apiBaseURL: String { String(localized: "Base URL", comment: "Label for the API base URL field") }
+    static var apiKey: String { String(localized: "API Key", comment: "Label for the API key field") }
+    static var model: String { String(localized: "Model", comment: "Label for the model field") }
+    static var refreshModels: String { String(localized: "Refresh Models", comment: "Button title that refreshes the model list") }
+    static var apiSettingsModelRefreshFailed: String { String(localized: "Could not load models from the API. You can still enter a model manually.", comment: "Status message when model discovery fails") }
     static var refreshStatus: String { String(localized: "Refresh Status", comment: "Action that refreshes backend status") }
     static var keyboardShortcuts: String { String(localized: "Keyboard Shortcuts…", comment: "Menu entry that opens the keyboard shortcuts panel") }
     static var keyboardShortcutsTitle: String { String(localized: "Keyboard Shortcuts", comment: "Title for the keyboard shortcuts panel") }
@@ -29,20 +34,15 @@ enum L10n {
         )
     }
 
-    static var serviceStatusChecking: String { String(localized: "Service Status: Checking...", comment: "Backend status headline while checking") }
-    static var serviceStatusAvailable: String { String(localized: "Service Status: Available", comment: "Backend status headline when available") }
-    static var serviceStatusStarting: String { String(localized: "Service Status: Starting", comment: "Backend status headline when starting") }
-    static var serviceStatusUnavailable: String { String(localized: "Service Status: Unavailable", comment: "Backend status headline when unavailable") }
-    static var serviceStatusError: String { String(localized: "Service Status: Error", comment: "Backend status headline when errored") }
+    static var serviceStatusChecking: String { String(localized: "API Status: Checking...", comment: "Backend status headline while checking") }
+    static var serviceStatusAvailable: String { String(localized: "API Status: Available", comment: "Backend status headline when available") }
+    static var serviceStatusUnavailable: String { String(localized: "API Status: Unavailable", comment: "Backend status headline when unavailable") }
+    static var serviceStatusError: String { String(localized: "API Status: Error", comment: "Backend status headline when errored") }
 
-    static var checkingBackendAvailability: String { String(localized: "Checking backend availability", comment: "Backend status detail while checking") }
-    static var backendReachable: String { String(localized: "Translation backend is reachable", comment: "Backend status detail when available") }
-    static var backendStartingPleaseWait: String { String(localized: "Backend is starting, please wait", comment: "Backend status detail when starting") }
-    static var backendCurrentlyUnavailable: String { String(localized: "Backend is currently unavailable", comment: "Backend status detail when unavailable") }
-    static var unableVerifyBackendStatus: String { String(localized: "Unable to verify backend status", comment: "Backend status detail when refresh fails") }
-    static var failedToStartService: String { String(localized: "Failed to start the service", comment: "Backend status detail when starting fails") }
-    static var failedToStopService: String { String(localized: "Failed to stop the service", comment: "Backend status detail when stopping fails") }
-    static var failedToRestartService: String { String(localized: "Failed to restart the service", comment: "Backend status detail when restarting fails") }
+    static var checkingBackendAvailability: String { String(localized: "Checking API availability", comment: "Backend status detail while checking") }
+    static var backendReachable: String { String(localized: "Translation API is reachable", comment: "Backend status detail when available") }
+    static var backendCurrentlyUnavailable: String { String(localized: "Translation API is currently unavailable", comment: "Backend status detail when unavailable") }
+    static var unableVerifyBackendStatus: String { String(localized: "Unable to verify API status", comment: "Backend status detail when refresh fails") }
 
     static var noTextProvided: String { String(localized: "No text was provided.", comment: "Error when no text is available") }
     static var textExceedsMaximumLength: String { String(localized: "Text exceeds the maximum length.", comment: "Error when text exceeds the length limit") }
@@ -67,6 +67,7 @@ enum L10n {
     static var clipboardLongTextConfirmation: String { String(localized: "This clipboard text is longer than the quick-translate limit.", comment: "Confirmation text for long clipboard content") }
     static var preview: String { String(localized: "Preview:", comment: "Preview label") }
     static var cancel: String { String(localized: "Cancel", comment: "Cancel button title") }
+    static var save: String { String(localized: "Save", comment: "Save button title") }
     static var translate: String { String(localized: "Translate", comment: "Translate button title") }
     static var translation: String { String(localized: "Translation", comment: "Overlay title for a translation result") }
     static var close: String { String(localized: "Close", comment: "Close button title") }

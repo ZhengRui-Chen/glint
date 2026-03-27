@@ -69,32 +69,13 @@ final class StatusBarController: NSObject, NSMenuDelegate {
 
         menu.addItem(.separator())
 
-        let startServiceItem = NSMenuItem(
-            title: viewModel.startServiceLabel,
-            action: #selector(handleStartService),
+        let apiSettingsItem = NSMenuItem(
+            title: viewModel.apiSettingsLabel,
+            action: #selector(handleOpenAPISettings),
             keyEquivalent: ""
         )
-        startServiceItem.target = self
-        startServiceItem.isEnabled = viewModel.canStartService
-        menu.addItem(startServiceItem)
-
-        let stopServiceItem = NSMenuItem(
-            title: viewModel.stopServiceLabel,
-            action: #selector(handleStopService),
-            keyEquivalent: ""
-        )
-        stopServiceItem.target = self
-        stopServiceItem.isEnabled = viewModel.canStopService
-        menu.addItem(stopServiceItem)
-
-        let restartServiceItem = NSMenuItem(
-            title: viewModel.restartServiceLabel,
-            action: #selector(handleRestartService),
-            keyEquivalent: ""
-        )
-        restartServiceItem.target = self
-        restartServiceItem.isEnabled = viewModel.canRestartService
-        menu.addItem(restartServiceItem)
+        apiSettingsItem.target = self
+        menu.addItem(apiSettingsItem)
 
         let refreshStatusItem = NSMenuItem(
             title: viewModel.refreshStatusLabel,
@@ -196,18 +177,8 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     }
 
     @objc
-    private func handleStartService() {
-        viewModelProvider().startService()
-    }
-
-    @objc
-    private func handleStopService() {
-        viewModelProvider().stopService()
-    }
-
-    @objc
-    private func handleRestartService() {
-        viewModelProvider().restartService()
+    private func handleOpenAPISettings() {
+        viewModelProvider().openAPISettings()
     }
 
     @objc

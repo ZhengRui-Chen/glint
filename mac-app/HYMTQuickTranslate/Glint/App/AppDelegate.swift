@@ -90,7 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let shortcutRecorderUserDefaults: UserDefaults
     private let hotkeyMonitorFactory: HotkeyMonitorFactory
     nonisolated(unsafe) private let backendStatusMonitor: BackendStatusMonitor
-    nonisolated(unsafe) private let backendControlService: any BackendControlServicing
+    private let apiSettingsStore: APISettingsStore
     private let backendRefreshScheduler: any BackendRefreshScheduling
     private var shortcutSettings: ShortcutSettings
     private lazy var shortcutRecorder = ShortcutRecorder(
@@ -102,6 +102,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ) { [weak self] action in
         self?.handleShortcutPanelAction(action) ?? false
     }
+    private lazy var apiSettingsPanelController = APISettingsPanelController(
+        store: apiSettingsStore,
+        onSave: { [weak self] in
+        self?.refreshBackendStatus()
+        }
+    )
     private var clipboardHotkeyMonitor: GlobalHotkeyMonitoring?
     private var selectionHotkeyMonitor: GlobalHotkeyMonitoring?
     private var ocrHotkeyMonitor: GlobalHotkeyMonitoring?
@@ -109,8 +115,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var recordingTarget: ShortcutTarget?
     private var shortcutStatusLabel: String?
     private var backendStatus = BackendStatusSnapshot.checking()
-    private var backendActionContext: BackendActionContext?
-    private var isBackendControlActionInFlight = false
     private var backendRefreshGeneration = 0
     private var backendRefreshTimer: (any BackendRefreshControlling)?
     private var localShortcutRecordingMonitor: Any?
@@ -122,7 +126,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutRecorderUserDefaults = .standard
         hotkeyMonitorFactory = Self.defaultHotkeyMonitorFactory
         backendStatusMonitor = BackendStatusMonitor()
-        backendControlService = BackendControlService()
+        apiSettingsStore = APISettingsStore()
         backendRefreshScheduler = TimerBackendRefreshScheduler()
         super.init()
     }
@@ -133,7 +137,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutRecorderUserDefaults: UserDefaults = .standard,
         hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory,
         backendStatusMonitor: BackendStatusMonitor = BackendStatusMonitor(),
-        backendControlService: any BackendControlServicing = BackendControlService(),
+        apiSettingsStore: APISettingsStore = APISettingsStore(),
         backendRefreshScheduler: any BackendRefreshScheduling = TimerBackendRefreshScheduler()
     ) {
         self.shortcutSettings = shortcutSettings
@@ -141,7 +145,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.shortcutRecorderUserDefaults = shortcutRecorderUserDefaults
         self.hotkeyMonitorFactory = hotkeyMonitorFactory
         self.backendStatusMonitor = backendStatusMonitor
-        self.backendControlService = backendControlService
+        self.apiSettingsStore = apiSettingsStore
         self.backendRefreshScheduler = backendRefreshScheduler
         super.init()
     }
@@ -300,14 +304,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onTranslateOCR: { [weak self] in
                 self?.handleOCRTranslation()
             },
-            onStartService: { [weak self] in
-                self?.startBackendService()
-            },
-            onStopService: { [weak self] in
-                self?.stopBackendService()
-            },
-            onRestartService: { [weak self] in
-                self?.restartBackendService()
+            onOpenAPISettings: { [weak self] in
+                self?.openAPISettings()
             },
             onRefreshStatus: { [weak self] in
                 self?.refreshBackendStatus()
@@ -321,79 +319,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
     }
 
-    private func startBackendService() {
-        invalidateInFlightBackendRefreshes()
-        isBackendControlActionInFlight = true
-        backendActionContext = BackendActionContext(action: .start, requestedAt: Date())
-        updateBackendStatus(.starting(detail: L10n.backendStartingPleaseWait))
-        Task { @MainActor [weak self] in
-            guard let self else {
-                return
-            }
-
-            do {
-                try await backendControlService.start()
-                isBackendControlActionInFlight = false
-                refreshBackendStatus()
-            } catch {
-                isBackendControlActionInFlight = false
-                updateBackendStatus(
-                    .error(detail: L10n.failedToStartService),
-                    clearActionContext: true
-                )
-            }
-        }
-    }
-
-    private func stopBackendService() {
-        invalidateInFlightBackendRefreshes()
-        isBackendControlActionInFlight = true
-        backendActionContext = nil
-        updateBackendStatus(.unavailable(detail: L10n.backendCurrentlyUnavailable))
-        Task { @MainActor [weak self] in
-            guard let self else {
-                return
-            }
-
-            do {
-                try await backendControlService.stop()
-                isBackendControlActionInFlight = false
-                refreshBackendStatus()
-            } catch {
-                isBackendControlActionInFlight = false
-                updateBackendStatus(.error(detail: L10n.failedToStopService))
-            }
-        }
-    }
-
-    private func restartBackendService() {
-        invalidateInFlightBackendRefreshes()
-        isBackendControlActionInFlight = true
-        backendActionContext = BackendActionContext(action: .restart, requestedAt: Date())
-        updateBackendStatus(.starting(detail: L10n.backendStartingPleaseWait))
-        Task { @MainActor [weak self] in
-            guard let self else {
-                return
-            }
-
-            do {
-                try await backendControlService.restart()
-                isBackendControlActionInFlight = false
-                refreshBackendStatus()
-            } catch {
-                isBackendControlActionInFlight = false
-                updateBackendStatus(
-                    .error(detail: L10n.failedToRestartService),
-                    clearActionContext: true
-                )
-            }
-        }
+    private func openAPISettings() {
+        cancelShortcutRecording()
+        apiSettingsPanelController.show(
+            anchorRect: statusBarController?.statusButtonFrameInScreen
+        )
     }
 
     private func refreshBackendStatus() {
-        guard !isBackendControlActionInFlight else {
-            return
-        }
         let refreshGeneration = nextBackendRefreshGeneration()
         updateBackendStatus(.checking())
         Task { @MainActor [weak self] in
@@ -401,19 +334,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 return
             }
 
-            let snapshot = await backendStatusMonitor.refresh(actionContext: backendActionContext)
+            let snapshot = await backendStatusMonitor.refresh()
             guard shouldApplyBackendRefreshResult(for: refreshGeneration) else {
                 return
             }
-            updateBackendStatus(
-                snapshot,
-                clearActionContext: {
-                    if case .starting = snapshot {
-                        return false
-                    }
-                    return true
-                }()
-            )
+            updateBackendStatus(snapshot)
         }
     }
 
@@ -422,22 +347,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return backendRefreshGeneration
     }
 
-    private func invalidateInFlightBackendRefreshes() {
-        backendRefreshGeneration += 1
-    }
-
     private func shouldApplyBackendRefreshResult(for refreshGeneration: Int) -> Bool {
         refreshGeneration == backendRefreshGeneration
     }
 
-    private func updateBackendStatus(
-        _ snapshot: BackendStatusSnapshot,
-        clearActionContext: Bool = false
-    ) {
+    private func updateBackendStatus(_ snapshot: BackendStatusSnapshot) {
         backendStatus = snapshot
-        if clearActionContext {
-            backendActionContext = nil
-        }
         statusBarController?.refreshMenu()
     }
 
@@ -539,6 +454,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @MainActor
     func shortcutPanelControllerForTesting() -> ShortcutPanelController {
         shortcutPanelController
+    }
+
+    @MainActor
+    func apiSettingsPanelControllerForTesting() -> APISettingsPanelController {
+        apiSettingsPanelController
     }
 
     @MainActor

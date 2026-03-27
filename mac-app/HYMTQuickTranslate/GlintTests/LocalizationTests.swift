@@ -32,10 +32,6 @@ final class LocalizationTests: XCTestCase {
             L10n.serviceStatusAvailable
         )
         XCTAssertEqual(
-            BackendStatusSnapshot.starting(detail: "wait").headline,
-            L10n.serviceStatusStarting
-        )
-        XCTAssertEqual(
             BackendStatusSnapshot.unavailable(detail: "down").headline,
             L10n.serviceStatusUnavailable
         )

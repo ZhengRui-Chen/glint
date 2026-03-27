@@ -9,9 +9,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
     func test_monitor_reports_available_when_api_is_reachable() async {
         let monitor = BackendStatusMonitor(
-            apiChecker: StubBackendAPIHealthChecker(result: .success(.reachable)),
-            processChecker: StubBackendProcessChecker(result: .success(true)),
-            now: { Date(timeIntervalSince1970: 100) }
+            apiChecker: StubBackendAPIHealthChecker(result: .success(.reachable))
         )
 
         let snapshot = await monitor.refresh()
@@ -19,41 +17,9 @@ final class BackendStatusMonitorTests: XCTestCase {
         XCTAssertEqual(snapshot, .available(detail: L10n.backendReachable))
     }
 
-    func test_monitor_reports_unavailable_when_api_is_not_reachable_even_after_recent_start() async {
-        let now = Date(timeIntervalSince1970: 100)
+    func test_monitor_reports_unavailable_when_api_is_not_reachable() async {
         let monitor = BackendStatusMonitor(
-            apiChecker: StubBackendAPIHealthChecker(result: .success(.unreachable)),
-            processChecker: StubBackendProcessChecker(result: .success(true)),
-            now: { now }
-        )
-
-        let snapshot = await monitor.refresh(
-            actionContext: BackendActionContext(
-                action: .start,
-                requestedAt: now.addingTimeInterval(-5)
-            )
-        )
-
-        XCTAssertEqual(snapshot, .unavailable(detail: L10n.backendCurrentlyUnavailable))
-    }
-
-    func test_monitor_reports_unavailable_when_process_and_api_are_both_unavailable() async {
-        let monitor = BackendStatusMonitor(
-            apiChecker: StubBackendAPIHealthChecker(result: .success(.unreachable)),
-            processChecker: StubBackendProcessChecker(result: .success(false)),
-            now: { Date(timeIntervalSince1970: 100) }
-        )
-
-        let snapshot = await monitor.refresh()
-
-        XCTAssertEqual(snapshot, .unavailable(detail: L10n.backendCurrentlyUnavailable))
-    }
-
-    func test_monitor_ignores_process_check_failures_when_api_is_unreachable() async {
-        let monitor = BackendStatusMonitor(
-            apiChecker: StubBackendAPIHealthChecker(result: .success(.unreachable)),
-            processChecker: StubBackendProcessChecker(result: .failure(StubError.processFailed)),
-            now: { Date(timeIntervalSince1970: 100) }
+            apiChecker: StubBackendAPIHealthChecker(result: .success(.unreachable))
         )
 
         let snapshot = await monitor.refresh()
@@ -63,9 +29,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
     func test_monitor_reports_error_when_api_probe_fails() async {
         let monitor = BackendStatusMonitor(
-            apiChecker: StubBackendAPIHealthChecker(result: .failure(StubError.apiFailed)),
-            processChecker: StubBackendProcessChecker(result: .success(true)),
-            now: { Date(timeIntervalSince1970: 100) }
+            apiChecker: StubBackendAPIHealthChecker(result: .failure(StubError.apiFailed))
         )
 
         let snapshot = await monitor.refresh()
@@ -95,17 +59,8 @@ private struct StubBackendAPIHealthChecker: BackendAPIHealthChecking {
     }
 }
 
-private struct StubBackendProcessChecker: BackendProcessChecking {
-    let result: Result<Bool, Error>
-
-    func isBackendProcessRunning() async throws -> Bool {
-        try result.get()
-    }
-}
-
 private enum StubError: Error {
     case apiFailed
-    case processFailed
 }
 
 private final class MockURLProtocol: URLProtocol {
