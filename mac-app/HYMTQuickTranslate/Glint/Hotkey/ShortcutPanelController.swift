@@ -162,6 +162,10 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         state.update(shortcutSettings: shortcutSettings)
     }
 
+    var testingSnapshot: ShortcutPanelTestingSnapshot {
+        state.testingSnapshot
+    }
+
     private func makeRootView() -> ShortcutPanelView {
         ShortcutPanelView(
             state: state,
@@ -189,6 +193,13 @@ final class ShortcutPanelController: NSObject, NSWindowDelegate {
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
     }
+}
+
+struct ShortcutPanelTestingSnapshot: Equatable {
+    let selectionShortcutLabel: String
+    let clipboardShortcutLabel: String
+    let recordingTarget: ShortcutTarget?
+    let statusMessage: String?
 }
 
 @MainActor
@@ -282,6 +293,15 @@ final class ShortcutPanelViewState: ObservableObject {
         syncLabelsFromViewModel()
         recordingTarget = nil
         statusMessage = "Defaults restored"
+    }
+
+    var testingSnapshot: ShortcutPanelTestingSnapshot {
+        ShortcutPanelTestingSnapshot(
+            selectionShortcutLabel: selectionShortcutLabel,
+            clipboardShortcutLabel: clipboardShortcutLabel,
+            recordingTarget: recordingTarget,
+            statusMessage: statusMessage
+        )
     }
 
     private func syncLabelsFromViewModel() {

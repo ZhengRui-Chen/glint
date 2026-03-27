@@ -2,6 +2,8 @@ import Carbon.HIToolbox
 import Foundation
 
 protocol GlobalHotkeyMonitoring: AnyObject {
+    var isRunning: Bool { get }
+    var configuredShortcut: GlobalHotkeyShortcut { get }
     @discardableResult
     func start() -> Bool
     func stop()
@@ -81,6 +83,10 @@ final class GlobalHotkeyMonitor: GlobalHotkeyMonitoring {
     private var eventHandler: EventHandlerRef?
     private var hotKeyRef: EventHotKeyRef?
     private(set) var isRunning = false
+
+    var configuredShortcut: GlobalHotkeyShortcut {
+        shortcut
+    }
 
     init(
         identifier: UInt32 = 1,

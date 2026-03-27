@@ -143,7 +143,7 @@ final class ShortcutPanelControllerTests: XCTestCase {
         controller.requestStartRecording(for: .clipboard)
         controller.requestApplyRecordedShortcut(newShortcut)
 
-        let state = try XCTUnwrap(reflectedState(from: controller))
+        let state = controller.testingSnapshot
         XCTAssertEqual(
             actions,
             [
@@ -168,21 +168,15 @@ final class ShortcutPanelControllerTests: XCTestCase {
         controller.requestStartRecording(for: .selection)
         controller.requestDone()
 
-        let doneState = try XCTUnwrap(reflectedState(from: controller))
+        let doneState = controller.testingSnapshot
         XCTAssertNil(doneState.recordingTarget)
         XCTAssertNil(doneState.statusMessage)
 
         controller.requestStartRecording(for: .clipboard)
         controller.closePanel()
 
-        let closedState = try XCTUnwrap(reflectedState(from: controller))
+        let closedState = controller.testingSnapshot
         XCTAssertNil(closedState.recordingTarget)
         XCTAssertNil(closedState.statusMessage)
     }
-}
-
-private func reflectedState(from controller: ShortcutPanelController) -> ShortcutPanelViewState? {
-    Mirror(reflecting: controller).children
-        .first { $0.label == "state" }?
-        .value as? ShortcutPanelViewState
 }

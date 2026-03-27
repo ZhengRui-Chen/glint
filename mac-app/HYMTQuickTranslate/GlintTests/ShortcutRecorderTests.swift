@@ -40,8 +40,8 @@ final class ShortcutRecorderTests: XCTestCase {
             selectionMonitor.events,
             [.start(ShortcutSettings.default.selectionShortcut)]
         )
-        XCTAssertNotNil(reflectedValue(named: "clipboardHotkeyMonitor", from: appDelegate))
-        XCTAssertNotNil(reflectedValue(named: "selectionHotkeyMonitor", from: appDelegate))
+        XCTAssertNotNil(appDelegate.clipboardHotkeyMonitorForTesting())
+        XCTAssertNotNil(appDelegate.selectionHotkeyMonitorForTesting())
     }
 
     func test_recorder_persists_updated_shortcut_settings() throws {
@@ -262,7 +262,7 @@ final class ShortcutRecorderTests: XCTestCase {
             ]
         )
 
-        let state = try XCTUnwrap(reflectedShortcutPanelState(from: panel))
+        let state = panel.testingSnapshot
         XCTAssertNil(state.recordingTarget)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
@@ -317,11 +317,12 @@ final class ShortcutRecorderTests: XCTestCase {
             clipboardMonitor.events,
             [
                 .start(ShortcutSettings.default.clipboardShortcut),
-                .reload(candidateShortcut)
+                .reload(candidateShortcut),
+                .start(ShortcutSettings.default.clipboardShortcut)
             ]
         )
 
-        let state = try XCTUnwrap(reflectedShortcutPanelState(from: panel))
+        let state = panel.testingSnapshot
         XCTAssertEqual(state.recordingTarget, .clipboard)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
@@ -403,8 +404,12 @@ final class ShortcutRecorderTests: XCTestCase {
                 .reload(ShortcutSettings.default.selectionShortcut)
             ]
         )
+        XCTAssertTrue(clipboardMonitor.isRunningForTesting)
+        XCTAssertTrue(selectionMonitor.isRunningForTesting)
+        XCTAssertEqual(clipboardMonitor.activeShortcutForTesting, ShortcutSettings.default.clipboardShortcut)
+        XCTAssertEqual(selectionMonitor.activeShortcutForTesting, ShortcutSettings.default.selectionShortcut)
 
-        let state = try XCTUnwrap(reflectedShortcutPanelState(from: panel))
+        let state = panel.testingSnapshot
         XCTAssertNil(state.recordingTarget)
         XCTAssertEqual(
             state.clipboardShortcutLabel,
@@ -415,6 +420,101 @@ final class ShortcutRecorderTests: XCTestCase {
             "Selection Shortcut: \(ShortcutSettings.default.selectionShortcut.displayName)"
         )
         XCTAssertEqual(state.statusMessage, "Defaults restored")
+    }
+
+    @MainActor
+    func test_shortcut_panel_reset_preserves_live_consistency_when_clipboard_rollback_fails() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        defer {
+            userDefaults.removePersistentDomain(forName: #function)
+        }
+
+        let savedSettings = ShortcutSettings(
+            clipboardShortcut: GlobalHotkeyShortcut(
+                keyCode: UInt32(kVK_ANSI_T),
+                modifiers: UInt32(controlKey | optionKey)
+            ),
+            selectionShortcut: GlobalHotkeyShortcut(
+                keyCode: UInt32(kVK_ANSI_Y),
+                modifiers: UInt32(controlKey | optionKey | cmdKey)
+            )
+        )
+        savedSettings.save(to: userDefaults)
+
+        let clipboardMonitor = TestHotkeyMonitor(reloadResults: [true, false, true])
+        let selectionMonitor = TestHotkeyMonitor(
+            startResults: [true, false],
+            reloadResults: [false, true]
+        )
+        let appDelegate = AppDelegate(
+            shortcutSettings: savedSettings,
+            launchCoordinator: ImmediateLaunchCoordinator(),
+            shortcutRecorderUserDefaults: userDefaults,
+            hotkeyMonitorFactory: { identifier, shortcut, _ in
+                let monitor = if identifier == 1 {
+                    clipboardMonitor
+                } else {
+                    selectionMonitor
+                }
+                monitor.initialShortcut = shortcut
+                return monitor
+            }
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let panel = appDelegate.shortcutPanelControllerForTesting()
+        panel.requestResetToDefaults()
+
+        XCTAssertEqual(
+            ShortcutSettings.load(from: userDefaults),
+            savedSettings
+        )
+        XCTAssertEqual(
+            clipboardMonitor.events,
+            [
+                .start(savedSettings.clipboardShortcut),
+                .reload(ShortcutSettings.default.clipboardShortcut),
+                .reload(savedSettings.clipboardShortcut),
+                .start(ShortcutSettings.default.clipboardShortcut),
+                .stop,
+                .start(savedSettings.clipboardShortcut)
+            ]
+        )
+        XCTAssertEqual(
+            selectionMonitor.events,
+            [
+                .start(savedSettings.selectionShortcut),
+                .reload(ShortcutSettings.default.selectionShortcut),
+                .start(savedSettings.selectionShortcut),
+                .reload(savedSettings.selectionShortcut),
+                .stop,
+                .start(savedSettings.selectionShortcut)
+            ]
+        )
+        XCTAssertTrue(clipboardMonitor.isRunningForTesting)
+        XCTAssertTrue(selectionMonitor.isRunningForTesting)
+        XCTAssertEqual(clipboardMonitor.activeShortcutForTesting, savedSettings.clipboardShortcut)
+        XCTAssertEqual(selectionMonitor.activeShortcutForTesting, savedSettings.selectionShortcut)
+
+        let state = panel.testingSnapshot
+        XCTAssertNil(state.recordingTarget)
+        XCTAssertEqual(
+            state.clipboardShortcutLabel,
+            "Clipboard Shortcut: \(savedSettings.clipboardShortcut.displayName)"
+        )
+        XCTAssertEqual(
+            state.selectionShortcutLabel,
+            "Selection Shortcut: \(savedSettings.selectionShortcut.displayName)"
+        )
+        XCTAssertEqual(state.statusMessage, "Defaults could not be restored.")
     }
 
     @MainActor
@@ -475,7 +575,7 @@ final class ShortcutRecorderTests: XCTestCase {
             )
         )
         XCTAssertEqual(
-            reflectedValue(named: "shortcutStatusLabel", from: appDelegate) as? String,
+            appDelegate.shortcutStatusLabelForTesting(),
             "Clipboard shortcut was reset to the default because the saved combination could not be registered."
         )
     }
@@ -531,7 +631,7 @@ final class ShortcutRecorderTests: XCTestCase {
         )
         XCTAssertEqual(ShortcutSettings.load(from: userDefaults), .default)
         XCTAssertEqual(
-            reflectedValue(named: "shortcutStatusLabel", from: appDelegate) as? String,
+            appDelegate.shortcutStatusLabelForTesting(),
             "Clipboard shortcut could not be registered. Choose another combination from the menu bar."
         )
     }
@@ -550,22 +650,10 @@ final class ShortcutRecorderTests: XCTestCase {
     }
 }
 
-private func reflectedValue(named label: String, from appDelegate: AppDelegate) -> Any? {
-    Mirror(reflecting: appDelegate).children
-        .first { $0.label == label }?
-        .value
-}
-
 private struct ImmediateLaunchCoordinator: AppLaunchCoordinating {
     func shouldRegisterHotkey(immediatelyAfterLaunch: Bool) -> Bool {
         true
     }
-}
-
-private func reflectedShortcutPanelState(from controller: ShortcutPanelController) -> ShortcutPanelViewState? {
-    Mirror(reflecting: controller).children
-        .first { $0.label == "state" }?
-        .value as? ShortcutPanelViewState
 }
 
 private final class TestHotkeyMonitor: GlobalHotkeyMonitoring {
@@ -575,33 +663,73 @@ private final class TestHotkeyMonitor: GlobalHotkeyMonitoring {
         case reload(GlobalHotkeyShortcut)
     }
 
-    var initialShortcut = GlobalHotkeyShortcut.default
+    var initialShortcut = GlobalHotkeyShortcut.default {
+        didSet {
+            activeShortcutForTesting = initialShortcut
+        }
+    }
+    private(set) var activeShortcutForTesting = GlobalHotkeyShortcut.default
+    private(set) var isRunningForTesting = false
     private(set) var events: [Event] = []
     private var startResults: [Bool]
     private var reloadResults: [Bool]
 
-    init(startResults: [Bool] = [], reloadResults: [Bool] = []) {
+    var isRunning: Bool {
+        isRunningForTesting
+    }
+
+    var configuredShortcut: GlobalHotkeyShortcut {
+        activeShortcutForTesting
+    }
+
+    init(
+        startResults: [Bool] = [],
+        reloadResults: [Bool] = []
+    ) {
         self.startResults = startResults
         self.reloadResults = reloadResults
     }
 
     func start() -> Bool {
-        events.append(.start(initialShortcut))
-        if startResults.isEmpty {
-            return true
+        events.append(.start(activeShortcutForTesting))
+        let didStart = if startResults.isEmpty {
+            true
+        } else {
+            startResults.removeFirst()
         }
-        return startResults.removeFirst()
+        if didStart {
+            isRunningForTesting = true
+        } else {
+            isRunningForTesting = false
+        }
+        return didStart
     }
 
     func stop() {
         events.append(.stop)
+        isRunningForTesting = false
     }
 
     func reload(shortcut: GlobalHotkeyShortcut) -> Bool {
+        let previousShortcut = activeShortcutForTesting
+        let wasRunning = isRunningForTesting
         events.append(.reload(shortcut))
-        if reloadResults.isEmpty {
+        let didReload = if reloadResults.isEmpty {
+            true
+        } else {
+            reloadResults.removeFirst()
+        }
+        if didReload {
+            activeShortcutForTesting = shortcut
+            isRunningForTesting = true
             return true
         }
-        return reloadResults.removeFirst()
+        activeShortcutForTesting = shortcut
+        isRunningForTesting = false
+        if wasRunning {
+            activeShortcutForTesting = previousShortcut
+            _ = start()
+        }
+        return false
     }
 }

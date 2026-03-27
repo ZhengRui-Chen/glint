@@ -35,51 +35,53 @@ final class ShortcutPanelViewModelTests: XCTestCase {
         )
     }
 
-    func test_duplicate_shortcuts_surface_a_hard_error_message() {
+    func test_cancel_clears_active_recording_state() {
         let viewModel = ShortcutPanelViewModel(shortcutSettings: .default)
 
         viewModel.startRecording(for: .clipboard)
-        viewModel.applyRecordedShortcut(GlobalHotkeyShortcut.selectionDefault)
-
-        XCTAssertEqual(viewModel.recordingTarget, .clipboard)
-        XCTAssertEqual(
-            viewModel.statusMessage,
-            "This shortcut is already used by Glint"
-        )
-        XCTAssertEqual(
-            viewModel.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(GlobalHotkeyShortcut.default.displayName)"
-        )
-    }
-
-    func test_successful_save_updates_visible_shortcut_and_feedback_message() {
-        let newShortcut = GlobalHotkeyShortcut(
-            keyCode: UInt32(kVK_ANSI_X),
-            modifiers: UInt32(controlKey | optionKey | cmdKey)
-        )
-        let viewModel = ShortcutPanelViewModel(shortcutSettings: .default)
-
-        viewModel.startRecording(for: .clipboard)
-        viewModel.applyRecordedShortcut(newShortcut)
+        viewModel.cancelRecording()
 
         XCTAssertNil(viewModel.recordingTarget)
+        XCTAssertNil(viewModel.statusMessage)
+    }
+
+    func test_custom_settings_are_reflected_in_visible_labels() {
+        let customSettings = ShortcutSettings(
+            clipboardShortcut: GlobalHotkeyShortcut(
+                keyCode: UInt32(kVK_ANSI_X),
+                modifiers: UInt32(controlKey | optionKey | cmdKey)
+            ),
+            selectionShortcut: GlobalHotkeyShortcut(
+                keyCode: UInt32(kVK_ANSI_Y),
+                modifiers: UInt32(controlKey | optionKey | cmdKey)
+            )
+        )
+        let viewModel = ShortcutPanelViewModel(shortcutSettings: customSettings)
+
         XCTAssertEqual(
             viewModel.clipboardShortcutLabel,
-            "Clipboard Shortcut: \(newShortcut.displayName)"
+            "Clipboard Shortcut: \(customSettings.clipboardShortcut.displayName)"
         )
-        XCTAssertEqual(viewModel.selectionShortcutLabel, "Selection Shortcut: \(GlobalHotkeyShortcut.selectionDefault.displayName)")
-        XCTAssertEqual(viewModel.statusMessage, "Shortcut saved")
+        XCTAssertEqual(
+            viewModel.selectionShortcutLabel,
+            "Selection Shortcut: \(customSettings.selectionShortcut.displayName)"
+        )
     }
 
     func test_reset_restores_both_defaults_with_feedback_message() {
-        let updatedShortcut = GlobalHotkeyShortcut(
-            keyCode: UInt32(kVK_ANSI_X),
-            modifiers: UInt32(controlKey | optionKey | cmdKey)
+        let customizedSettings = ShortcutSettings(
+            clipboardShortcut: GlobalHotkeyShortcut(
+                keyCode: UInt32(kVK_ANSI_X),
+                modifiers: UInt32(controlKey | optionKey | cmdKey)
+            ),
+            selectionShortcut: GlobalHotkeyShortcut(
+                keyCode: UInt32(kVK_ANSI_Y),
+                modifiers: UInt32(controlKey | optionKey | cmdKey)
+            )
         )
-        let viewModel = ShortcutPanelViewModel(shortcutSettings: .default)
+        let viewModel = ShortcutPanelViewModel(shortcutSettings: customizedSettings)
 
         viewModel.startRecording(for: .clipboard)
-        viewModel.applyRecordedShortcut(updatedShortcut)
         viewModel.resetToDefaults()
 
         XCTAssertNil(viewModel.recordingTarget)

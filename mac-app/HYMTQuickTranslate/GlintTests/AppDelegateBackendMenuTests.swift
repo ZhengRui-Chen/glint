@@ -450,6 +450,9 @@ private struct ImmediateLaunchCoordinatorForBackendMenuTests: AppLaunchCoordinat
 }
 
 private final class NoopHotkeyMonitor: GlobalHotkeyMonitoring {
+    let configuredShortcut = GlobalHotkeyShortcut.default
+    let isRunning = true
+
     func start() -> Bool {
         true
     }

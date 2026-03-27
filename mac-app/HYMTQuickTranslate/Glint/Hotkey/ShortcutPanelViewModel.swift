@@ -36,22 +36,6 @@ final class ShortcutPanelViewModel {
         statusMessage = nil
     }
 
-    func applyRecordedShortcut(_ shortcut: GlobalHotkeyShortcut) {
-        guard let target = recordingTarget else {
-            return
-        }
-
-        let recorder = ShortcutRecorder(existingSettings: shortcutSettings)
-        switch recorder.validate(shortcut, for: target) {
-        case let .success(updatedSettings):
-            shortcutSettings = updatedSettings
-            recordingTarget = nil
-            statusMessage = "Shortcut saved"
-        case .failure(.duplicateShortcut):
-            statusMessage = "This shortcut is already used by Glint"
-        }
-    }
-
     func resetToDefaults() {
         shortcutSettings = .default
         recordingTarget = nil
