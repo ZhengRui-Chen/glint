@@ -51,4 +51,39 @@ final class ScreenRegionSelectionModelTests: XCTestCase {
 
         XCTAssertEqual(rect, CGRect(x: 40, y: 120, width: 80, height: 60))
     }
+
+    func test_panel_frames_keep_each_display_separate_for_multimonitor_capture() {
+        let frames = ScreenRegionSelectionLayout.panelFrames(
+            for: [
+                CGRect(x: 0, y: 0, width: 1512, height: 982),
+                CGRect(x: 1512, y: 0, width: 1728, height: 1117),
+            ]
+        )
+
+        XCTAssertEqual(
+            frames,
+            [
+                CGRect(x: 0, y: 0, width: 1512, height: 982),
+                CGRect(x: 1512, y: 0, width: 1728, height: 1117),
+            ]
+        )
+    }
+
+    func test_local_selection_rect_intersects_global_selection_with_screen_frame() {
+        let rect = ScreenRegionSelectionLayout.localSelectionRect(
+            for: CGRect(x: 1600, y: 100, width: 240, height: 120),
+            screenFrame: CGRect(x: 1512, y: 0, width: 1728, height: 1117)
+        )
+
+        XCTAssertEqual(rect, CGRect(x: 88, y: 100, width: 240, height: 120))
+    }
+
+    func test_local_selection_rect_returns_zero_for_non_intersecting_screen() {
+        let rect = ScreenRegionSelectionLayout.localSelectionRect(
+            for: CGRect(x: 1600, y: 100, width: 240, height: 120),
+            screenFrame: CGRect(x: 0, y: 0, width: 1512, height: 982)
+        )
+
+        XCTAssertEqual(rect, CGRect.zero)
+    }
 }

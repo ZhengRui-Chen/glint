@@ -1,10 +1,38 @@
 import SwiftUI
 
 enum ScreenRegionSelectionLayout {
+    static func panelFrames(for screenFrames: [CGRect]) -> [CGRect] {
+        screenFrames
+    }
+
+    static func localSelectionRect(
+        for globalRect: CGRect,
+        screenFrame: CGRect
+    ) -> CGRect {
+        let intersection = globalRect.intersection(screenFrame)
+        guard intersection.isNull == false,
+              intersection.isEmpty == false else {
+            return .zero
+        }
+        return intersection.offsetBy(dx: -screenFrame.minX, dy: -screenFrame.minY)
+    }
+
     static func displayRect(for rect: CGRect, canvasHeight: CGFloat) -> CGRect {
         CGRect(
             x: rect.minX,
             y: canvasHeight - rect.maxY,
+            width: rect.width,
+            height: rect.height
+        )
+    }
+
+    static func captureRect(
+        forGlobalRect rect: CGRect,
+        desktopFrame: CGRect
+    ) -> CGRect {
+        CGRect(
+            x: rect.minX,
+            y: desktopFrame.maxY - rect.maxY,
             width: rect.width,
             height: rect.height
         )
@@ -16,22 +44,22 @@ enum ScreenRegionSelectionLayout {
         desktopFrame: CGRect
     ) -> CGRect {
         let globalRect = rect.offsetBy(dx: panelFrame.minX, dy: panelFrame.minY)
-        return CGRect(
-            x: globalRect.minX,
-            y: desktopFrame.maxY - globalRect.maxY,
-            width: globalRect.width,
-            height: globalRect.height
-        )
+        return captureRect(forGlobalRect: globalRect, desktopFrame: desktopFrame)
     }
 }
 
 struct ScreenRegionSelectionView: View {
     @ObservedObject var model: ScreenRegionSelectionModel
+    let screenFrame: CGRect
 
     var body: some View {
         GeometryReader { proxy in
-            let displayRect = ScreenRegionSelectionLayout.displayRect(
+            let localRect = ScreenRegionSelectionLayout.localSelectionRect(
                 for: model.selectionRect,
+                screenFrame: screenFrame
+            )
+            let displayRect = ScreenRegionSelectionLayout.displayRect(
+                for: localRect,
                 canvasHeight: proxy.size.height
             )
 
