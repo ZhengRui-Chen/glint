@@ -29,7 +29,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         permissionRequiredMessage: L10n.accessibilityPermissionNotGranted,
         automationPermissionRequiredMessage: L10n.browserAutomationPermissionRetry,
         unsupportedHostAppMessage: L10n.unsupportedHostApp,
-        rejectedTextMessage: L10n.textExceedsMaximumLength
     )
     private let overlayPlacementResolver = OverlayPlacementResolver()
     private let screenRegionSelectionController = ScreenRegionSelectionController()
@@ -165,36 +164,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                         overlayController.show(state: .loading, placement: placement)
                         let state = await ocrWorkflow.confirmTranslation(for: recognition)
                         present(state, placement: placement)
-                    case let .confirm(recognition):
-                        overlayController.show(
-                            state: .confirmLongText(recognition.text),
-                            placement: placement
-                        ) { [weak self] _ in
-                            guard let self else {
-                                return
-                            }
-                            Task {
-                                self.overlayController.show(state: .loading, placement: placement)
-                                let state = await self.ocrWorkflow.confirmTranslation(for: recognition)
-                                self.present(state, placement: placement)
-                            }
-                        }
                     case let .final(state):
                         present(state, placement: placement)
                     }
                 }
             }
-        }
-    }
-
-    private func confirmTranslation(
-        _ text: String,
-        placement: OverlayPlacement = .centered
-    ) {
-        Task {
-            overlayController.show(state: .loading, placement: placement)
-            let state = await workflow.confirmTranslation(for: text)
-            present(state, placement: placement)
         }
     }
 
@@ -216,14 +190,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         _ state: OverlayViewState,
         placement: OverlayPlacement = .centered
     ) {
-        switch state {
-        case let .confirmLongText(text):
-            overlayController.show(state: state, placement: placement) { [weak self] _ in
-                self?.confirmTranslation(text, placement: placement)
-            }
-        default:
-            overlayController.show(state: state, placement: placement)
-        }
+        overlayController.show(state: state, placement: placement)
     }
 
     private func makeMenuBarViewModel() -> MenuBarViewModel {

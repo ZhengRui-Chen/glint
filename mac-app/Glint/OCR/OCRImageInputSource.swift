@@ -67,25 +67,21 @@ struct OCRImageInputSource: TextInputSource {
 
 enum PreparedOCRTranslation: Equatable {
     case translate(OCRRecognition)
-    case confirm(OCRRecognition)
     case final(OverlayViewState)
 }
 
 struct TranslateOCRWorkflow: Sendable {
     let recognizer: any OCRTextRecognizing
     let client: any TranslationClienting
-    let policy: TextLengthPolicy
     let detectDirection: @Sendable (String) -> TranslationDirection
 
     init(
         recognizer: any OCRTextRecognizing = VisionOCRService(),
         client: any TranslationClienting = RuntimeTranslationClient(),
-        policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
         detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect
     ) {
         self.recognizer = recognizer
         self.client = client
-        self.policy = policy
         self.detectDirection = detectDirection
     }
 
@@ -94,14 +90,7 @@ struct TranslateOCRWorkflow: Sendable {
 
         switch await inputSource.resolveRecognition() {
         case let .success(recognition):
-            switch policy.evaluate(recognition.text) {
-            case .allowed:
-                return .translate(recognition)
-            case .needsConfirmation:
-                return .confirm(recognition)
-            case .rejected:
-                return .final(.error(L10n.recognizedTextExceedsMaximumLength))
-            }
+            return .translate(recognition)
         case let .failure(failure):
             return .final(.error(message(for: failure)))
         }
@@ -117,11 +106,9 @@ struct TranslateOCRWorkflow: Sendable {
         TranslateTextWorkflow(
             inputSource: inputSource,
             client: client,
-            policy: policy,
             detectDirection: detectDirection,
             noTextMessage: L10n.noTextRecognizedInSelectedArea,
-            ocrUnavailableMessage: L10n.ocrUnavailableOnSystem,
-            rejectedTextMessage: L10n.recognizedTextExceedsMaximumLength
+            ocrUnavailableMessage: L10n.ocrUnavailableOnSystem
         )
     }
 

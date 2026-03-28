@@ -30,10 +30,6 @@ final class OverlayPresentationBehaviorTests: XCTestCase {
         XCTAssertFalse(OverlayPanelController.shouldActivateApp(for: .error("failed")))
     }
 
-    func test_confirmation_overlay_state_requires_app_activation() {
-        XCTAssertTrue(OverlayPanelController.shouldActivateApp(for: .confirmLongText("long text")))
-    }
-
     func test_overlay_content_relies_on_panel_animation_instead_of_internal_state_transition_animation() {
         XCTAssertFalse(OverlayContentView.usesAnimatedStateTransitions)
     }

@@ -5,8 +5,7 @@ final class TranslateClipboardWorkflowTests: XCTestCase {
     func test_workflow_returns_error_when_clipboard_is_empty() async {
         let workflow = TranslateClipboardWorkflow(
             clipboard: StubClipboard(text: nil),
-            client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000)
+            client: StubClient()
         )
 
         let state = await workflow.handleShortcut()
@@ -14,30 +13,28 @@ final class TranslateClipboardWorkflowTests: XCTestCase {
         XCTAssertEqual(state, .error(L10n.clipboardDoesNotContainText))
     }
 
-    func test_workflow_requires_confirmation_for_medium_text() async {
+    func test_workflow_translates_medium_text_without_confirmation() async {
         let text = String(repeating: "a", count: 2001)
         let workflow = TranslateClipboardWorkflow(
             clipboard: StubClipboard(text: text),
-            client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000)
+            client: StubClient()
         )
 
         let state = await workflow.handleShortcut()
 
-        XCTAssertEqual(state, .confirmLongText(text))
+        XCTAssertEqual(state, .result("translated"))
     }
 
-    func test_workflow_returns_clipboard_specific_error_when_text_exceeds_hard_limit() async {
+    func test_workflow_translates_very_long_text_without_rejecting() async {
         let text = String(repeating: "a", count: 8001)
         let workflow = TranslateClipboardWorkflow(
             clipboard: StubClipboard(text: text),
-            client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000)
+            client: StubClient()
         )
 
         let state = await workflow.handleShortcut()
 
-        XCTAssertEqual(state, .error(L10n.clipboardTextExceedsMaximumLength))
+        XCTAssertEqual(state, .result("translated"))
     }
 }
 

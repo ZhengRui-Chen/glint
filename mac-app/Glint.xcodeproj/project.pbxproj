@@ -55,7 +55,6 @@
 		67F92AF74BF95A00B1EAA003 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF64BF95A00B1EAA003 /* StatusBarController.swift */; };
 		67F92AF94BF95A00B1EAA003 /* MenuBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92AF84BF95A00B1EAA003 /* MenuBarViewModel.swift */; };
 		67F92B014BF95A00B1EAA003 /* ShortcutRecorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */; };
-		76C0BD70306C0A9E62C6CC6B /* TextLengthPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */; };
 		8562635D6940198B616B1F7F /* OverlayContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256D57BF55CAA7F38948E365 /* OverlayContentView.swift */; };
 		8C830E79BD7C7102DC4DD459 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AE5CDB850EAE7A2364F2648 /* Cocoa.framework */; };
 		8D8EF327B0B7F14C8B9BF561 /* TranslationPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06EDB02CB1EEFD2CACEFD2 /* TranslationPromptBuilder.swift */; };
@@ -63,7 +62,6 @@
 		8F4E38AA8E070F43D5CE4CF1 /* ClipboardTextReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E536E02711038F959B64A810 /* ClipboardTextReader.swift */; };
 		98A4C1E55F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A4C1E45F2B4A7700D6B122 /* OverlayPlacementResolverTests.swift */; };
 		98A4C1E75F2B4A7700D6B122 /* OverlayPlacementResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A4C1E65F2B4A7700D6B122 /* OverlayPlacementResolver.swift */; };
-		9ACA3D2DC5AA4C653C9DB0B2 /* TextLengthPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */; };
 		A36D1B90B9C54B12A1F79011 /* AppLaunchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */; };
 		A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */; };
 		B5149D4A8C5A423DA0D4D322 /* AppLaunchCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */; };
@@ -123,7 +121,6 @@
 		6A1B2C3D4E5F60718293A400 /* BackendStatusMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendStatusMonitor.swift; path = Backend/BackendStatusMonitor.swift; sourceTree = "<group>"; };
 		6A1B2C3D4E5F60718293A402 /* BackendHealthChecker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BackendHealthChecker.swift; path = Backend/BackendHealthChecker.swift; sourceTree = "<group>"; };
 		3F1FCD9FBAB6D739F058A51C /* ShortcutRecorder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShortcutRecorder.swift; path = Hotkey/ShortcutRecorder.swift; sourceTree = "<group>"; };
-		6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextLengthPolicyTests.swift; sourceTree = "<group>"; };
 		67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBarViewModelTests.swift; sourceTree = "<group>"; };
 		67F92AF64BF95A00B1EAA003 /* StatusBarController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StatusBarController.swift; path = MenuBar/StatusBarController.swift; sourceTree = "<group>"; };
 		67F92AF84BF95A00B1EAA003 /* MenuBarViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MenuBarViewModel.swift; path = MenuBar/MenuBarViewModel.swift; sourceTree = "<group>"; };
@@ -160,7 +157,6 @@
 		A36D1B90B9C54B12A1F79010 /* AppLaunchCoordinator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppLaunchCoordinator.swift; path = App/AppLaunchCoordinator.swift; sourceTree = "<group>"; };
 		B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLaunchCoordinatorTests.swift; sourceTree = "<group>"; };
 		B7B6E8C289C92039E8BE9AA7 /* GlintTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlintTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextLengthPolicy.swift; path = Core/TextLengthPolicy.swift; sourceTree = "<group>"; };
 		C6FA3164C1A241F7AF4E4400 /* OverlaySizingPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlaySizingPolicyTests.swift; sourceTree = "<group>"; };
 		D34F5CF0B8A349D6A4B15A10 /* OverlaySizingPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlaySizingPolicy.swift; path = UI/OverlaySizingPolicy.swift; sourceTree = "<group>"; };
 		D908A44A839644AD85014000 /* OverlayPresentationBehaviorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OverlayPresentationBehaviorTests.swift; sourceTree = "<group>"; };
@@ -250,7 +246,6 @@
 				A1B2C3D4E5F60718293A4104 /* L10n.swift */,
 				5EA45D34D5C4A573A16AD22C /* TranslationDirection.swift */,
 				800983F77AF1EE6EF8E788EC /* DirectionDetector.swift */,
-				CE97743544C816B307E92CF9 /* TextLengthPolicy.swift */,
 				F1156EC880026F445D4879E9 /* ChatCompletionModels.swift */,
 				9F06EDB02CB1EEFD2CACEFD2 /* TranslationPromptBuilder.swift */,
 				EB7AEFEB50D84538DA24CABB /* LocalTranslationClient.swift */,
@@ -297,7 +292,6 @@
 				5B7A9D0C1E2F304152637484 /* BackendStatusMonitorTests.swift */,
 				B5149D4A8C5A423DA0D4D321 /* AppLaunchCoordinatorTests.swift */,
 				E0161BCD887A2137DEC2A30C /* DirectionDetectorTests.swift */,
-				6A4DF46774DF20D4EB81A7C1 /* TextLengthPolicyTests.swift */,
 				67F92AF24BF95A00B1EAA003 /* MenuBarViewModelTests.swift */,
 				A1B2C3D4E5F60718293A4106 /* LocalizationTests.swift */,
 				67F92B004BF95A00B1EAA003 /* ShortcutRecorderTests.swift */,
@@ -430,7 +424,6 @@
 				A1B2C3D4E5F60718293A4101 /* L10n.swift in Sources */,
 				42F3CD2B101BB299A6DB09BF /* TranslationDirection.swift in Sources */,
 				3BB859C5818A4EA38E3F0FEB /* DirectionDetector.swift in Sources */,
-				9ACA3D2DC5AA4C653C9DB0B2 /* TextLengthPolicy.swift in Sources */,
 				FF9A8B5A42406761E0D802F5 /* ChatCompletionModels.swift in Sources */,
 				8D8EF327B0B7F14C8B9BF561 /* TranslationPromptBuilder.swift in Sources */,
 				02DE59A8465021E8EBFAD86C /* LocalTranslationClient.swift in Sources */,
@@ -476,7 +469,6 @@
 				5B7A9D0C1E2F304152637485 /* BackendStatusMonitorTests.swift in Sources */,
 				B5149D4A8C5A423DA0D4D322 /* AppLaunchCoordinatorTests.swift in Sources */,
 				A65530B7A9D106D5B4323DB1 /* DirectionDetectorTests.swift in Sources */,
-				76C0BD70306C0A9E62C6CC6B /* TextLengthPolicyTests.swift in Sources */,
 				67F92AF34BF95A00B1EAA003 /* MenuBarViewModelTests.swift in Sources */,
 				A1B2C3D4E5F60718293A4103 /* LocalizationTests.swift in Sources */,
 				67F92B014BF95A00B1EAA003 /* ShortcutRecorderTests.swift in Sources */,

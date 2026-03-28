@@ -34,23 +34,6 @@ struct OverlayContentView: View {
         case .loading:
             ProgressView(L10n.translating)
                 .progressViewStyle(.circular)
-        case let .confirmLongText(text):
-            Text(L10n.clipboardLongTextConfirmation)
-                .font(.headline)
-            Text(L10n.preview)
-                .font(.subheadline)
-                .foregroundStyle(visualStyle.secondaryTextColor)
-            SelectableTextView(text: text, visualStyle: visualStyle)
-                .frame(maxHeight: 160)
-            HStack {
-                secondaryButton(L10n.cancel) {
-                    viewModel.close()
-                }
-                primaryButton(L10n.translate) {
-                    viewModel.confirmLongText()
-                }
-                .keyboardShortcut(.defaultAction)
-            }
         case let .result(text):
             Text(L10n.translation)
                 .font(.headline)
@@ -82,8 +65,6 @@ struct OverlayContentView: View {
         switch viewModel.state {
         case .loading:
             return "loading"
-        case let .confirmLongText(text):
-            return "confirm-\(text)"
         case let .result(text):
             return "result-\(text)"
         case let .error(message):
@@ -102,16 +83,6 @@ struct OverlayContentView: View {
         }
     }
 
-    @ViewBuilder
-    private func secondaryButton(_ title: String, action: @escaping () -> Void) -> some View {
-        if #available(macOS 26, *), visualStyle == .liquidGlass {
-            Button(title, action: action)
-                .buttonStyle(.glass)
-        } else {
-            Button(title, action: action)
-                .buttonStyle(.bordered)
-        }
-    }
 }
 
 enum SystemTranslationAvailabilityState: Equatable, Sendable {

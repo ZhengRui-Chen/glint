@@ -49,7 +49,6 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
     private static let anchorMargin: CGFloat = 16
 
     private let panelWidth: CGFloat = 460
-    private let confirmMinimumHeight: CGFloat = 188
     private let presentationOffset: CGFloat = 12
     private let mouseEventMask: NSEvent.EventTypeMask = [.leftMouseDown, .rightMouseDown, .otherMouseDown]
     private let visualStyle = OverlayVisualStyle.current
@@ -123,12 +122,11 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
 
     func show(
         state: OverlayViewState,
-        placement: OverlayPlacement = .centered,
-        onConfirm: ((String) -> Void)? = nil
+        placement: OverlayPlacement = .centered
     ) {
         lastShownAt = ProcessInfo.processInfo.systemUptime
         panel.allowsKeyWindow = Self.shouldActivateApp(for: state)
-        viewModel.show(state, onConfirm: onConfirm)
+        viewModel.show(state)
         resizePanel(for: state)
         apply(placement)
         refreshBackdropSample()
@@ -180,8 +178,6 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
             targetHeight = sizingPolicy.minHeight
         case let .result(text), let .error(text):
             targetHeight = sizingPolicy.height(for: text)
-        case let .confirmLongText(text):
-            targetHeight = max(sizingPolicy.height(for: text), confirmMinimumHeight)
         }
 
         var frame = panel.frame
@@ -265,10 +261,6 @@ final class OverlayPanelController: NSObject, NSWindowDelegate {
     }
 
     nonisolated static func shouldActivateApp(for state: OverlayViewState) -> Bool {
-        if case .confirmLongText = state {
-            return true
-        }
-
         return false
     }
 

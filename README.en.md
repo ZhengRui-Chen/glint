@@ -29,7 +29,7 @@ Glint handles the macOS client experience only:
 - selection translation
 - OCR region translation
 - shortcut customization
-- API connection settings
+- translation provider settings
 
 Glint ** no longer owns ** model downloads, service startup, watchdogs, or
 local deployment scripts.
@@ -38,15 +38,34 @@ For the backend repository I use with Glint, see:
 
 - `https://github.com/ZhengRui-Chen/HY-MT`
 
-## API Requirements
+## Translation Providers
 
-Glint expects an OpenAI-compatible API and currently uses:
+Glint now supports two translation modes:
+
+- `Custom API`
+- `System Translation`
+
+### Custom API
+
+`Custom API` is for your own compatible endpoint. Glint currently uses:
 
 - `POST /v1/chat/completions`
 - `GET /v1/models`
 
 `/v1/models` is only used for model discovery.
 If your backend does not expose it, you can still type the model name manually.
+
+### System Translation
+
+`System Translation` uses the translation capability built into macOS and does
+not require:
+
+- `Base URL`
+- `API Key`
+- `Model`
+
+This mode depends on system translation support and installed language data.
+The settings panel shows the current availability state directly.
 
 ## macOS App
 
@@ -55,7 +74,9 @@ If your backend does not expose it, you can still type the model name manually.
 1. Open `mac-app/Glint.xcodeproj`
 2. Run the `Glint` scheme
 3. Open `API Settings…` from the menu bar
-4. Configure `Base URL`, `API Key`, and `Model`
+4. Choose a translation mode:
+   - `Custom API`: configure `Base URL`, `API Key`, and `Model`
+   - `System Translation`: use macOS translation directly
 
 You can also build the app directly:
 
@@ -73,23 +94,22 @@ The output will be written to `dist/Glint.dmg`.
 
 ### API Settings
 
-The `API Settings…` panel exposes:
+The `API Settings…` panel now has two tabs:
 
-- `Base URL`
-- `API Key`
-- `Model`
+- `Custom API`
+- `System Translation`
 
-`Model` supports both behaviors:
+Notes:
 
-- manual entry
-- dropdown selection after refreshing `/v1/models`
-
-Settings are persisted in `UserDefaults`.
+- `Custom API` exposes `Base URL`, `API Key`, and `Model`
+- `Model` supports both manual entry and dropdown selection after refreshing `/v1/models`
+- `System Translation` shows the current system translation availability
+- settings are persisted in `UserDefaults`
 
 ### Menu Bar Features
 
-- the menu shows the current API status
-- `Refresh Status` re-checks connectivity
+- the menu shows the current translation provider status
+- `Refresh Status` re-checks `Custom API` connectivity
 - `Translate Clipboard` reads from the pasteboard
 - `Translate Selection` reads the current selection and tries to place results near the cursor
 - `Translate OCR Area` lets you capture a screen region, run OCR, then translate
@@ -108,4 +128,5 @@ separate repository:
 
 - `https://github.com/ZhengRui-Chen/HY-MT`
 
-Set up the backend there first, then point Glint at it through `API Settings…`.
+If you use `Custom API`, set up the backend there first, then point Glint at it
+through `API Settings…`.

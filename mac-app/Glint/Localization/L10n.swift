@@ -61,7 +61,6 @@ enum L10n {
     static var systemTranslationReady: String { String(localized: "Using the built-in macOS translation service", comment: "Backend status detail when system translation is selected") }
 
     static var noTextProvided: String { String(localized: "No text was provided.", comment: "Error when no text is available") }
-    static var textExceedsMaximumLength: String { String(localized: "Text exceeds the maximum length.", comment: "Error when text exceeds the length limit") }
     static var noSelectedTextFound: String { String(localized: "No selected text was found.", comment: "Error when there is no selected text") }
     static var accessibilityPermissionNotGranted: String { String(localized: "Accessibility permission is not granted.", comment: "Error when accessibility permission is missing") }
     static var accessibilityPermissionRequiredForSelectionTranslation: String { String(localized: "Accessibility permission is required for selection translation.", comment: "Error when selection translation requires accessibility permission") }
@@ -69,21 +68,17 @@ enum L10n {
     static var browserAutomationPermissionRetry: String { String(localized: "Browser automation permission is not granted. Allow Glint to control the browser and try again.", comment: "Error asking the user to allow browser control") }
     static var unsupportedHostApp: String { String(localized: "Frontmost app does not expose selected text through Accessibility APIs.", comment: "Error when the current app does not expose selected text") }
     static var clipboardDoesNotContainText: String { String(localized: "Clipboard does not contain text.", comment: "Error when the clipboard has no text") }
-    static var clipboardTextExceedsMaximumLength: String { String(localized: "Clipboard text exceeds the maximum length.", comment: "Error when clipboard text is too long") }
     static var localTranslationServiceInvalidResponse: String { String(localized: "Local translation service returned an invalid response.", comment: "Error when the translation service response is invalid") }
     static var localTranslationServiceUnavailable: String { String(localized: "Local translation service is unavailable.", comment: "Error when the translation service is unavailable") }
     static var systemTranslationUnavailable: String { String(localized: "System Translation is unavailable on this Mac.", comment: "Error when the system translation service is unavailable") }
     static var systemTranslationFailed: String { String(localized: "System Translation could not complete the request.", comment: "Error when system translation fails") }
     static var translationRequestTimedOut: String { String(localized: "Translation request timed out.", comment: "Error when a translation request times out") }
 
-    static var recognizedTextExceedsMaximumLength: String { String(localized: "Recognized text exceeds the maximum length.", comment: "Error when OCR text is too long") }
     static var noTextRecognizedInSelectedArea: String { String(localized: "No text was recognized in the selected area.", comment: "Error when OCR finds no text") }
     static var ocrUnavailableOnSystem: String { String(localized: "OCR is unavailable on this system.", comment: "Error when OCR is unavailable") }
     static var unableToCaptureSelectedArea: String { String(localized: "Unable to capture the selected area.", comment: "Error when the selected area cannot be captured") }
 
     static var translating: String { String(localized: "Translating...", comment: "Overlay loading state") }
-    static var clipboardLongTextConfirmation: String { String(localized: "This clipboard text is longer than the quick-translate limit.", comment: "Confirmation text for long clipboard content") }
-    static var preview: String { String(localized: "Preview:", comment: "Preview label") }
     static var cancel: String { String(localized: "Cancel", comment: "Cancel button title") }
     static var save: String { String(localized: "Save", comment: "Save button title") }
     static var translate: String { String(localized: "Translate", comment: "Translate button title") }

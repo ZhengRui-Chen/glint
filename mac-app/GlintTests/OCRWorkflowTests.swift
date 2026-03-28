@@ -69,6 +69,22 @@ final class OCRWorkflowTests: XCTestCase {
         )
     }
 
+    func test_prepare_translates_long_ocr_text_without_confirmation() async {
+        let text = String(repeating: "你", count: 8001)
+        let workflow = TranslateOCRWorkflow(
+            recognizer: StubOCRRecognizer(
+                result: .success(OCRRecognition(text: text, diagnostics: "obs=99"))
+            )
+        )
+
+        let prepared = await workflow.prepare(image: makeTestImage())
+
+        XCTAssertEqual(
+            prepared,
+            .translate(OCRRecognition(text: text, diagnostics: "obs=99"))
+        )
+    }
+
     func test_confirm_translation_returns_plain_translation_result() async {
         let workflow = TranslateOCRWorkflow(
             recognizer: StubOCRRecognizer(

@@ -5,31 +5,28 @@ final class TextInputSourceWorkflowTests: XCTestCase {
     func test_workflow_returns_error_when_input_source_has_no_text() async {
         let workflow = TranslateTextWorkflow(
             inputSource: StubTextInputSource(result: .failure(TextInputFailure(.noText))),
-            client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000)
+            client: StubClient()
         )
         let state = await workflow.run()
         XCTAssertEqual(state, .error(L10n.noTextProvided))
     }
 
-    func test_workflow_returns_generic_error_when_non_clipboard_text_exceeds_hard_limit() async {
+    func test_workflow_translates_long_non_clipboard_text_without_rejecting() async {
         let text = String(repeating: "a", count: 8001)
         let workflow = TranslateTextWorkflow(
             inputSource: StubTextInputSource(result: .success(text)),
-            client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000)
+            client: StubClient()
         )
 
         let state = await workflow.run()
 
-        XCTAssertEqual(state, .error(L10n.textExceedsMaximumLength))
+        XCTAssertEqual(state, .result("translated"))
     }
 
     func test_prepare_returns_translation_request_for_allowed_text() async {
         let workflow = TranslateTextWorkflow(
             inputSource: StubTextInputSource(result: .success("hello")),
-            client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000)
+            client: StubClient()
         )
 
         let prepared = await workflow.prepare()
@@ -48,7 +45,6 @@ final class TextInputSourceWorkflowTests: XCTestCase {
                 )
             ),
             client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000),
             noTextMessage: "No selected text was found.",
             permissionRequiredMessage: "Accessibility permission is not granted.",
             automationPermissionRequiredMessage: "Browser automation permission is not granted.",
@@ -74,7 +70,6 @@ final class TextInputSourceWorkflowTests: XCTestCase {
         let workflow = TranslateTextWorkflow(
             inputSource: StubTextInputSource(result: .failure(TextInputFailure(.permissionRequired))),
             client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000),
             noTextMessage: "No selected text was found.",
             permissionRequiredMessage: "Accessibility permission is not granted.",
             unsupportedHostAppMessage: "Frontmost app does not expose selected text through Accessibility APIs."
@@ -89,7 +84,6 @@ final class TextInputSourceWorkflowTests: XCTestCase {
         let workflow = TranslateTextWorkflow(
             inputSource: StubTextInputSource(result: .failure(TextInputFailure(.unsupportedHostApp))),
             client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000),
             noTextMessage: "No selected text was found.",
             permissionRequiredMessage: "Accessibility permission is not granted.",
             automationPermissionRequiredMessage: "Browser automation permission is not granted.",
@@ -108,7 +102,6 @@ final class TextInputSourceWorkflowTests: XCTestCase {
         let workflow = TranslateTextWorkflow(
             inputSource: StubTextInputSource(result: .failure(TextInputFailure(.automationPermissionRequired))),
             client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000),
             noTextMessage: "No selected text was found.",
             permissionRequiredMessage: "Accessibility permission is not granted.",
             automationPermissionRequiredMessage: "Browser automation permission is not granted.",
@@ -131,7 +124,6 @@ final class TextInputSourceWorkflowTests: XCTestCase {
                 )
             ),
             client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000),
             noTextMessage: "No selected text was found.",
             permissionRequiredMessage: "Accessibility permission is not granted.",
             automationPermissionRequiredMessage: "Browser automation permission is not granted.",
@@ -162,7 +154,6 @@ final class TextInputSourceWorkflowTests: XCTestCase {
                 )
             ),
             client: StubClient(),
-            policy: .init(softLimit: 2000, hardLimit: 8000),
             noTextMessage: "No selected text was found.",
             permissionRequiredMessage: "Accessibility permission is not granted.",
             automationPermissionRequiredMessage: "Browser automation permission is not granted.",
