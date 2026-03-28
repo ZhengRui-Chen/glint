@@ -19,7 +19,7 @@ struct TranslateTextWorkflow: Sendable {
 
     init(
         inputSource: any TextInputSource,
-        client: any TranslationClienting = LocalTranslationClient(),
+        client: any TranslationClienting = RuntimeTranslationClient(),
         policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
         detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect,
         noTextMessage: String = L10n.noTextProvided,
@@ -83,6 +83,10 @@ struct TranslateTextWorkflow: Sendable {
                 return .error(L10n.localTranslationServiceInvalidResponse)
             case .invalidStatusCode:
                 return .error(L10n.localTranslationServiceUnavailable)
+            case .systemTranslationUnavailable:
+                return .error(L10n.systemTranslationUnavailable)
+            case .systemTranslationFailed:
+                return .error(L10n.systemTranslationFailed)
             }
         } catch let error as URLError {
             switch error.code {
@@ -128,7 +132,7 @@ struct TranslateClipboardWorkflow: Sendable {
 
     init(
         clipboard: any ClipboardTextReading = ClipboardTextReader(),
-        client: any TranslationClienting = LocalTranslationClient(),
+        client: any TranslationClienting = RuntimeTranslationClient(),
         policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
         detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect
     ) {

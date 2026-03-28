@@ -79,7 +79,7 @@ struct TranslateOCRWorkflow: Sendable {
 
     init(
         recognizer: any OCRTextRecognizing = VisionOCRService(),
-        client: any TranslationClienting = LocalTranslationClient(),
+        client: any TranslationClienting = RuntimeTranslationClient(),
         policy: TextLengthPolicy = .init(softLimit: 2000, hardLimit: 8000),
         detectDirection: @escaping @Sendable (String) -> TranslationDirection = DirectionDetector.detect
     ) {

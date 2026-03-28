@@ -55,18 +55,15 @@ final class AppDelegateBackendMenuTests: XCTestCase {
     @MainActor
     func test_opening_menu_does_not_trigger_backend_refresh() async throws {
         let apiChecker = SequencedBackendAPIHealthChecker(results: [.unreachable, .reachable])
-        let monitor = BackendStatusMonitor(
-            apiChecker: apiChecker
-        )
+        let apiSettingsStore = makeIsolatedAPISettingsStore()
+        let monitor = makeCustomAPIBackendStatusMonitor(apiChecker: apiChecker)
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
             hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
             backendStatusMonitor: monitor,
-            apiSettingsStore: APISettingsStore(
-                userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-            )
+            apiSettingsStore: apiSettingsStore
         )
 
         appDelegate.applicationDidFinishLaunching(
@@ -93,18 +90,15 @@ final class AppDelegateBackendMenuTests: XCTestCase {
     @MainActor
     func test_application_launch_does_not_schedule_background_refresh_timer() async throws {
         let apiChecker = SequencedBackendAPIHealthChecker(results: [.unreachable, .reachable])
-        let monitor = BackendStatusMonitor(
-            apiChecker: apiChecker
-        )
+        let apiSettingsStore = makeIsolatedAPISettingsStore()
+        let monitor = makeCustomAPIBackendStatusMonitor(apiChecker: apiChecker)
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
             hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
             backendStatusMonitor: monitor,
-            apiSettingsStore: APISettingsStore(
-                userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-            )
+            apiSettingsStore: apiSettingsStore
         )
 
         appDelegate.applicationDidFinishLaunching(
@@ -129,18 +123,15 @@ final class AppDelegateBackendMenuTests: XCTestCase {
     @MainActor
     func test_backend_refresh_exposes_api_settings_and_keyboard_shortcuts_entries() async throws {
         let apiChecker = SequencedBackendAPIHealthChecker(results: [.reachable, .reachable])
-        let monitor = BackendStatusMonitor(
-            apiChecker: apiChecker
-        )
+        let apiSettingsStore = makeIsolatedAPISettingsStore()
+        let monitor = makeCustomAPIBackendStatusMonitor(apiChecker: apiChecker)
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
             hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
             backendStatusMonitor: monitor,
-            apiSettingsStore: APISettingsStore(
-                userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-            )
+            apiSettingsStore: apiSettingsStore
         )
 
         appDelegate.applicationDidFinishLaunching(
@@ -182,18 +173,15 @@ final class AppDelegateBackendMenuTests: XCTestCase {
     @MainActor
     func test_older_backend_refresh_result_does_not_override_newer_snapshot() async throws {
         let apiChecker = ControlledBackendAPIHealthChecker()
-        let monitor = BackendStatusMonitor(
-            apiChecker: apiChecker
-        )
+        let apiSettingsStore = makeIsolatedAPISettingsStore()
+        let monitor = makeCustomAPIBackendStatusMonitor(apiChecker: apiChecker)
         let appDelegate = AppDelegate(
             shortcutSettings: .default,
             launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
             shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
             hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
             backendStatusMonitor: monitor,
-            apiSettingsStore: APISettingsStore(
-                userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-            )
+            apiSettingsStore: apiSettingsStore
         )
 
         appDelegate.applicationDidFinishLaunching(
@@ -308,7 +296,8 @@ private final class NoopHotkeyMonitor: GlobalHotkeyMonitoring {
 private func makeAppDelegate(
     apiResults: [BackendAPIReachability]
 ) -> AppDelegate {
-    let monitor = BackendStatusMonitor(
+    let apiSettingsStore = makeIsolatedAPISettingsStore()
+    let monitor = makeCustomAPIBackendStatusMonitor(
         apiChecker: SequencedBackendAPIHealthChecker(results: apiResults)
     )
     return AppDelegate(
@@ -317,9 +306,22 @@ private func makeAppDelegate(
         shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
         hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
         backendStatusMonitor: monitor,
-        apiSettingsStore: APISettingsStore(
-            userDefaults: UserDefaults(suiteName: UUID().uuidString)!
-        )
+        apiSettingsStore: apiSettingsStore
+    )
+}
+
+private func makeIsolatedAPISettingsStore() -> APISettingsStore {
+    APISettingsStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
+}
+
+private func makeCustomAPIBackendStatusMonitor(
+    apiChecker: any BackendAPIHealthChecking
+) -> BackendStatusMonitor {
+    BackendStatusMonitor(
+        configProvider: {
+            AppConfig(settings: APISettings())
+        },
+        apiChecker: apiChecker
     )
 }
 

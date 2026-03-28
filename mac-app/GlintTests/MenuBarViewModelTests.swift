@@ -65,6 +65,20 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.canRefreshStatus)
     }
 
+    func test_menu_bar_keeps_translation_enabled_in_system_translation_mode() {
+        let viewModel = MenuBarViewModel(
+            permissionStatus: .granted,
+            backendStatus: .system(detail: L10n.systemTranslationReady)
+        )
+
+        XCTAssertEqual(viewModel.backendHeadline, L10n.serviceStatusSystemTranslation)
+        XCTAssertEqual(viewModel.backendDetail, L10n.systemTranslationReady)
+        XCTAssertTrue(viewModel.canTranslateSelection)
+        XCTAssertTrue(viewModel.canTranslateClipboard)
+        XCTAssertTrue(viewModel.canTranslateOCR)
+        XCTAssertFalse(viewModel.canRefreshStatus)
+    }
+
     func test_menu_bar_invokes_callbacks_for_actions() {
         let recorder = MenuActionRecorder()
         let viewModel = MenuBarViewModel(

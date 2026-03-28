@@ -5,6 +5,7 @@ enum BackendStatusSnapshot: Equatable {
     case available(detail: String)
     case unavailable(detail: String)
     case error(detail: String)
+    case system(detail: String)
 
     var headline: String {
         switch self {
@@ -16,6 +17,8 @@ enum BackendStatusSnapshot: Equatable {
             L10n.serviceStatusUnavailable
         case .error:
             L10n.serviceStatusError
+        case .system:
+            L10n.serviceStatusSystemTranslation
         }
     }
 
@@ -24,16 +27,19 @@ enum BackendStatusSnapshot: Equatable {
         case let .checking(detail),
              let .available(detail),
              let .unavailable(detail),
-             let .error(detail):
+             let .error(detail),
+             let .system(detail):
             detail
         }
     }
 
     var canTranslate: Bool {
-        if case .available = self {
+        switch self {
+        case .available, .system:
             return true
+        case .checking, .unavailable, .error:
+            return false
         }
-        return false
     }
 
     var canRefreshStatus: Bool {
@@ -42,6 +48,8 @@ enum BackendStatusSnapshot: Equatable {
             false
         case .available, .unavailable, .error:
             true
+        case .system:
+            false
         }
     }
 }
