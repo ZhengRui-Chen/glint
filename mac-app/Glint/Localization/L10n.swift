@@ -7,7 +7,21 @@ enum L10n {
 
     static var apiSettings: String { String(localized: "API Settings…", comment: "Menu entry that opens the API settings panel") }
     static var apiSettingsTitle: String { String(localized: "API Settings", comment: "Title for the API settings panel") }
-    static var apiSettingsSubtitle: String { String(localized: "Configure the OpenAI-compatible endpoint Glint should use for translation.", comment: "Subtitle shown in the API settings panel") }
+    static var apiSettingsSubtitle: String { String(localized: "Choose how Glint should translate text.", comment: "Subtitle shown in the API settings panel") }
+    static var customAPIProvider: String { String(localized: "Custom API", comment: "Provider label for custom HTTP APIs") }
+    static var systemTranslationProvider: String { String(localized: "System Translation", comment: "Provider label for macOS system translation") }
+    static var systemTranslationDescription: String { String(localized: "Use the built-in macOS translation service. No API endpoint, API key, or model is required.", comment: "Description shown on the system translation settings page") }
+    static var systemTranslationAvailabilityChecking: String { String(localized: "Checking system translation availability...", comment: "Status shown while checking system translation support") }
+    static var systemTranslationAvailabilityReady: String { String(localized: "English and Chinese system translation is ready on this Mac.", comment: "Summary when system translation is fully installed") }
+    static var systemTranslationAvailabilityDownloadRequired: String { String(localized: "Some system translation language data may need to download before first use.", comment: "Summary when system translation is supported but language data may still need downloading") }
+    static var systemTranslationAvailabilityUnsupported: String { String(localized: "This Mac does not currently support English and Chinese system translation.", comment: "Summary when the required language pair is unsupported") }
+    static var systemTranslationAvailabilityUnavailable: String { String(localized: "System Translation requires macOS 15 or later.", comment: "Summary when the system translation framework is unavailable") }
+    static var systemTranslationDirectionEnglishToChinese: String { String(localized: "English -> Simplified Chinese", comment: "System translation direction label for English to Simplified Chinese") }
+    static var systemTranslationDirectionChineseToEnglish: String { String(localized: "Chinese -> English", comment: "System translation direction label for Chinese to English") }
+    static var systemTranslationStatusInstalled: String { String(localized: "Installed", comment: "System translation language status when installed") }
+    static var systemTranslationStatusAvailableAfterDownload: String { String(localized: "Available After Download", comment: "System translation language status when supported but not yet downloaded") }
+    static var systemTranslationStatusUnsupported: String { String(localized: "Not Supported", comment: "System translation language status when unsupported") }
+    static var systemTranslationStatusUnavailable: String { String(localized: "Unavailable", comment: "System translation language status when unavailable on this OS") }
     static var apiBaseURL: String { String(localized: "Base URL", comment: "Label for the API base URL field") }
     static var apiKey: String { String(localized: "API Key", comment: "Label for the API key field") }
     static var model: String { String(localized: "Model", comment: "Label for the model field") }
@@ -38,11 +52,13 @@ enum L10n {
     static var serviceStatusAvailable: String { String(localized: "API Status: Available", comment: "Backend status headline when available") }
     static var serviceStatusUnavailable: String { String(localized: "API Status: Unavailable", comment: "Backend status headline when unavailable") }
     static var serviceStatusError: String { String(localized: "API Status: Error", comment: "Backend status headline when errored") }
+    static var serviceStatusSystemTranslation: String { String(localized: "Translation Mode: System", comment: "Backend status headline when system translation is selected") }
 
     static var checkingBackendAvailability: String { String(localized: "Checking API availability", comment: "Backend status detail while checking") }
     static var backendReachable: String { String(localized: "Translation API is reachable", comment: "Backend status detail when available") }
     static var backendCurrentlyUnavailable: String { String(localized: "Translation API is currently unavailable", comment: "Backend status detail when unavailable") }
     static var unableVerifyBackendStatus: String { String(localized: "Unable to verify API status", comment: "Backend status detail when refresh fails") }
+    static var systemTranslationReady: String { String(localized: "Using the built-in macOS translation service", comment: "Backend status detail when system translation is selected") }
 
     static var noTextProvided: String { String(localized: "No text was provided.", comment: "Error when no text is available") }
     static var textExceedsMaximumLength: String { String(localized: "Text exceeds the maximum length.", comment: "Error when text exceeds the length limit") }
@@ -56,6 +72,8 @@ enum L10n {
     static var clipboardTextExceedsMaximumLength: String { String(localized: "Clipboard text exceeds the maximum length.", comment: "Error when clipboard text is too long") }
     static var localTranslationServiceInvalidResponse: String { String(localized: "Local translation service returned an invalid response.", comment: "Error when the translation service response is invalid") }
     static var localTranslationServiceUnavailable: String { String(localized: "Local translation service is unavailable.", comment: "Error when the translation service is unavailable") }
+    static var systemTranslationUnavailable: String { String(localized: "System Translation is unavailable on this Mac.", comment: "Error when the system translation service is unavailable") }
+    static var systemTranslationFailed: String { String(localized: "System Translation could not complete the request.", comment: "Error when system translation fails") }
     static var translationRequestTimedOut: String { String(localized: "Translation request timed out.", comment: "Error when a translation request times out") }
 
     static var recognizedTextExceedsMaximumLength: String { String(localized: "Recognized text exceeds the maximum length.", comment: "Error when OCR text is too long") }

@@ -9,6 +9,8 @@ enum LocalTranslationClientError: Error, Equatable {
     case invalidResponse
     case invalidStatusCode(Int)
     case emptyChoices
+    case systemTranslationUnavailable
+    case systemTranslationFailed
 }
 
 struct LocalTranslationClient: TranslationClienting, Sendable {
@@ -78,5 +80,46 @@ struct LocalTranslationClient: TranslationClienting, Sendable {
             throw LocalTranslationClientError.emptyChoices
         }
         return content
+    }
+}
+
+struct RuntimeTranslationClient: TranslationClienting, Sendable {
+    private let configProvider: @Sendable () -> AppConfig
+    private let makeCustomAPIClient: @Sendable (AppConfig) -> any TranslationClienting
+    private let systemTranslationClient: any TranslationClienting
+
+    init(
+        configProvider: @escaping @Sendable () -> AppConfig = { AppConfig.default },
+        makeCustomAPIClient: @escaping @Sendable (AppConfig) -> any TranslationClienting = { config in
+            LocalTranslationClient(config: config)
+        },
+        systemTranslationClient: any TranslationClienting = SystemTranslationClient()
+    ) {
+        self.configProvider = configProvider
+        self.makeCustomAPIClient = makeCustomAPIClient
+        self.systemTranslationClient = systemTranslationClient
+    }
+
+    func translate(text: String, direction: TranslationDirection) async throws -> String {
+        let config = configProvider()
+        switch config.provider {
+        case .customAPI:
+            return try await makeCustomAPIClient(config).translate(text: text, direction: direction)
+        case .system:
+            return try await systemTranslationClient.translate(text: text, direction: direction)
+        }
+    }
+}
+
+struct SystemTranslationClient: TranslationClienting, Sendable {
+    func translate(text: String, direction: TranslationDirection) async throws -> String {
+        guard #available(macOS 15.0, *) else {
+            throw LocalTranslationClientError.systemTranslationUnavailable
+        }
+
+        return try await SystemTranslationSessionBroker.shared.translate(
+            text: text,
+            direction: direction
+        )
     }
 }

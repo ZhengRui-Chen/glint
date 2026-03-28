@@ -6,6 +6,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
     func test_view_state_syncs_draft_settings_and_model_options() {
         let state = APISettingsPanelViewState(
             settings: APISettings(
+                provider: .customAPI,
                 baseURLString: "https://example.invalid/v1",
                 apiKey: "first-key",
                 model: "first-model"
@@ -13,6 +14,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
             availableModels: ["first-model"]
         )
 
+        XCTAssertEqual(state.provider, .customAPI)
         XCTAssertEqual(state.baseURLString, "https://example.invalid/v1")
         XCTAssertEqual(state.apiKey, "first-key")
         XCTAssertEqual(state.model, "first-model")
@@ -21,6 +23,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
 
         state.update(
             settings: APISettings(
+                provider: .system,
                 baseURLString: "https://other.invalid/v1",
                 apiKey: "second-key",
                 model: "second-model"
@@ -28,6 +31,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
             availableModels: ["a-model", "z-model"]
         )
 
+        XCTAssertEqual(state.provider, .system)
         XCTAssertEqual(state.baseURLString, "https://other.invalid/v1")
         XCTAssertEqual(state.apiKey, "second-key")
         XCTAssertEqual(state.model, "second-model")
@@ -46,6 +50,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
 
         controller.updateDraftForTesting(
             APISettings(
+                provider: .system,
                 baseURLString: "https://saved.invalid/v1",
                 apiKey: "saved-key",
                 model: "saved-model"
@@ -56,6 +61,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
         XCTAssertEqual(
             store.load(),
             APISettings(
+                provider: .system,
                 baseURLString: "https://saved.invalid/v1",
                 apiKey: "saved-key",
                 model: "saved-model"
@@ -74,6 +80,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
 
         controller.updateDraftForTesting(
             APISettings(
+                provider: .customAPI,
                 baseURLString: "https://draft.invalid/v1",
                 apiKey: "draft-key",
                 model: "manual-model"
@@ -86,6 +93,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
             recorder.receivedSettings,
             [
                 APISettings(
+                    provider: .customAPI,
                     baseURLString: "https://draft.invalid/v1",
                     apiKey: "draft-key",
                     model: "manual-model"
@@ -104,7 +112,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
             store: APISettingsStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
         )
 
-        XCTAssertEqual(controller.testingPanelFrame.height, 360)
+        XCTAssertEqual(controller.testingPanelFrame.height, 420)
     }
 
     func test_controller_persists_selected_model_from_combo_box() async throws {
@@ -117,6 +125,7 @@ final class APISettingsPanelControllerTests: XCTestCase {
 
         controller.updateDraftForTesting(
             APISettings(
+                provider: .customAPI,
                 baseURLString: "http://127.0.0.1:8001",
                 apiKey: "change-me",
                 model: ""
@@ -134,6 +143,59 @@ final class APISettingsPanelControllerTests: XCTestCase {
         controller.requestSave()
 
         XCTAssertEqual(store.load().model, "m-model")
+    }
+
+    func test_controller_does_not_refresh_models_for_system_translation_provider() async throws {
+        let store = APISettingsStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
+        let recorder = ModelDiscoveryFactoryRecorder()
+        let controller = APISettingsPanelController(
+            store: store,
+            makeDiscoveryClient: recorder.makeClient(settings:)
+        )
+
+        controller.updateDraftForTesting(
+            APISettings(
+                provider: .system,
+                baseURLString: "https://ignored.invalid/v1",
+                apiKey: "ignored-key",
+                model: "ignored-model"
+            )
+        )
+
+        let models = try await controller.refreshModels()
+
+        XCTAssertTrue(models.isEmpty)
+        XCTAssertTrue(recorder.receivedSettings.isEmpty)
+    }
+
+    func test_controller_refreshes_system_translation_availability_for_system_provider() async {
+        let store = APISettingsStore(userDefaults: UserDefaults(suiteName: UUID().uuidString)!)
+        let expectedReport = SystemTranslationAvailabilityReport.make(
+            enToZh: .installed,
+            zhToEn: .supported
+        )
+        let controller = APISettingsPanelController(
+            store: store,
+            makeDiscoveryClient: { _ in StubModelDiscoveryClient() },
+            systemTranslationAvailabilityInspector: StubSystemTranslationAvailabilityInspector(
+                report: expectedReport
+            )
+        )
+
+        controller.updateDraftForTesting(
+            APISettings(
+                provider: .system,
+                baseURLString: "",
+                apiKey: "",
+                model: ""
+            )
+        )
+
+        let report = await controller.refreshSystemTranslationAvailability()
+
+        XCTAssertEqual(report, expectedReport)
+        XCTAssertEqual(controller.testingSnapshot.systemTranslationAvailability, expectedReport)
+        XCTAssertFalse(controller.testingSnapshot.isRefreshingSystemTranslationAvailability)
     }
 }
 
@@ -156,5 +218,13 @@ private final class ModelDiscoveryFactoryRecorder {
 private struct StubModelDiscoveryClient: ModelDiscoveryFetching {
     func fetchModels() async throws -> [String] {
         ["a-model", "m-model", "z-model"]
+    }
+}
+
+private struct StubSystemTranslationAvailabilityInspector: SystemTranslationAvailabilityInspecting {
+    let report: SystemTranslationAvailabilityReport
+
+    func availabilityReport() async -> SystemTranslationAvailabilityReport {
+        report
     }
 }

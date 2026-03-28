@@ -6,6 +6,7 @@ enum AppBranding {
 }
 
 struct AppConfig {
+    let provider: TranslationProvider
     let baseURLString: String
     let baseURL: URL
     let model: String
@@ -22,6 +23,7 @@ struct AppConfig {
         requestTimeout: TimeInterval = 20,
         backendAPITimeout: TimeInterval = 5
     ) {
+        provider = settings.provider
         baseURLString = settings.baseURLString
         baseURL = URL(string: settings.baseURLString) ?? URL(string: "about:blank")!
         model = settings.model

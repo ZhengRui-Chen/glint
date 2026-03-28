@@ -3,7 +3,7 @@ import SwiftUI
 
 private enum APISettingsPanelLayout {
     static let width: CGFloat = 460
-    static let height: CGFloat = 360
+    static let height: CGFloat = 420
 }
 
 protocol ModelDiscoveryFetching {
@@ -17,12 +17,15 @@ struct APISettingsPanelTestingSnapshot: Equatable {
     let availableModels: [String]
     let isRefreshingModels: Bool
     let statusMessage: String?
+    let systemTranslationAvailability: SystemTranslationAvailabilityReport
+    let isRefreshingSystemTranslationAvailability: Bool
 }
 
 @MainActor
 final class APISettingsPanelController: NSObject, NSWindowDelegate {
     private let store: APISettingsStore
     private let makeDiscoveryClient: (APISettings) -> any ModelDiscoveryFetching
+    private let systemTranslationAvailabilityInspector: any SystemTranslationAvailabilityInspecting
     private let onSave: (() -> Void)?
     private let state: APISettingsPanelViewState
     private let panel: APISettingsPanelWindow
@@ -33,10 +36,12 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
         makeDiscoveryClient: @escaping (APISettings) -> any ModelDiscoveryFetching = { settings in
             ModelDiscoveryClient(config: AppConfig(settings: settings))
         },
+        systemTranslationAvailabilityInspector: any SystemTranslationAvailabilityInspecting = SystemTranslationAvailabilityInspector(),
         onSave: (() -> Void)? = nil
     ) {
         self.store = store
         self.makeDiscoveryClient = makeDiscoveryClient
+        self.systemTranslationAvailabilityInspector = systemTranslationAvailabilityInspector
         self.onSave = onSave
         self.state = APISettingsPanelViewState(settings: store.load())
         self.panel = APISettingsPanelWindow(
@@ -54,6 +59,7 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
             rootView: APISettingsPanelView(
                 state: state,
                 onRefreshModels: {},
+                onRefreshSystemTranslationAvailability: {},
                 onCancel: {},
                 onSave: {}
             )
@@ -83,6 +89,9 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
             settings: store.load(),
             availableModels: state.availableModels
         )
+        if state.provider == .system {
+            requestRefreshSystemTranslationAvailability()
+        }
 
         let frame = resolvedTargetFrame(anchorRect: anchorRect)
         panel.setFrame(frame, display: false)
@@ -107,8 +116,18 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
         }
     }
 
+    func requestRefreshSystemTranslationAvailability() {
+        Task { @MainActor in
+            _ = await refreshSystemTranslationAvailability()
+        }
+    }
+
     @discardableResult
     func refreshModels() async throws -> [String] {
+        guard state.provider == .customAPI else {
+            return []
+        }
+
         state.beginRefreshingModels()
         let settings = state.draftSettings
 
@@ -120,6 +139,18 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
             state.failRefreshingModels(L10n.apiSettingsModelRefreshFailed)
             throw error
         }
+    }
+
+    @discardableResult
+    func refreshSystemTranslationAvailability() async -> SystemTranslationAvailabilityReport {
+        guard state.provider == .system else {
+            return state.systemTranslationAvailability
+        }
+
+        state.beginRefreshingSystemTranslationAvailability()
+        let report = await systemTranslationAvailabilityInspector.availabilityReport()
+        state.finishRefreshingSystemTranslationAvailability(report)
+        return report
     }
 
     var testingSnapshot: APISettingsPanelTestingSnapshot {
@@ -157,6 +188,9 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
             state: state,
             onRefreshModels: { [weak self] in
                 self?.requestRefreshModels()
+            },
+            onRefreshSystemTranslationAvailability: { [weak self] in
+                self?.requestRefreshSystemTranslationAvailability()
             },
             onCancel: { [weak self] in
                 self?.requestCancel()
@@ -201,27 +235,34 @@ final class APISettingsPanelController: NSObject, NSWindowDelegate {
 
 @MainActor
 final class APISettingsPanelViewState: ObservableObject {
+    @Published var provider: TranslationProvider
     @Published var baseURLString: String
     @Published var apiKey: String
     @Published var model: String
     @Published private(set) var availableModels: [String]
     @Published private(set) var isRefreshingModels: Bool
     @Published private(set) var statusMessage: String?
+    @Published private(set) var systemTranslationAvailability: SystemTranslationAvailabilityReport
+    @Published private(set) var isRefreshingSystemTranslationAvailability: Bool
 
     init(
         settings: APISettings,
         availableModels: [String] = []
     ) {
+        provider = settings.provider
         baseURLString = settings.baseURLString
         apiKey = settings.apiKey
         model = settings.model
         self.availableModels = availableModels
         isRefreshingModels = false
         statusMessage = nil
+        systemTranslationAvailability = .checking()
+        isRefreshingSystemTranslationAvailability = false
     }
 
     var draftSettings: APISettings {
         APISettings(
+            provider: provider,
             baseURLString: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines),
             apiKey: apiKey.trimmingCharacters(in: .whitespacesAndNewlines),
             model: model.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -232,6 +273,7 @@ final class APISettingsPanelViewState: ObservableObject {
         settings: APISettings,
         availableModels: [String]
     ) {
+        provider = settings.provider
         baseURLString = settings.baseURLString
         apiKey = settings.apiKey
         model = settings.model
@@ -241,6 +283,7 @@ final class APISettingsPanelViewState: ObservableObject {
     }
 
     func updateDraft(_ settings: APISettings) {
+        provider = settings.provider
         baseURLString = settings.baseURLString
         apiKey = settings.apiKey
         model = settings.model
@@ -262,12 +305,25 @@ final class APISettingsPanelViewState: ObservableObject {
         statusMessage = message
     }
 
+    func beginRefreshingSystemTranslationAvailability() {
+        isRefreshingSystemTranslationAvailability = true
+    }
+
+    func finishRefreshingSystemTranslationAvailability(
+        _ report: SystemTranslationAvailabilityReport
+    ) {
+        systemTranslationAvailability = report
+        isRefreshingSystemTranslationAvailability = false
+    }
+
     var testingSnapshot: APISettingsPanelTestingSnapshot {
         APISettingsPanelTestingSnapshot(
             settings: draftSettings,
             availableModels: availableModels,
             isRefreshingModels: isRefreshingModels,
-            statusMessage: statusMessage
+            statusMessage: statusMessage,
+            systemTranslationAvailability: systemTranslationAvailability,
+            isRefreshingSystemTranslationAvailability: isRefreshingSystemTranslationAvailability
         )
     }
 }
@@ -276,6 +332,7 @@ private struct APISettingsPanelView: View {
     @ObservedObject var state: APISettingsPanelViewState
 
     let onRefreshModels: () -> Void
+    let onRefreshSystemTranslationAvailability: () -> Void
     let onCancel: () -> Void
     let onSave: () -> Void
 
@@ -289,35 +346,65 @@ private struct APISettingsPanelView: View {
                     .foregroundStyle(.secondary)
             }
 
-            VStack(alignment: .leading, spacing: 12) {
-                field(title: L10n.apiBaseURL) {
-                    TextField("", text: $state.baseURLString)
-                        .textFieldStyle(.roundedBorder)
-                }
+            Picker("", selection: $state.provider) {
+                Text(L10n.customAPIProvider).tag(TranslationProvider.customAPI)
+                Text(L10n.systemTranslationProvider).tag(TranslationProvider.system)
+            }
+            .pickerStyle(.segmented)
 
-                field(title: L10n.apiKey) {
-                    SecureField("", text: $state.apiKey)
-                        .textFieldStyle(.roundedBorder)
-                }
+            Group {
+                switch state.provider {
+                case .customAPI:
+                    VStack(alignment: .leading, spacing: 12) {
+                        field(title: L10n.apiBaseURL) {
+                            TextField("", text: $state.baseURLString)
+                                .textFieldStyle(.roundedBorder)
+                        }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L10n.model)
-                        .font(.system(size: 12, weight: .medium))
-                    APIModelComboBox(
-                        text: $state.model,
-                        options: state.availableModels
-                    )
-                    HStack(spacing: 8) {
-                        Button(L10n.refreshModels, action: onRefreshModels)
-                        if state.isRefreshingModels {
+                        field(title: L10n.apiKey) {
+                            SecureField("", text: $state.apiKey)
+                                .textFieldStyle(.roundedBorder)
+                        }
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.model)
+                                .font(.system(size: 12, weight: .medium))
+                            APIModelComboBox(
+                                text: $state.model,
+                                options: state.availableModels
+                            )
+                            HStack(spacing: 8) {
+                                Button(L10n.refreshModels, action: onRefreshModels)
+                                if state.isRefreshingModels {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                }
+                            }
+                        }
+                    }
+                case .system:
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(L10n.systemTranslationProvider)
+                            .font(.system(size: 14, weight: .semibold))
+                        Text(L10n.systemTranslationDescription)
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                        Text(state.systemTranslationAvailability.summary)
+                            .font(.system(size: 12, weight: .medium))
+                        if state.isRefreshingSystemTranslationAvailability {
                             ProgressView()
                                 .controlSize(.small)
+                        }
+                        ForEach(state.systemTranslationAvailability.detailLines, id: \.self) { line in
+                            Text(line)
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
             }
 
-            if let statusMessage = state.statusMessage {
+            if state.provider == .customAPI, let statusMessage = state.statusMessage {
                 Text(statusMessage)
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
@@ -337,6 +424,11 @@ private struct APISettingsPanelView: View {
             width: APISettingsPanelLayout.width,
             height: APISettingsPanelLayout.height
         )
+        .onChange(of: state.provider) { _, provider in
+            if provider == .system {
+                onRefreshSystemTranslationAvailability()
+            }
+        }
     }
 
     private func field<Content: View>(

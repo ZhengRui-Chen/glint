@@ -9,6 +9,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
     func test_monitor_reports_available_when_api_is_reachable() async {
         let monitor = BackendStatusMonitor(
+            configProvider: { AppConfig(settings: APISettings(provider: .customAPI)) },
             apiChecker: StubBackendAPIHealthChecker(result: .success(.reachable))
         )
 
@@ -19,6 +20,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
     func test_monitor_reports_unavailable_when_api_is_not_reachable() async {
         let monitor = BackendStatusMonitor(
+            configProvider: { AppConfig(settings: APISettings(provider: .customAPI)) },
             apiChecker: StubBackendAPIHealthChecker(result: .success(.unreachable))
         )
 
@@ -29,6 +31,7 @@ final class BackendStatusMonitorTests: XCTestCase {
 
     func test_monitor_reports_error_when_api_probe_fails() async {
         let monitor = BackendStatusMonitor(
+            configProvider: { AppConfig(settings: APISettings(provider: .customAPI)) },
             apiChecker: StubBackendAPIHealthChecker(result: .failure(StubError.apiFailed))
         )
 
@@ -87,6 +90,20 @@ final class BackendStatusMonitorTests: XCTestCase {
 
         XCTAssertEqual(reachability, .reachable)
     }
+
+    func test_monitor_reports_system_translation_mode_without_http_probe() async {
+        let checker = RecordingBackendAPIHealthChecker(result: .reachable)
+        let monitor = BackendStatusMonitor(
+            configProvider: { AppConfig(settings: APISettings(provider: .system)) },
+            apiChecker: checker
+        )
+
+        let snapshot = await monitor.refresh()
+        let callCount = await checker.recordedCallCount()
+
+        XCTAssertEqual(snapshot, .system(detail: L10n.systemTranslationReady))
+        XCTAssertEqual(callCount, 0)
+    }
 }
 
 private struct StubBackendAPIHealthChecker: BackendAPIHealthChecking {
@@ -94,6 +111,24 @@ private struct StubBackendAPIHealthChecker: BackendAPIHealthChecking {
 
     func checkAPIReachability() async throws -> BackendAPIReachability {
         try result.get()
+    }
+}
+
+actor RecordingBackendAPIHealthChecker: BackendAPIHealthChecking {
+    private let result: BackendAPIReachability
+    private var callCount = 0
+
+    init(result: BackendAPIReachability) {
+        self.result = result
+    }
+
+    func checkAPIReachability() async throws -> BackendAPIReachability {
+        callCount += 1
+        return result
+    }
+
+    func recordedCallCount() -> Int {
+        callCount
     }
 }
 

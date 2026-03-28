@@ -114,6 +114,60 @@ final class LocalTranslationClientTests: XCTestCase {
 
         XCTAssertEqual(translated, "runtime translation")
     }
+
+    func test_runtime_client_routes_custom_api_requests_to_http_client() async throws {
+        let customAPIClient = RecordingTranslationClient(result: "custom-result")
+        let systemClient = RecordingTranslationClient(result: "system-result")
+        let client = RuntimeTranslationClient(
+            configProvider: {
+                AppConfig(
+                    settings: APISettings(
+                        provider: .customAPI,
+                        baseURLString: "https://example.invalid/v1",
+                        apiKey: "test-key",
+                        model: "test-model"
+                    )
+                )
+            },
+            makeCustomAPIClient: { _ in customAPIClient },
+            systemTranslationClient: systemClient
+        )
+
+        let translated = try await client.translate(text: "hello", direction: .enToZh)
+
+        XCTAssertEqual(translated, "custom-result")
+        let customCalls = await customAPIClient.recordedCalls()
+        let systemCalls = await systemClient.recordedCalls()
+        XCTAssertEqual(customCalls, [.init(text: "hello", direction: .enToZh)])
+        XCTAssertTrue(systemCalls.isEmpty)
+    }
+
+    func test_runtime_client_routes_system_requests_to_system_translation_client() async throws {
+        let customAPIClient = RecordingTranslationClient(result: "custom-result")
+        let systemClient = RecordingTranslationClient(result: "system-result")
+        let client = RuntimeTranslationClient(
+            configProvider: {
+                AppConfig(
+                    settings: APISettings(
+                        provider: .system,
+                        baseURLString: "https://ignored.invalid/v1",
+                        apiKey: "ignored-key",
+                        model: "ignored-model"
+                    )
+                )
+            },
+            makeCustomAPIClient: { _ in customAPIClient },
+            systemTranslationClient: systemClient
+        )
+
+        let translated = try await client.translate(text: "你好", direction: .zhToEn)
+
+        XCTAssertEqual(translated, "system-result")
+        let customCalls = await customAPIClient.recordedCalls()
+        let systemCalls = await systemClient.recordedCalls()
+        XCTAssertTrue(customCalls.isEmpty)
+        XCTAssertEqual(systemCalls, [.init(text: "你好", direction: .zhToEn)])
+    }
 }
 
 private final class LocalTranslationClientMockURLProtocol: URLProtocol {
@@ -214,5 +268,28 @@ private func XCTAssertLocalTranslationThrowsErrorAsync<T>(
         XCTAssertEqual(error, expected, file: file, line: line)
     } catch {
         XCTFail("Unexpected error: \(error)", file: file, line: line)
+    }
+}
+
+private actor RecordingTranslationClient: TranslationClienting {
+    struct Call: Equatable {
+        let text: String
+        let direction: TranslationDirection
+    }
+
+    private let result: String
+    private var calls: [Call] = []
+
+    init(result: String) {
+        self.result = result
+    }
+
+    func translate(text: String, direction: TranslationDirection) async throws -> String {
+        calls.append(Call(text: text, direction: direction))
+        return result
+    }
+
+    func recordedCalls() -> [Call] {
+        calls
     }
 }
