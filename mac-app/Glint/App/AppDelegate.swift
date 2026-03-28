@@ -19,17 +19,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
     }
 
-    private let accessibilityPermission = AccessibilityPermission()
+    private let accessibilityPermission: any AccessibilityPermissionChecking
     private let overlayController = OverlayPanelController()
     private let workflow = TranslateClipboardWorkflow()
     private let ocrWorkflow = TranslateOCRWorkflow()
-    private let selectionWorkflow = TranslateTextWorkflow(
-        inputSource: SelectionInputSource(),
-        noTextMessage: L10n.noSelectedTextFound,
-        permissionRequiredMessage: L10n.accessibilityPermissionNotGranted,
-        automationPermissionRequiredMessage: L10n.browserAutomationPermissionRetry,
-        unsupportedHostAppMessage: L10n.unsupportedHostApp,
-    )
+    private let selectionWorkflow: TranslateTextWorkflow
     private let overlayPlacementResolver = OverlayPlacementResolver()
     private let screenRegionSelectionController = ScreenRegionSelectionController()
     private let launchCoordinator: any AppLaunchCoordinating
@@ -71,6 +65,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotkeyMonitorFactory = Self.defaultHotkeyMonitorFactory
         backendStatusMonitor = BackendStatusMonitor()
         apiSettingsStore = APISettingsStore()
+        accessibilityPermission = AccessibilityPermission()
+        selectionWorkflow = TranslateTextWorkflow(
+            inputSource: SelectionInputSource(permission: accessibilityPermission),
+            noTextMessage: L10n.noSelectedTextFound,
+            permissionRequiredMessage: L10n.accessibilityPermissionNotGranted,
+            automationPermissionRequiredMessage: L10n.browserAutomationPermissionRetry,
+            unsupportedHostAppMessage: L10n.unsupportedHostApp,
+        )
         super.init()
     }
 
@@ -80,7 +82,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutRecorderUserDefaults: UserDefaults = .standard,
         hotkeyMonitorFactory: @escaping HotkeyMonitorFactory = AppDelegate.defaultHotkeyMonitorFactory,
         backendStatusMonitor: BackendStatusMonitor = BackendStatusMonitor(),
-        apiSettingsStore: APISettingsStore = APISettingsStore()
+        apiSettingsStore: APISettingsStore = APISettingsStore(),
+        accessibilityPermission: any AccessibilityPermissionChecking = AccessibilityPermission()
     ) {
         self.shortcutSettings = shortcutSettings
         self.launchCoordinator = launchCoordinator
@@ -88,6 +91,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.hotkeyMonitorFactory = hotkeyMonitorFactory
         self.backendStatusMonitor = backendStatusMonitor
         self.apiSettingsStore = apiSettingsStore
+        self.accessibilityPermission = accessibilityPermission
+        self.selectionWorkflow = TranslateTextWorkflow(
+            inputSource: SelectionInputSource(permission: accessibilityPermission),
+            noTextMessage: L10n.noSelectedTextFound,
+            permissionRequiredMessage: L10n.accessibilityPermissionNotGranted,
+            automationPermissionRequiredMessage: L10n.browserAutomationPermissionRetry,
+            unsupportedHostAppMessage: L10n.unsupportedHostApp,
+        )
         super.init()
     }
 
@@ -113,6 +124,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         removeShortcutRecordingMonitors()
     }
 
+    func applicationDidBecomeActive(_ notification: Notification) {
+        statusBarController?.refreshMenu()
+    }
+
     private func translateClipboard() {
         Task {
             overlayController.show(state: .loading, placement: .centered)
@@ -124,6 +139,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func handleSelectionTranslation() {
         let placement = overlayPlacementResolver.resolve(cursorAnchor: NSEvent.mouseLocation)
         guard accessibilityPermission.isGranted else {
+            _ = accessibilityPermission.requestAccessPrompt()
             overlayController.show(
                 state: .error(L10n.accessibilityPermissionRequiredForSelectionTranslation),
                 placement: placement

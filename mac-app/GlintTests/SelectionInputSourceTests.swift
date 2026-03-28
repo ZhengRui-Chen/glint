@@ -4,8 +4,9 @@ import XCTest
 final class SelectionInputSourceTests: XCTestCase {
     func test_selection_input_reports_missing_permission() async {
         let provider = StubSelectionProvider(result: .failure(SelectionProviderFailure(.noText)))
+        let permission = StubAccessibilityPermission(isGranted: false)
         let source = SelectionInputSource(
-            permission: StubAccessibilityPermission(isGranted: false),
+            permission: permission,
             provider: provider
         )
 
@@ -14,6 +15,18 @@ final class SelectionInputSourceTests: XCTestCase {
 
         XCTAssertEqual(result, .failure(TextInputFailure(.permissionRequired)))
         XCTAssertEqual(callCount, 0)
+    }
+
+    func test_selection_input_requests_accessibility_prompt_when_permission_is_missing() async {
+        let permission = StubAccessibilityPermission(isGranted: false)
+        let source = SelectionInputSource(
+            permission: permission,
+            provider: StubSelectionProvider(result: .failure(SelectionProviderFailure(.noText)))
+        )
+
+        _ = await source.resolveText()
+
+        XCTAssertEqual(permission.requestPromptCallCount, 1)
     }
 
     func test_selection_input_reports_missing_selection() async {
@@ -297,8 +310,19 @@ final class SelectionInputSourceTests: XCTestCase {
     }
 }
 
-private struct StubAccessibilityPermission: AccessibilityPermissionChecking {
-    let isGranted: Bool
+private final class StubAccessibilityPermission: @unchecked Sendable, AccessibilityPermissionChecking {
+    var isGranted: Bool
+    private(set) var requestPromptCallCount = 0
+
+    init(isGranted: Bool) {
+        self.isGranted = isGranted
+    }
+
+    @discardableResult
+    func requestAccessPrompt() -> Bool {
+        requestPromptCallCount += 1
+        return isGranted
+    }
 }
 
 private actor StubSelectionProvider: SelectionProviding {

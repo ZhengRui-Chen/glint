@@ -208,6 +208,50 @@ final class AppDelegateBackendMenuTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 50_000_000)
         XCTAssertEqual(menu.items.first?.title, L10n.serviceStatusUnavailable)
     }
+
+    @MainActor
+    func test_application_becoming_active_refreshes_accessibility_permission_status() async throws {
+        let permission = MutableAccessibilityPermission(isGranted: false)
+        let apiSettingsStore = makeIsolatedAPISettingsStore()
+        let monitor = makeCustomAPIBackendStatusMonitor(
+            apiChecker: SequencedBackendAPIHealthChecker(results: [.reachable])
+        )
+        let appDelegate = AppDelegate(
+            shortcutSettings: .default,
+            launchCoordinator: ImmediateLaunchCoordinatorForBackendMenuTests(),
+            shortcutRecorderUserDefaults: UserDefaults(suiteName: UUID().uuidString)!,
+            hotkeyMonitorFactory: { _, _, _ in NoopHotkeyMonitor() },
+            backendStatusMonitor: monitor,
+            apiSettingsStore: apiSettingsStore,
+            accessibilityPermission: permission
+        )
+
+        appDelegate.applicationDidFinishLaunching(
+            Notification(name: NSApplication.didFinishLaunchingNotification)
+        )
+        defer {
+            appDelegate.applicationWillTerminate(
+                Notification(name: NSApplication.willTerminateNotification)
+            )
+        }
+
+        let controller = try XCTUnwrap(reflectedStatusBarController(from: appDelegate))
+        let menu = try XCTUnwrap(reflectedMenu(from: controller))
+        _ = await waitForMenuItem(
+            titled: L10n.accessibilityPermission(status: L10n.accessibilityPermissionRequired),
+            in: menu
+        )
+
+        permission.isGranted = true
+        appDelegate.applicationDidBecomeActive(
+            Notification(name: NSApplication.didBecomeActiveNotification)
+        )
+
+        _ = await waitForMenuItem(
+            titled: L10n.accessibilityPermission(status: L10n.accessibilityPermissionGranted),
+            in: menu
+        )
+    }
 }
 
 private actor SequencedBackendAPIHealthChecker: BackendAPIHealthChecking {
@@ -289,6 +333,19 @@ private final class NoopHotkeyMonitor: GlobalHotkeyMonitoring {
 
     func reload(shortcut: GlobalHotkeyShortcut) -> Bool {
         true
+    }
+}
+
+private final class MutableAccessibilityPermission: @unchecked Sendable, AccessibilityPermissionChecking {
+    var isGranted: Bool
+
+    init(isGranted: Bool) {
+        self.isGranted = isGranted
+    }
+
+    @discardableResult
+    func requestAccessPrompt() -> Bool {
+        isGranted
     }
 }
 

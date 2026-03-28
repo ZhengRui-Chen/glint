@@ -22,4 +22,12 @@ mkdir -p "$DIST_DIR"
 rm -rf "$DIST_APP_PATH"
 ditto "$SOURCE_APP_PATH" "$DIST_APP_PATH"
 
+BUNDLE_IDENTIFIER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$DIST_APP_PATH/Contents/Info.plist")
+codesign \
+  --force \
+  --sign - \
+  --deep \
+  --identifier "$BUNDLE_IDENTIFIER" \
+  "$DIST_APP_PATH"
+
 printf 'Built %s app at %s\n' "$CONFIGURATION" "$DIST_APP_PATH"

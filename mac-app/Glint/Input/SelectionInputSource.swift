@@ -56,6 +56,7 @@ struct SelectionInputSource: TextInputSource {
 
     func resolveText() async -> Result<String, TextInputFailure> {
         guard permission.isGranted else {
+            _ = permission.requestAccessPrompt()
             return .failure(TextInputFailure(.permissionRequired))
         }
 
